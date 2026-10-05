@@ -1,0 +1,61 @@
+/* PRESETS
+/––––––––––––––––––––––––*/
+@use 'media' as *;
+
+.content-block {
+	// side padding (gutter) for every section, header and footer included.
+	// Section level only: <section class="content-block"><div class="content-max">…</div></section>
+	padding: 0 120px;
+
+	@include media('<desktop') {
+		padding: 0 80px;
+	}
+	@include media('<tablet') {
+		padding: 0 48px;
+	}
+	@include media('<phone') {
+		padding: 0 25px;
+	}
+}
+
+.content-narrow {
+	max-width: 960px;
+	margin-inline: auto;
+
+	@include media('<desktop') {
+		max-width: 800px;
+	}
+}
+
+.content-max {
+	max-width: 1920px;
+	margin: 0 auto;
+
+	@include media('<wideScreen') {
+		max-width: 1520px;
+	}
+	@include media('<desktop') {
+		max-width: 1360px;
+	}
+}
+
+.noscroll {
+	overflow: hidden;
+}
+
+:focus {
+	outline: 0;
+}
+
+.img-fluid {
+	max-width: 100%;
+	height: auto;
+}
+
+%cover {
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+}

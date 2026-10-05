@@ -4,16 +4,30 @@
 	"main": "index.js",
 	"author": "Andrea Musso",
 	"license": "MIT",
+	"packageManager": "pnpm@10.33.2",
 	"scripts": {
 		"build": "webpack",
-		"start": "webpack-dev-server"
+		"start": "webpack-dev-server",
+		"dev:2026": "webpack --config webpack.2026.config.js --mode development --watch",
+		"build:2026": "webpack --config webpack.2026.config.js --mode production"
 	},
 	"devDependencies": {
+		"@fontsource/manrope": "^5.3.0",
+		"@fontsource/titillium-web": "^5.3.0",
+		"autoprefixer": "^10.6.1",
+		"css-loader": "^7.1.5",
+		"css-minimizer-webpack-plugin": "^8.0.0",
+		"mini-css-extract-plugin": "^2.10.2",
+		"postcss": "^8.5.29",
+		"postcss-loader": "^8.2.1",
+		"sass": "^1.105.1",
+		"sass-loader": "^17.0.1",
 		"webpack": "^5.97.1",
 		"webpack-cli": "^6.0.1",
 		"webpack-dev-server": "^5.2.0"
 	},
 	"dependencies": {
-		"countup.js": "^2.8.0"
+		"countup.js": "^2.8.0",
+		"include-media": "^2.0.0"
 	}
 }

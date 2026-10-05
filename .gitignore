@@ -30,3 +30,6 @@ Thumbs.db
 vendor/
 .composer/
 .phpunit.result.cache
+
+# 2026 build: commit only production output (pnpm build:2026)
+dist-2026/**/*.map
