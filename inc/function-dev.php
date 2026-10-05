@@ -15,6 +15,8 @@ require get_template_directory() . '/inc/function-assets.php';
 require get_template_directory() . '/inc/function-helpers.php';
 // Main Menu 2026 markup: submenu toggles, dropdown arrows, ACF menu button
 require get_template_directory() . '/inc/function-navigation.php';
+// ACF options pages (Options > Footer) + dsa_2026_option() helper
+require get_template_directory() . '/inc/function-acf.php';
 
 /*==================================================================================
   THEME SUPPORT

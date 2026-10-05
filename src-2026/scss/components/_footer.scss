@@ -1,0 +1,218 @@
+/*==================================================================================
+  FOOTER (footer-new.php, components-2026/footer/)
+  Certification strip above the footer, then the footer itself and its bottom bar.
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+/* Certification strip (partner.php)
+/––––––––––––––––––––––––*/
+.footer-partners {
+	padding: 40px 0; // sides come from .content-block
+	background-color: $color__main-light;
+	border-top: 1px solid rgba($color__text-light, 0.06);
+	border-bottom: 1px solid rgba($color__text-light, 0.06);
+
+	@include media('<phone') {
+		padding: 32px 0;
+	}
+}
+
+.footer-partners__list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 32px 72px;
+
+	@include media('<phone') {
+		gap: 24px 32px;
+	}
+}
+
+.footer-partners__img {
+	width: auto;
+	height: 64px;
+
+	@include media('<phone') {
+		height: 48px;
+	}
+}
+
+/* Footer
+/––––––––––––––––––––––––*/
+.dark-footer {
+	padding: 64px 0 40px; // sides come from .content-block
+	background-color: $color__main;
+	color: $color__text-light;
+	font-size: 14px;
+	line-height: 1.5;
+
+	a {
+		transition: color 0.25s ease;
+
+		&:hover {
+			color: $color__link;
+		}
+
+		&:focus-visible {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+
+	@include media('<phone') {
+		padding: 48px 0 32px;
+	}
+}
+
+.footer-inner {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+	gap: 48px;
+
+	@include media('<tablet') {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* Logo, info, social
+/––––––––––––––––––––––––*/
+.footer-logo {
+	.custom-logo-link {
+		display: inline-block;
+		line-height: 0;
+	}
+
+	.custom-logo {
+		width: auto;
+		max-width: none;
+		height: 48px;
+	}
+}
+
+.footer-logo__text {
+	font-family: $header__fontname;
+	font-size: 22px;
+	font-weight: 700;
+}
+
+.footer-info {
+	max-width: 260px;
+	margin-top: 24px;
+	opacity: 0.8;
+
+	> * + * {
+		margin-top: 8px;
+	}
+}
+
+.footer-social {
+	display: flex;
+	gap: 8px;
+	margin-top: 24px;
+}
+
+// The 36px circle is in the svg (fill="currentColor"): $color__text-light,
+// $color__link on hover from the .dark-footer a rules above
+.dark-footer .footer-social__link {
+	display: flex; // no inline gap under the svg
+	border-radius: 50%; // round focus outline
+
+	&:focus-visible {
+		color: $color__link;
+	}
+}
+
+/* Columns: menus (navigation.php) + Get in Touch (contact.php)
+/––––––––––––––––––––––––*/
+.footer-navigation {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 48px;
+
+	@include media('<phone-land') {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 40px 32px;
+	}
+	@include media('<phone') {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.footer-col__title {
+	// class beats the global h2 sizes in _general.scss
+	margin-bottom: 16px;
+	color: $color__text-light;
+	font-family: $header__fontname;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.25;
+}
+
+.footer-menu,
+.footer-contact {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	a {
+		opacity: 0.8;
+
+		&:hover,
+		&:focus-visible {
+			opacity: 1;
+		}
+	}
+}
+
+.footer-contact__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.footer-contact__icon {
+	display: flex;
+	flex-shrink: 0;
+	color: $color__link;
+}
+
+/* Bottom bar (bottom.php)
+/––––––––––––––––––––––––*/
+.footer-bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	margin-top: 72px;
+	padding-top: 32px;
+	border-top: 1px solid rgba($color__text-light, 0.15);
+	font-size: 12px;
+
+	@include media('<phone-land') {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		margin-top: 48px;
+	}
+}
+
+.footer-bottom__copy {
+	opacity: 0.8;
+}
+
+.footer-legal {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+
+	a {
+		opacity: 0.8;
+
+		&:hover,
+		&:focus-visible {
+			opacity: 1;
+		}
+	}
+}

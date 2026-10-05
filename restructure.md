@@ -52,16 +52,19 @@ The legacy SCSS (`dist/styles/main.scss` and `map/*`) is compiled **outside** th
 ```
 functions.php          legacy + one require of inc/function-dev.php
 header-new.php         2026 header (loaded by get_header('new')): markup only, parts in components-2026/header/
+footer-new.php         2026 footer (loaded by get_footer('new')): markup only, parts in components-2026/footer/
 inc/                   2026 PHP
   function-dev.php        entry: requires the other inc files + theme support (custom logo, 2026 nav menus)
   function-assets.php     fonts/CSS/JS on 2026 pages, dequeues legacy assets there
   function-helpers.php    dsa_2026_get_svg()
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
+  function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option()
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
+  footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php
-  footer/  page/       (next)
-svg-templates/         inline SVGs: svg-arrow.php, svg-chevron-down.php
+  page/                (next)
+svg-templates/         inline SVGs: arrow, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
 templates-2026/
   page-contact-2026.php "Contact 2026" page template (main.site-main--contact)
@@ -85,6 +88,7 @@ src-2026/
       _accordion.scss  accordion-js base styles
       _header.scss     header bar, logo, hamburger
       _navigation.scss main nav, dropdowns, mobile panel
+      _footer.scss     certification strip, footer columns, bottom bar
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -101,11 +105,11 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
   - **enqueues `dist-2026/main.css` and `main.js`**, the JS in the footer, both versioned with `filemtime()`;
   - **adds the `layout-2026` class to `<body>`.**
 - Every other page behaves exactly as before.
-- **2026 pages are a clean slate: no Bootstrap and no legacy CSS.** The whole page (header, content, footer) has to be built with 2026 markup and styles. Until the templates call `get_footer('new')`, the legacy `footer.php` renders unstyled on 2026 pages.
+- **2026 pages are a clean slate: no Bootstrap and no legacy CSS.** The whole page (header, content, footer) has to be built with 2026 markup and styles. 2026 templates end with **`get_footer('new')`**. One that still calls `get_footer()` gets the legacy `footer.php`, unstyled.
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template (currently "Contact 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header is built. `footer-new.php` is started: it has markup, but its `components-2026/footer/` parts don't exist yet, and templates still call the legacy `get_footer()`. No public page uses `get_header('new')` yet.
+**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -165,6 +169,8 @@ get_template_part('components-2026/partials/button', null, array(
 - **In templates:** `get_template_part('svg-templates/svg-arrow')`.
 - **Where you need a string** (filters, concatenation): `dsa_2026_get_svg('arrow')`.
 - **Wrap decorative icons** in `<span aria-hidden="true">`.
+- **A part that changes colour on hover** gets `fill="currentColor"` (or `stroke`), so CSS sets its colour, as in the footer's social icons.
+- **Remove Figma's `clipPath` wrappers when they clip nothing.** Their IDs repeat when an icon appears twice on a page.
 
 ### Accordions (accordion-js)
 
@@ -220,12 +226,48 @@ header.header[data-2026="header"] > .content-block > .content-max > .header-inne
   - The skip link (`.skip-link.screen-reader-text`) appears on keyboard focus.
   - Links and buttons show a `:focus-visible` outline. The global helper sets `:focus { outline: 0 }`, so every new component must add its own `:focus-visible` style.
 
+## Footer (`footer-new.php`)
+
+```
+section.footer-partners.content-block > .content-max     components-2026/footer/partner.php (above the footer)
+footer.dark-footer > .content-block > .content-max
+	.footer-inner
+		.footer-logo         logo.php (custom logo, 48px high) + info.php + social.php
+		.footer-navigation   navigation.php (Services, Company) + contact.php (Get in Touch)
+	.footer-bottom           bottom.php (copyright + Footer Legal 2026 menu)
+```
+
+- **Content:** everything except the menus and logo comes from **Options > Footer**, the ACF group "Footer 2026" (`acf-json/group_6ac3c858bc43e.json`). Partials read it with `dsa_2026_option()`, and each one renders nothing while its fields are empty.
+
+  | Tab | Field | Name | Type |
+  | --- | --- | --- | --- |
+  | Certifications | Certifications | `footer_certifications` | repeater of `image` (image ID) |
+  | Info | Footer info | `footer_info` | WYSIWYG |
+  | Social | LinkedIn, X, YouTube | `footer_linkedin`, `footer_x`, `footer_youtube` | link |
+  | Contact | Map, Email, Phone number | `footer_map`, `footer_email`, `footer_phone` | link |
+
+  - **Contact links:** the link text is what's shown. The URLs are a Maps URL, `mailto:…` and `tel:+44…`.
+  - **Social links:** they show only an icon, with the network name as the `aria-label`. The icon is a 36px SVG whose circle is `currentColor`: `$color__text-light`, and `$color__link` on hover.
+- **Menus:** the Footer Service 2026 and Footer Company 2026 locations become the "Services" and "Company" columns. The column titles are in `navigation.php`. A column is skipped while its location has no menu.
+- **Copyright:** hard-coded in `bottom.php`, with the year from `wp_date('Y')`.
+- **Styles:**
+  - The certification strip is `$color__main-light`, with logos 64px high (48px below `phone`).
+  - The footer is `$color__main` with `$color__text-light` text.
+  - Columns are 1fr / 2fr, and the menus are a 3-column grid.
+  - Below `tablet` it becomes one column, with 2 menu columns below `phone-land` and 1 below `phone`.
+  - The bottom bar stacks below `phone-land`.
+
 ## ACF fields (`acf-json/`)
 
 - ACF saves every field group as JSON in `acf-json/`, which it detects automatically in the theme. Commit these files.
 - **The JSON is written on the server** when a group is saved in WP admin. After editing fields on live, download the changed `group_*.json` files into the repo and commit them.
 - **Never upload an older `acf-json/` over the server's copy.** Groups showing "Awaiting save" just haven't been written to JSON yet: open the group and save it.
 - **Read 2026 fields with `get_field()`,** always behind a `function_exists('get_field')` check in `inc/` code.
+- **Options pages:**
+  - Register them in `inc/function-acf.php` on `acf/init`, as children of the legacy "Options" page (`parent_slug` `acf-options`).
+  - **Read options with `dsa_2026_option('name')`.**
+  - **Prefix option field names** (`footer_…`): every options page shares one namespace with the legacy Options fields (`cert_1`, `logos`…).
+  - **Keep `dsa_2026_options_parent_no_redirect()`.** Without it, ACF turns "Options" into a link to its first child, and the legacy Options fields can't be edited.
 
 ## Fonts
 
@@ -319,7 +361,8 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
 ## Deploying to the live server
 
 1. Run `pnpm build:2026` and commit the result.
-2. Upload `inc/`, `components-2026/`, `svg-templates/`, `dist-2026/`, `templates-2026/`, `acf-json/` and `header-new.php` **first**.
+2. Upload `inc/`, `components-2026/`, `svg-templates/`, `dist-2026/`, `templates-2026/`, `header-new.php` and `footer-new.php` **first**.
+   - For `acf-json/`, upload only the **new or changed** `group_*.json` files, then sync them under Custom Fields > Field Groups.
 3. Upload `functions.php` **last**. Its `require` of `inc/function-dev.php` is a fatal error if `inc/` isn't on the server yet.
 4. Never upload `node_modules/` or `src-2026/`. The server only needs the built `dist-2026/`.
 
@@ -394,3 +437,15 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
 - **2026-10-05**
   - accordion-js is now a normal import, bundled into `main.js`, and `dist-2026/chunks/` is gone. See "Decisions".
   - JS modules follow Andrea's pattern: `modules/header.js` became `modules/headerNavigation.js` with `export default function headerNavigation()`, called from `main.js`.
+- **2026-10-05**
+  - Built the 2026 footer:
+    - `components-2026/footer/` (certification strip, logo, info, social, menus, contact, bottom bar);
+    - `_footer.scss`;
+    - six new icons in `svg-templates/`.
+  - Added `inc/function-acf.php`:
+    - the **Options > Footer** sub-page;
+    - `dsa_2026_option()`;
+    - the no-redirect filter that keeps the legacy Options page editable.
+  - New ACF group "Footer 2026" (`group_6ac3c858bc43e.json`).
+  - "Contact 2026" now calls `get_footer('new')`.
+  - Footer icons replaced with Andrea's SVGs: the social circles are `currentColor` (teal on hover) and the no-op `clipPath` wrappers were removed.

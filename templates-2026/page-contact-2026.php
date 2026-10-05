@@ -24,4 +24,4 @@ get_header('new'); ?>
 	</section>
 </main>
 
-<?php get_footer(); ?>
+<?php get_footer('new'); ?>
