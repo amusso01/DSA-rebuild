@@ -1,0 +1,118 @@
+/*==================================================================================
+  TWO-COLUMN IMAGE TEXT (components-2026/sections/two-column-image-text.php)
+  Dynamic Layout 2026 section: image + content side by side, optional reverse and
+  background colour. Figma: DSA, nodes 223:3270 (default) and 223:3278 (reverse, button).
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+.two-column-image-text {
+	// only top/bottom: the sides come from .content-block
+	padding-block: 76px;
+	background-color: $color__main; // default; the ACF colour is an inline style
+	color: $color__text-light;
+
+	@include media('<tablet') {
+		padding-block: 64px;
+	}
+	@include media('<phone') {
+		padding-block: 48px;
+	}
+}
+
+.two-column-image-text__inner {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	align-items: center; // content centred against the image
+	gap: 88px;
+
+	@include media('<desktop') {
+		gap: 64px;
+	}
+	@include media('<tablet') {
+		gap: 48px;
+	}
+	@include media('<phone-land') {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 40px;
+	}
+	@include media('<phone') {
+		gap: 32px;
+	}
+}
+
+// reverse is visual only: the DOM stays image, then content
+.two-column-image-text--reverse .two-column-image-text__media {
+	order: 2;
+
+	@include media('<phone-land') {
+		order: 0; // one column: image always on top
+	}
+}
+
+.two-column-image-text__img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 556 / 542; // Figma, at 1440
+	object-fit: cover;
+	border-radius: 12px;
+}
+
+/* Content
+/––––––––––––––––––––––––*/
+.two-column-image-text__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	// margins instead of gap: a missing eyebrow/title/text/button leaves no hole
+	> * + * {
+		margin-top: 24px;
+	}
+}
+
+.two-column-image-text__eyebrow {
+	color: $color__link;
+	font-family: $header__fontname;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+	text-transform: uppercase;
+
+	+ .two-column-image-text__title {
+		margin-top: 18px;
+	}
+}
+
+// size, weight, line-height and font: base h2 in _general.scss
+.two-column-image-text__title {
+	color: $color__text-light;
+
+	// editors wrap words in <span class="accent"> to highlight them
+	.accent {
+		color: $color__link;
+	}
+}
+
+.two-column-image-text__text {
+	// Manrope 16px 400 from html; paragraphs have no gap, as in Figma (reset)
+	color: $color__text-light;
+	line-height: 1.6;
+
+	ul,
+	ol {
+		padding-left: 1.25em; // the reset zeroes it, bullets would hang outside
+	}
+
+	a {
+		color: $color__link;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+
+		&:focus-visible {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+}

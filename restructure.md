@@ -64,7 +64,7 @@ components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php
-  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php
+  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php
   page/                (next)
 svg-templates/         inline SVGs: arrow, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
@@ -93,6 +93,7 @@ src-2026/
       _navigation.scss main nav, dropdowns, mobile panel
       _footer.scss     certification strip, footer columns, bottom bar
       _hero-page.scss  Dynamic Layout section: hero page (breadcrumb, title, accent lines)
+      _two-column-image-text.scss  Dynamic Layout section: image + content, reverse, background colour
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -113,7 +114,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with one section so far: Hero page. No public page uses `get_header('new')` yet.
+**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with two sections so far: Hero page and Two-column image text. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -303,6 +304,7 @@ main#main.site-main.site-main--layout
 ### Adding a section
 
 1. **ACF:** add a layout to `page_sections`, with a snake_case name (`two_columns`) and its sub fields. Then sync the JSON (see "ACF fields").
+   - **If the section has settings, split its fields into two tabs: Options first, then Content** (e.g. Two-column image text).
 2. **Markup:** create `components-2026/sections/<name>.php`, with hyphens in the name. Read `$args` with `wp_parse_args()` defaults, escape everything on output, and wrap the section itself:
 
    ```php
@@ -383,6 +385,62 @@ section.hero-page.content-block
 
     The `tablet` and `phone` values aren't in Figma.
 
+### Two-column image text (`sections/two-column-image-text.php` + `_two-column-image-text.scss`)
+
+Layout `two_column_image_text` ("Two-column image text"). Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, both frames 1440 × 694:
+- node `223:3270`: the default order, `#091C1E`, no button;
+- node `223:3278`: reversed, `#122C29`, with a button.
+
+```
+section.two-column-image-text.content-block[.two-column-image-text--reverse]   (style="background-color: …")
+	.content-max > .two-column-image-text__inner                  (grid 1fr 1fr)
+		.two-column-image-text__media > img.two-column-image-text__img
+		.two-column-image-text__content
+			p.__eyebrow, h2.__title, div.__text, a.btn.__button  (each only when filled)
+```
+
+| Tab | Label | Name | Type | Notes |
+| --- | --- | --- | --- | --- |
+| Options | Background color (50%) | `background_color` | color picker | default `#091C1E` |
+| Options | Image layout grid reverse (50%) | `grid_reverse` | true/false | off: image, content. On: content, image |
+| Content | Eyebrow | `eyebrow` | text | optional |
+| Content | Content title | `title` | textarea (new lines → `<br>`) | always an `<h2>` |
+| Content | Content | `content` | WYSIWYG (basic, no media) | |
+| Content | Button | `link` | link | optional, rendered with `partials/button.php` |
+| Content | Image | `image` | image (ID) | **required** |
+
+- **Background:**
+  - **Valid colour:** it's printed as an inline `style`, after `sanitize_hex_color()`.
+  - **Empty or invalid colour:** the SCSS default `$color__main` applies.
+  - The text always stays `$color__text-light`, so editors should pick dark colours.
+- **Reverse:** it only changes the visual order (CSS `order`). The DOM is always image, then content. In one column (below `phone-land`) the image is always on top.
+- **Title:**
+  - It goes through `wp_kses()`, which keeps only `<span class>` and `<br>`.
+  - **Highlighting:** wrap words in `<span class="accent">` to colour them `$color__link`.
+  - **Base h2:** its size, weight, line-height and font come from the base `h2` in `_general.scss` (Titillium 400, 44px / 1.2, with the h2 scale). Don't redeclare them in the section.
+- **Text:** `wp_kses_post()`. In WYSIWYG lists, the padding is put back (`1.25em`). Links are `$color__link` and underlined.
+- **Image:**
+  - `wp_get_attachment_image()` at size `large`, with `sizes` `(max-width: 920px) 100vw, 50vw` and the alt text from the media library.
+  - Eager-loaded only when it's the first section.
+- **Styles:**
+  - **Eyebrow:** Titillium Web 600, 14px, `line-height: 1.5`, uppercase, `$color__link`.
+  - **Text:** Manrope 16px 400, `line-height: 1.6`, `$color__text-light`. Paragraphs have no gap, as in Figma.
+  - **Button:** `.btn` as it is. It already matches Figma.
+  - **Image:** `aspect-ratio: 556 / 542` (Figma), `object-fit: cover`, 12px radius on every image.
+  - **Grid:** content vertically centred (`align-items: center`).
+  - **Column spacing:** eyebrow → title 18px, then 24px before the text and 24px before the button. These are margins, so a missing element leaves no gap.
+  - **Padding and gap:** `padding-block` only. At 1440px the section is 694px high, as in Figma.
+
+    | Width | Padding top / bottom | Grid |
+    | --- | --- | --- |
+    | Base (desktop) | 76px | 2 columns, gap 88px |
+    | `<desktop` | 76px | gap 64px |
+    | `<tablet` | 64px | gap 48px |
+    | `<phone-land` | 64px | 1 column, image on top, gap 40px |
+    | `<phone` | 48px | gap 32px |
+
+    Only the desktop values are in Figma.
+
 ## ACF fields (`acf-json/`)
 
 - ACF saves every field group as JSON in `acf-json/`, which it detects automatically in the theme. Commit these files.
@@ -403,7 +461,7 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
 | Family | Weights | SCSS variable | Used for |
 | --- | --- | --- | --- |
 | Manrope | 400, 500, 600, 700 | `$text__fontname` | body text |
-| Titillium Web | 400, 700 | `$header__fontname` | headings |
+| Titillium Web | 400, 600, 700 | `$header__fontname` | headings (600: section eyebrows) |
 
 - **Only the Latin and Latin-extended subsets are loaded.** `unicode-range` means browsers fetch Latin-extended only when a page needs it.
 - **Only the weights in the table exist.** Any other weight is faked by the browser.
@@ -633,3 +691,11 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - It has a breadcrumb (Home, the repeater links, then the current page), a title with an H-tag select and `<span class="accent">` highlighting, two accent lines, and an optional background image.
     - Spacing comes from Figma node `223:2966`.
   - `main.scss` has a new "Sections" group for section partials.
+- **2026-10-05**
+  - Second Dynamic Layout section, **Two-column image text**: layout `two_column_image_text`, `components-2026/sections/two-column-image-text.php` and `_two-column-image-text.scss`.
+    - The **Options** tab has the background colour and the reverse switch. The **Content** tab has the eyebrow, H2 title, WYSIWYG, button and image.
+    - Figma nodes `223:3270` and `223:3278`.
+    - Andrea chose a 12px radius on every image and 76px padding (as in Figma).
+  - The Options/Content tabs are now the convention for sections with settings (see "Adding a section").
+  - The base `h2, .h2` in `_general.scss` now has `font-weight: 400; line-height: 1.2` (Figma "H2" style). The footer column titles and the hero title keep their own values.
+  - Added Titillium Web 600 (Latin and Latin-extended), for section eyebrows.

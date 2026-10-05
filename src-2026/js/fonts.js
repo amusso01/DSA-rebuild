@@ -16,5 +16,7 @@ import '@fontsource/manrope/latin-ext-700.css'
 // Titillium Web: headings ($header__fontname)
 import '@fontsource/titillium-web/latin-400.css'
 import '@fontsource/titillium-web/latin-ext-400.css'
+import '@fontsource/titillium-web/latin-600.css'
+import '@fontsource/titillium-web/latin-ext-600.css'
 import '@fontsource/titillium-web/latin-700.css'
 import '@fontsource/titillium-web/latin-ext-700.css'

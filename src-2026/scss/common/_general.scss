@@ -96,6 +96,8 @@ h1,
 h2,
 .h2 {
 	font-size: $text__h2;
+	font-weight: 400; // Figma "H2": Titillium Web Regular 44 / 1.2
+	line-height: 1.2;
 }
 
 h3,
