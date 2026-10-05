@@ -17,6 +17,8 @@ require get_template_directory() . '/inc/function-helpers.php';
 require get_template_directory() . '/inc/function-navigation.php';
 // ACF options pages (Options > Footer) + dsa_2026_option() helper
 require get_template_directory() . '/inc/function-acf.php';
+// Dynamic Layout 2026 template: no editor, flexible content sections renderer
+require get_template_directory() . '/inc/function-layout.php';
 
 /*==================================================================================
   THEME SUPPORT

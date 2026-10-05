@@ -119,23 +119,21 @@
 		gap: 16px;
 		padding: 10px 12px;
 		border-radius: 12px;
-		color: $color__text;
+		color: $color__main-light;
+		font-family: $text__fontname;
 		font-size: 14px;
-		font-weight: 500;
+		font-weight: 600;
 		line-height: 1.4;
 		white-space: nowrap;
-
-		&:hover {
-			color: $color__text;
-		}
+		transition: background-color 0.2s ease;
 	}
 
-	// hover + active (current page): underline the label, not the arrow
-	> li > a:hover .sub-menu__label,
-	> li.current-menu-item > a .sub-menu__label {
-		text-decoration: underline;
-		text-underline-offset: 4px;
-		text-decoration-thickness: 1px;
+	// hover + active (current page): #C9DB001A background on the whole anchor (Andrea's spec),
+	// text stays $color__main-light, no underline
+	> li > a:hover,
+	> li > a:focus-visible,
+	> li.current-menu-item > a {
+		background-color: $color__dropdown-hover;
 	}
 }
 
@@ -248,8 +246,11 @@
 			padding-bottom: 12px;
 		}
 
+		// light text on the dark panel, also for the desktop hover/active states
 		> li > a,
-		> li > a:hover {
+		> li > a:hover,
+		> li > a:focus-visible,
+		> li.current-menu-item > a {
 			padding: 10px 12px 10px 16px;
 			color: $color__text-light;
 			white-space: normal;

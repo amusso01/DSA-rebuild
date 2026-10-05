@@ -10,8 +10,6 @@
 .footer-partners {
 	padding: 40px 0; // sides come from .content-block
 	background-color: $color__main-light;
-	border-top: 1px solid rgba($color__text-light, 0.06);
-	border-bottom: 1px solid rgba($color__text-light, 0.06);
 
 	@include media('<phone') {
 		padding: 32px 0;
@@ -32,7 +30,7 @@
 
 .footer-partners__img {
 	width: auto;
-	height: 64px;
+	height: 100px;
 
 	@include media('<phone') {
 		height: 48px;
@@ -44,8 +42,10 @@
 .dark-footer {
 	padding: 64px 0 40px; // sides come from .content-block
 	background-color: $color__main;
-	color: $color__text-light;
-	font-size: 14px;
+	color: $color__text-light; // every footer text, no opacity
+	font-family: $text__fontname;
+	font-size: 14px; // columns; the bottom bar is 13px
+	font-weight: 400;
 	line-height: 1.5;
 
 	a {
@@ -87,7 +87,7 @@
 	.custom-logo {
 		width: auto;
 		max-width: none;
-		height: 48px;
+		height: 81px;
 	}
 }
 
@@ -100,7 +100,6 @@
 .footer-info {
 	max-width: 260px;
 	margin-top: 24px;
-	opacity: 0.8;
 
 	> * + * {
 		margin-top: 8px;
@@ -155,15 +154,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-
-	a {
-		opacity: 0.8;
-
-		&:hover,
-		&:focus-visible {
-			opacity: 1;
-		}
-	}
 }
 
 .footer-contact__link {
@@ -187,8 +177,8 @@
 	gap: 24px;
 	margin-top: 72px;
 	padding-top: 32px;
-	border-top: 1px solid rgba($color__text-light, 0.15);
-	font-size: 12px;
+	border-top: 1px solid $color__main-light; // same line as the header's bottom border
+	font-size: 13px; // copy + legal menu
 
 	@include media('<phone-land') {
 		flex-direction: column;
@@ -198,21 +188,8 @@
 	}
 }
 
-.footer-bottom__copy {
-	opacity: 0.8;
-}
-
 .footer-legal {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px 24px;
-
-	a {
-		opacity: 0.8;
-
-		&:hover,
-		&:focus-visible {
-			opacity: 1;
-		}
-	}
 }

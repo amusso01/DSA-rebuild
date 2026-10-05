@@ -59,15 +59,18 @@ inc/                   2026 PHP
   function-helpers.php    dsa_2026_get_svg()
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
   function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option()
+  function-layout.php     Dynamic Layout 2026: no editor + dsa_2026_render_sections()
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php
+  sections/            Dynamic Layout 2026 sections: one file per flexible layout (none yet)
   page/                (next)
 svg-templates/         inline SVGs: arrow, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
 templates-2026/
   page-contact-2026.php "Contact 2026" page template (main.site-main--contact)
+  page-layout-2026.php  "Dynamic Layout 2026" page template (main.site-main--layout)
 src-2026/
   js/
     fonts.js           Fontsource imports (self-hosted fonts)
@@ -107,9 +110,9 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 - Every other page behaves exactly as before.
 - **2026 pages are a clean slate: no Bootstrap and no legacy CSS.** The whole page (header, content, footer) has to be built with 2026 markup and styles. 2026 templates end with **`get_footer('new')`**. One that still calls `get_footer()` gets the legacy `footer.php`, unstyled.
 
-**Preview on the live site:** create a **private** page in WP admin and pick a 2026 template (currently "Contact 2026"). Only logged-in editors can see it.
+**Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. No public page uses `get_header('new')` yet.
+**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with no sections yet. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -144,7 +147,7 @@ Every new section and component, the header and footer sections included, uses t
 - **One component, two files:**
   - the markup is `components-2026/<area>/<name>.php`;
   - the styles are `src-2026/scss/components/_<name>.scss`, registered in `main.scss`.
-  - `<area>` is `header`, `footer`, `page`…, or `partials` for reusable pieces.
+  - `<area>` is `header`, `footer`, `page`…, `sections` for the Dynamic Layout builder, or `partials` for reusable pieces.
 - **Load a component with `get_template_part()`.** Pass data through `$args` (WP 5.5+) and read it with `wp_parse_args()`. Don't use globals.
 - **Escape everything on output:** `esc_html()`, `esc_attr()`, `esc_url()`.
 
@@ -208,8 +211,10 @@ header.header[data-2026="header"] > .content-block > .content-max > .header-inne
 
 - **Bar:** `$color__main` background, a 1px `$color__main-light` bottom border, 14px top and bottom padding (the sides come from `.content-block`). Logo and navigation use `space-between`.
 - **Menu:** the **Main Menu 2026** location, up to 2 levels. Links are Manrope 15px, weight 600, `$color__text-light`, with a 32px gap.
-  - **Hover and active state** (current page, or the parent of the current page) is an underline, on top-level links and dropdown items alike. There's no background or colour change.
-- **Dropdown:** `$color__text-light` background, 16px radius. Items have 10px 12px padding and a 12px radius, stay on one line, and end in a right-aligned arrow (`svg-arrow`).
+  - **Top-level hover and active state** (current page, or the parent of the current page) is an underline, with no background or colour change.
+- **Dropdown:** `$color__text-light` background, 16px radius. Items are Manrope 14px, weight 600, `$color__main-light`, with 10px 12px padding and a 12px radius. They stay on one line and end in a right-aligned arrow (`svg-arrow`).
+  - **Item hover and active state** (current page): the whole anchor gets the `$color__dropdown-hover` (`#C9DB001A`) background. The text stays `$color__main-light`, with no underline. **This colour is Andrea's spec, so don't remove it.** On mobile the items stay `$color__text-light` on the dark panel.
+  - **Use only the colours in `_variables.scss`.** Don't add new ones (tints, alphas…) unless Andrea gives the value. `$color__dropdown-hover` is one he gave.
   - It opens on hover, or by clicking the chevron toggle, which updates `aria-expanded`.
   - Escape, a click outside or focus leaving the item closes it.
   - The parent link is **not** repeated inside the dropdown.
@@ -232,7 +237,7 @@ header.header[data-2026="header"] > .content-block > .content-max > .header-inne
 section.footer-partners.content-block > .content-max     components-2026/footer/partner.php (above the footer)
 footer.dark-footer > .content-block > .content-max
 	.footer-inner
-		.footer-logo         logo.php (custom logo, 48px high) + info.php + social.php
+		.footer-logo         logo.php (custom logo, 81px high) + info.php + social.php
 		.footer-navigation   navigation.php (Services, Company) + contact.php (Get in Touch)
 	.footer-bottom           bottom.php (copyright + Footer Legal 2026 menu)
 ```
@@ -251,11 +256,80 @@ footer.dark-footer > .content-block > .content-max
 - **Menus:** the Footer Service 2026 and Footer Company 2026 locations become the "Services" and "Company" columns. The column titles are in `navigation.php`. A column is skipped while its location has no menu.
 - **Copyright:** hard-coded in `bottom.php`, with the year from `wp_date('Y')`.
 - **Styles:**
-  - The certification strip is `$color__main-light`, with logos 64px high (48px below `phone`).
-  - The footer is `$color__main` with `$color__text-light` text.
+  - The certification strip is `$color__main-light`, with logos 100px high (48px below `phone`).
+  - The footer is `$color__main`. All its text is `$color__text-light` at full opacity, in Manrope 400. Links turn `$color__link` on hover.
+  - The column text and links are 14px. The bottom bar (copyright + legal menu) is 13px.
+  - The logo is 81px high.
   - Columns are 1fr / 2fr, and the menus are a 3-column grid.
   - Below `tablet` it becomes one column, with 2 menu columns below `phone-land` and 1 below `phone`.
   - The bottom bar stacks below `phone-land`.
+
+## Dynamic Layout 2026 (`templates-2026/page-layout-2026.php`)
+
+Editors build these pages themselves: a list of sections, top to bottom, picked from an ACF flexible content field. The pages have no editor.
+
+```
+main#main.site-main.site-main--layout
+	section.<name>.content-block > .content-max    components-2026/sections/<name>.php (one per row)
+	…
+```
+
+- **Template:** "Dynamic Layout 2026". Inside the loop, `<main>` only calls `dsa_2026_render_sections()`. It never adds wrappers: each section brings its own.
+- **Field:**
+  - **Group:** the ACF group "Dynamic Layout 2026" (`acf-json/group_6ac4033ed38b9.json`), shown when Page Template is `templates-2026/page-layout-2026.php`.
+  - **The field:** one flexible content field, `page_sections` ("Page sections", button "Add section").
+  - **Layouts:** every section is a layout of this field. Its sub fields are defined **directly in the layout**, with no clone groups (see "Decisions").
+- **No editor:** `inc/function-layout.php` changes the edit screen of pages on this template only. `dsa_2026_is_layout_page()` is the only place the template path is written.
+  - **Block editor:** turned off with the `use_block_editor_for_post` filter.
+  - **Classic content box:** removed with `remove_post_type_support()` on `load-post.php`.
+  - **The editor only goes away after a reload.** Create the page, pick the template, save the draft, then reload.
+  - The old `post_content` stays in the database and isn't shown. It comes back if the page switches to another template.
+
+### How the loop works (`dsa_2026_render_sections()`)
+
+1. A password-protected page shows only the password form, as `the_content()` would.
+2. `get_field('page_sections')` returns every row. With no rows, or with ACF inactive, nothing is printed.
+3. Each row loads one component. The file name is the layout name with `_` replaced by `-`:
+
+   | Layout name | Component | SCSS | Section class |
+   | --- | --- | --- | --- |
+   | `hero` | `components-2026/sections/hero.php` | `_hero.scss` | `.hero` |
+   | `two_columns` | `components-2026/sections/two-columns.php` | `_two-columns.scss` | `.two-columns` |
+
+4. The component gets the row as `$args`: every sub field by name, plus `acf_fc_layout` and `index`. `index` is the row's position, `0` for the first section. **Never name a sub field `index` or `acf_fc_layout`.**
+5. A layout without a component file prints nothing. Logged-in editors see `<!-- dsa-2026: no component for section "x" -->` in the page source.
+
+### Adding a section
+
+1. **ACF:** add a layout to `page_sections`, with a snake_case name (`two_columns`) and its sub fields. Then sync the JSON (see "ACF fields").
+2. **Markup:** create `components-2026/sections/<name>.php`, with hyphens in the name. Read `$args` with `wp_parse_args()` defaults, escape everything on output, and wrap the section itself:
+
+   ```php
+   <?php
+   /**
+    * Section: two columns (layout two_columns in Dynamic Layout 2026).
+    *
+    * @package FDRY
+    */
+
+   $args = wp_parse_args($args, array(
+   	'title' => '',
+   	'left'  => '',
+   	'right' => '',
+   	'index' => 0,
+   ));
+   ?>
+   <section class="two-columns content-block">
+   	<div class="content-max">
+   		…
+   	</div>
+   </section>
+   ```
+3. **Styles:** create `src-2026/scss/components/_<name>.scss` and add its `@use` to `main.scss`.
+4. **JS:** only if the section needs it. Create `src-2026/js/modules/<sectionName>.js` and call it from `main.js` (see "JS conventions").
+5. **Headings:** every page needs exactly one `<h1>`. The hero prints it, and every other section starts at `<h2>`.
+
+**Reuse outside the builder:** a section is a normal component. Any template can render it by passing an array of the same shape, e.g. from an ACF Group field: `get_template_part('components-2026/sections/hero', null, get_field('hero'))`. No extra render helper is needed.
 
 ## ACF fields (`acf-json/`)
 
@@ -263,6 +337,7 @@ footer.dark-footer > .content-block > .content-max
 - **The JSON is written on the server** when a group is saved in WP admin. After editing fields on live, download the changed `group_*.json` files into the repo and commit them.
 - **Never upload an older `acf-json/` over the server's copy.** Groups showing "Awaiting save" just haven't been written to JSON yet: open the group and save it.
 - **Read 2026 fields with `get_field()`,** always behind a `function_exists('get_field')` check in `inc/` code.
+  - The Dynamic Layout builder reads the whole flexible field once and hands each row to its section as `$args`. Sections never call `get_sub_field()` (see "Dynamic Layout 2026").
 - **Options pages:**
   - Register them in `inc/function-acf.php` on `acf/init`, as children of the legacy "Options" page (`parent_slug` `acf-options`).
   - **Read options with `dsa_2026_option('name')`.**
@@ -370,6 +445,42 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
 
 Choices that were weighed and settled. Don't reopen them without a new reason.
 
+### 2026-10-05: Dynamic Layout sections use one flexible field, `get_template_part()` + `$args`, and fields in the layout
+
+**Context:** this is Andrea's pre-Gutenberg "Template Block" pattern, updated:
+- `get_field('blocks')` + `foreach`;
+- the layout `block-hero` is stripped to `hero.php`;
+- `file_exists()` + `include` through a `render_theme_block()` helper;
+- each layout holds one clone field (`block-<name>`) of a per-block field group.
+
+**Kept:**
+- `get_field()` + `foreach`;
+- the layout name maps to a file;
+- the row's fields are the component's data;
+- sections can be reused on other templates.
+
+**Changed:**
+- `get_template_part()` replaces `file_exists()` + `include` + `render_theme_block()`. It finds the file, returns `false` when it's missing, runs in its own scope, and it's how every 2026 component is loaded.
+- `$args` with `wp_parse_args()` defaults replaces `$fields`, so empty fields don't raise undefined-index warnings.
+- There's no `block-` prefix: the layout `two_columns` loads `two-columns.php`.
+- There are guards for:
+  - no rows (on PHP 8, `foreach` over `null` warns);
+  - ACF being inactive;
+  - password-protected pages.
+
+**Fields defined in the layout, not in per-section clone groups:**
+
+| | Pro | Con |
+| --- | --- | --- |
+| Clone (per-section group) | Fields defined once and reusable anywhere; one JSON file per section | Two things to set up per section; a list of inactive groups in admin |
+| In the layout | One group, one place, the simplest option | Another field group can't reuse a section's fields |
+
+**Decision:** fields go in the layout. Sections are built for the builder, so the simpler option wins.
+
+**Revisit only if** another field group (another template or an options page) needs a section's fields.
+- Move just that section's fields into their own group, and clone it into the layout as **seamless**. `$args` keeps the same shape, so the component doesn't change.
+- Moving fields can affect content already saved on live pages, so check the data first.
+
 ### 2026-10-05: JS libraries are bundled with normal imports, not lazy-loaded chunks
 
 **Context:** accordion-js (mobile header submenus) was first lazy-loaded with `import()`, which made webpack write it to a separate file, `dist-2026/chunks/accordion.<hash>.js`, fetched by `main.js` only on mobile. Andrea's usual approach is a normal `import` in the component module, bundled into `main.js`.
@@ -449,3 +560,19 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - New ACF group "Footer 2026" (`group_6ac3c858bc43e.json`).
   - "Contact 2026" now calls `get_footer('new')`.
   - Footer icons replaced with Andrea's SVGs: the social circles are `currentColor` (teal on hover) and the no-op `clipPath` wrappers were removed.
+- **2026-10-05**
+  - Dropdown items: Manrope 14px, weight 500, `$color__main-light`.
+  - On hover and on the current page, an item now gets the `$color__dropdown-hover` (`#C9DB001A`) background instead of an underline. Top-level links keep the underline.
+- **2026-10-05**
+  - Dropdown item hover and active state: the text is now `$color__main`, with no background. `$color__dropdown-hover` was removed, because it wasn't a project colour.
+  - Footer: the `rgba()` borders are gone. The bottom divider is `$color__main-light`, like the header border, and the certification strip has no borders.
+- **2026-10-05**
+  - Restored the dropdown item hover/active background `$color__dropdown-hover` (`#C9DB001A`) at Andrea's explicit request. It had been removed in the previous entry. The text stays `$color__main-light`.
+- **2026-10-05**
+  - Dropdown items are now weight 600 (was 500).
+- **2026-10-05**
+  - Added the Dynamic Layout 2026 template (`templates-2026/page-layout-2026.php`):
+    - the editor is removed on its pages;
+    - a new ACF group "Dynamic Layout 2026" (`group_6ac4033ed38b9.json`) holds the flexible field `page_sections`, with no layouts yet;
+    - `dsa_2026_render_sections()` in the new `inc/function-layout.php` renders `components-2026/sections/`.
+  - See "Dynamic Layout 2026" and "Decisions".

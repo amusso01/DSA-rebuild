@@ -1,0 +1,47 @@
+{
+    "key": "group_6ac4033ed38b9",
+    "title": "Dynamic Layout 2026",
+    "fields": [
+        {
+            "key": "field_6ac4033ed43f8",
+            "label": "Page sections",
+            "name": "page_sections",
+            "aria-label": "",
+            "type": "flexible_content",
+            "instructions": "Add sections and drag them to reorder. They appear on the page in this order.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layouts": [],
+            "min": "",
+            "max": "",
+            "button_label": "Add section"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "templates-2026/page-layout-2026.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Dynamic Layout 2026 template: the page sections builder. Every section is a layout rendered by components-2026/sections/<layout>.php.",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1791230782
+}
