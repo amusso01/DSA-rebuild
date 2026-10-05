@@ -1,14 +1,9 @@
 import { ready } from './utils/ready'
-import * as example from './modules/example'
+import headerNavigation from './modules/headerNavigation'
 
-// Eager modules: small and used site-wide. Each init() must be safe on any page.
-const modules = [example]
-
+// One call per component module; each returns early when its element isn't on the page.
+// Libraries are imported normally inside the modules and bundled here. Use a lazy import()
+// only for a large library needed on one page (see "Decisions" in restructure.md).
 ready(() => {
-	modules.forEach((module) => module.init())
-
-	// Heavy, page-specific modules: load lazily so they don't weigh down main.js, e.g.
-	// if (document.querySelector('[data-2026="gallery"]')) {
-	// 	import('./modules/gallery').then((m) => m.init())
-	// }
+	headerNavigation()
 })

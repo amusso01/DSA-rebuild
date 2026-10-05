@@ -1,5 +1,6 @@
 /* PRESETS
 /––––––––––––––––––––––––*/
+@use 'variables' as *;
 @use 'media' as *;
 
 .content-block {
@@ -58,4 +59,38 @@
 	position: absolute;
 	top: 0;
 	width: 100%;
+}
+
+/* ACCESSIBILITY (WordPress standard)
+/––––––––––––––––––––––––*/
+// visually hidden, still read by screen readers
+.screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	word-wrap: normal !important;
+}
+
+// "Skip to content" link: shown when focused with the keyboard
+.skip-link:focus {
+	top: 8px;
+	left: 8px;
+	z-index: 100000;
+	width: auto;
+	height: auto;
+	padding: 12px 20px;
+	clip: auto;
+	clip-path: none;
+	border-radius: 6px;
+	background-color: $color__text-light;
+	color: $color__main;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
 }

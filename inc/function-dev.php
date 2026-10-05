@@ -11,6 +11,10 @@
 ==================================================================================*/
 // fonts, CSS and JS from dist-2026 on pages that use header-new.php
 require get_template_directory() . '/inc/function-assets.php';
+// small template helpers (SVG as string…)
+require get_template_directory() . '/inc/function-helpers.php';
+// Main Menu 2026 markup: submenu toggles, dropdown arrows, ACF menu button
+require get_template_directory() . '/inc/function-navigation.php';
 
 /*==================================================================================
   THEME SUPPORT

@@ -1,0 +1,19 @@
+/*==================================================================================
+  ACCORDION (accordion-js)
+  Functional base from accordion-js/dist/accordion.min.css, demo visuals left out.
+  Markup: .ac > .ac-trigger + .ac-panel. Style each accordion in its own component.
+==================================================================================*/
+
+.ac .ac-panel {
+	overflow: hidden;
+	transition-property: height, visibility;
+	transition-timing-function: ease;
+}
+
+.ac.js-enabled .ac-panel {
+	visibility: hidden;
+}
+
+.ac.is-active .ac-panel {
+	visibility: visible;
+}

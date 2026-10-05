@@ -1,0 +1,37 @@
+/*==================================================================================
+  BUTTON (components-2026/partials/button.php)
+==================================================================================*/
+@use '../common/variables' as *;
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 12px 28px;
+	border: 0;
+	border-radius: 6px;
+	background-color: $color__link;
+	color: $color__main-light;
+	font-family: $text__fontname;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.25;
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+	transition:
+		background-color 0.25s ease,
+		color 0.25s ease;
+
+	&:hover,
+	&:focus-visible {
+		background-color: $color__accent-hover;
+		color: $color__main-light;
+	}
+
+	&:focus-visible {
+		outline: 2px solid $color__accent-hover;
+		outline-offset: 2px;
+	}
+}

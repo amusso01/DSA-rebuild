@@ -27,6 +27,7 @@
 		"webpack-dev-server": "^5.2.0"
 	},
 	"dependencies": {
+		"accordion-js": "^3.4.1",
 		"countup.js": "^2.8.0",
 		"include-media": "^2.0.0"
 	}

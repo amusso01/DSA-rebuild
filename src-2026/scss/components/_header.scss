@@ -1,0 +1,110 @@
+/*==================================================================================
+  HEADER (header-new.php, components-2026/header/)
+  Navigation and dropdowns live in _navigation.scss.
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+.header {
+	position: relative; // anchors the mobile nav panel
+	z-index: 100;
+	padding: 14px 0; // sides come from .content-block
+	background-color: $color__main;
+	border-bottom: 1px solid $color__main-light;
+	color: $color__text-light;
+}
+
+.header-inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 32px;
+}
+
+/* Logo
+/––––––––––––––––––––––––*/
+.header-logo {
+	flex-shrink: 0;
+	line-height: 0;
+
+	.custom-logo-link {
+		display: block;
+	}
+
+	.custom-logo {
+		width: auto;
+		max-width: none;
+		height: 65px;
+	}
+}
+
+.header-logo__text {
+	color: $color__text-light;
+	font-family: $header__fontname;
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 65px;
+}
+
+.header-navigation {
+	display: flex;
+	align-items: center;
+}
+
+/* Hamburger (below tablet)
+/––––––––––––––––––––––––*/
+.hamburger {
+	display: none;
+	position: relative;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: $color__text-light;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid $color__link;
+		outline-offset: 2px;
+	}
+
+	@include media('<tablet') {
+		display: block;
+	}
+}
+
+.hamburger__bar {
+	position: absolute;
+	left: 8px;
+	right: 8px;
+	height: 2px;
+	border-radius: 2px;
+	background-color: currentColor;
+	transition:
+		transform 0.25s ease,
+		opacity 0.25s ease;
+
+	&:nth-child(1) {
+		top: 13px;
+	}
+	&:nth-child(2) {
+		top: 19px;
+	}
+	&:nth-child(3) {
+		top: 25px;
+	}
+
+	// open: bars become an X
+	.hamburger[aria-expanded='true'] & {
+		&:nth-child(1) {
+			transform: translateY(6px) rotate(45deg);
+		}
+		&:nth-child(2) {
+			opacity: 0;
+		}
+		&:nth-child(3) {
+			transform: translateY(-6px) rotate(-45deg);
+		}
+	}
+}

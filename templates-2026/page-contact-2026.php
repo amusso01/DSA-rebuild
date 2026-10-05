@@ -3,7 +3,8 @@
 /**
  * Template Name: Contact 2026
  *
- * Contact page in the 2026 layout: same structure as page-2026.php, main#contact.
+ * Contact page in the 2026 layout.
+ * Every <main> keeps id="main" (skip-link target); the page is identified by .site-main--contact.
  * Wrappers go per section (.content-block > .content-max), never on <main>.
  *
  * @package FDRY
@@ -11,7 +12,7 @@
 
 get_header('new'); ?>
 
-<main id="contact" class="site-main" role="main">
+<main id="main" class="site-main site-main--contact" role="main">
 	<section class="content-block">
 		<div class="content-narrow">
 			<?php
