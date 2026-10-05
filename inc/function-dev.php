@@ -27,4 +27,13 @@ function dsa_2026_theme_support()
 		'flex-height' => true,
 		'flex-width'  => true,
 	));
+
+	register_nav_menus(
+		array(
+			'main-menu-2026'         => __('Main Menu 2026'),
+			'footer-service-2026'    => __('Footer Service 2026'),
+			'footer-company-2026'    => __('Footer Company 2026'),
+			'footer-legal-2026'      => __('Footer Legal 2026'),
+		)
+	);
 }

@@ -48,7 +48,7 @@ The legacy SCSS (`dist/styles/main.scss` and `map/*`) is compiled **outside** th
 functions.php          legacy + one require of inc/function-dev.php
 header-new.php         2026 header (loaded by get_header('new')), sections already wrapped
 inc/                   2026 PHP
-  function-dev.php     entry: requires the other inc files + theme support (custom logo)
+  function-dev.php     entry: requires the other inc files + theme support (custom logo, 2026 nav menus)
   function-assets.php  fonts/CSS/JS on 2026 pages, dequeues legacy assets there
 templates-2026/
   page-2026.php        "2026 Layout (preview)" page template
@@ -137,8 +137,18 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
 - **Name files `inc/function-<topic>.php`**, the same pattern as the legacy `library/function-setup.php`, and require each one from `inc/function-dev.php`.
 - **Prefix functions with `dsa_2026_`** and asset handles with `dsa-2026`.
 - **Code style:** tabs, `array()` and the `/*===…*/` section headers, like the legacy files.
-- **Theme support** (`add_theme_support`) goes in `dsa_2026_theme_support()` in `function-dev.php`, hooked on `after_setup_theme`.
+- **Theme support** (`add_theme_support`) and **2026 nav menu locations** (`register_nav_menus`) go in `dsa_2026_theme_support()` in `function-dev.php`, hooked on `after_setup_theme`.
 - **Custom logo is enabled.** Editors set it in Appearance > Customize > Site Identity > Logo, and templates print it with `the_custom_logo()` (or `get_custom_logo()` to get it as a string).
+- **2026 menu locations** (legacy menus unchanged in `library/function-setup.php`):
+
+  | Theme location slug | Admin label |
+  | --- | --- |
+  | `main-menu-2026` | Main Menu 2026 |
+  | `footer-service-2026` | Footer Service 2026 |
+  | `footer-company-2026` | Footer Company 2026 |
+  | `footer-legal-2026` | Footer Legal 2026 |
+
+  Assign menus under Appearance > Menus. Output with `wp_nav_menu( array( 'theme_location' => 'main-menu-2026', 'container' => false ) )` (and the other slugs as needed).
 
 ## SCSS conventions
 
@@ -208,3 +218,5 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
   - `.content-block` padding is now 120/80/48/25 and `.content-block--footer` is removed. `.content-max` is unchanged.
   - Section wrappers documented as the standard.
   - Applied to `page-2026.php`, the new `page-contact-2026.php` and the two sections of `header-new.php`.
+- **2026-10-05**
+  - Registered four 2026 nav menu locations in `dsa_2026_theme_support()`: Main Menu 2026, Footer Service/Company/Legal 2026.
