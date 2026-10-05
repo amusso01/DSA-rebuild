@@ -1,0 +1,99 @@
+/*offer area*/
+.offer-area {position: relative;z-index: 1; width: 100%; overflow: hidden;} 
+.offer-tab-link {text-align: center;}
+.offer-tab-link ul li {display: inline-block;padding: 10px 0;margin: 0 -3px;}
+.offer-tab-link ul li a {display: block;color: #000;font-size: 20px;padding: 10px 60px;border-bottom: 4px solid #000; font-weight: 500;}
+.offer-tab-link ul {list-style: none;padding: 0;margin: 0; border: 0;justify-content: center;}
+.offer-tab-link ul li a.active {color: darkcyan; border-color: darkcyan;}
+.offer-content p {text-align: left;margin: 0;width: 100%;}
+.offer-content h2 {text-align: left;}
+.offerItem {padding: 0 15px;width: 80px;overflow: hidden;float: left;position: relative; transition: 0.3s ease;}
+.offer-img {margin: 0 -15px;}
+.offer-detail {width: 800px;}
+.offerItemTitle {position: absolute;left: 40px;z-index: 1;width: 545px;color: #fff;transform: rotate(-90deg);transform-origin: left;text-align: center;margin: 0 auto;top: 95%;height: 80px;line-height: 80px;background: rgba(0,0,0,0.5); cursor: pointer; }
+.offerItem.active {width: calc(100% -  4*60px);}
+.offerItem.active .offer-detail {width: 1007px;} 
+.offerItem.active .offer-img {max-width: 415px;}
+.offerItem.active .offer-detail .row .col:first-child {max-width: 40% !important;}
+.offer-content {max-width: 460px;margin: 0 auto;top: 50%;position: relative;transform: translate(0, -50%); opacity: 0; transition: opacity 0.3s ease;}
+
+.offerslide:after {content: '';clear: both;display: block;}
+.offer-content p {color: #000;}
+.offer-content h2 {font-size: 24px;color: #000; text-transform: uppercase;}
+.offerItemTitle.hide {display: none;}
+.offerItem.active .offer-content{ transition: 0.3s ease; opacity: 1;}
+.offer-content a {background: $second-color;color: #fff;padding: 10px 20px; display: inline-block; margin-top: 10px; border: 0; border-radius: 3px;}
+.offer-content a:hover {background-color:$third-color ;}
+/*end*/
+
+
+
+
+  /*media area*/
+  @media (max-width:1750px){
+    .container {max-width: 1540px;}
+  }
+  
+  @media (max-width:1550px){
+    .container {max-width: 1340px;}
+  }
+  
+  @media (max-width:1450px){
+    .container {max-width: 1240px;}
+    .offer-content {margin: 0; max-width: 360px;}
+  }
+  
+
+  @media (max-width:1280px){
+    .container {max-width: 1140px;}
+    .offerItem.active .offer-detail {width: 750px;}
+    .offer-detail {width: 595px;}
+  }
+ 
+ @media (max-width:1199px){
+    .container {max-width: 960px;}
+    h4.offerItemTitle {height: 50px;line-height: 50px; left: 25px; top: 94%;} 
+    .offerItem{ width: 50px;}
+    .offerItem.active { width: calc(100% -  2*50px);}
+    .offerItem.active .offer-content{ margin-left: 20px;}
+}
+
+
+
+ @media (max-width:991px){
+    .container {max-width: 720px;}
+    .offer-content p{ font-size: 14px;}
+    .offerItem.active .offer-content {margin-left: 0;}
+    h4.offerItemTitle {font-size: 14px;top: 93%; width: 280px; height: 36px; line-height: 36px; left: 17px;}
+    .offerItem.active .offer-detail {width: 500px;}
+    .offer-content h2 {font-size: 18px;margin: 0;}
+    .offer-content a {padding: 7px 13px; font-size: 16px; margin-top: 10px;}
+    .offer-detail {width: 395px; max-height: 279px;}
+    .offerItem {width: 35px;}
+    .offerItem.active {width: calc(100% -  2*35px);}
+  }
+ 
+ @media (max-width:767px){
+    .container {max-width: 540px;}
+    .offerItem {width: 100%;}
+    .offer-detail {width: 100%;max-height: unset;display: none;}
+    h4.offerItemTitle{ text-align: left;padding-left: 15px; position: relative; transform: rotate(0); border-bottom: 1px solid #999; height: 40px; line-height: 40px; width: 100%; left: 0;}
+    .offer-img {margin: 0;}
+    .offer-content {margin: 0;max-width: 100%;}
+    .offerItemTitle.hide {background: #de9400; display: block;}
+    .offerItem.active .offer-detail {width: 100%; display: block;}
+    .offerItem.active .offer-detail .row .col:first-child {max-width: 50% !important;}
+    .offerItem.active{ width: 100%;}
+   
+  } 
+ 
+ @media (max-width:574px){
+    .container {max-width: 100%;}
+    .offerItem.active .offer-detail .row {display: block;}
+    .offerItem.active .offer-detail .row .col {max-width: 100% !important;}
+    .offer-content {transform: translate(0);top: 0;padding: 10px 0;}
+    .offer-img,.offerItem.active .offer-img {width: 100%;max-width: unset;}
+    .offer-img img{ width: 100%;}
+    .offerItem.active .offer-detail .row .col:first-child {max-width: 100% !important;}
+
+  }

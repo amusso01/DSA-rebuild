@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Manrope:wght@300;500;700&display=swap');
+
+$font: 'Manrope', sans-serif;
+$font-nav: 'Barlow', sans-serif;
+
+/* titles */
+$font-h1: 700 72px/80px $font;
+$font-h2: 700 24px/46px $font; //300
+$font-h3: 500 40px/55px $font;
+$font-h4: 500 32px/44px $font;
+$font-h5: 700 24px/33px $font;
+$font-normal: 500 16px/22px $font; //300
+$font-nav: 700 18px/22px $font;
+$font-litte-menu: 500 14px/19px $font; //300
+$font-litte: 500 14px/19px $font-nav; //300
+
+/* Color */
+$black-color: #000000;
+$white-color: #fff;
+$grey-color: #f7f7f7;
+$second-color: #0fc6bf;
+$third-color: #051033;
+
+body {
+	font-family: $font;
+}
+
+/* functions */
+a,
+button {
+	color: $black-color;
+	transition: 0.6s;
+	text-decoration: none;
+	&:hover {
+		color: $second-color;
+		text-decoration: none;
+	}
+}
+
+/* Text Align */
+.text-align-center {
+	text-align: center;
+}
+.text-align-right {
+	text-align: right;
+}
+
+/* Content */
+.container {
+	max-width: 1200px !important;
+	&.second {
+		max-width: 1000px !important;
+	}
+}
+
+.sticky-box {
+	position: sticky;
+	top: 0;
+	h2 {
+		font-size: 24px;
+		line-height: 30px;
+		margin-top: 20px;
+	}
+}
+
+.video-modal {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.7);
+	opacity: 0;
+	transition: 0.6s;
+	z-index: 9999;
+	&.active {
+		opacity: 1;
+		display: block;
+	}
+	.container {
+		position: relative;
+		max-width: 800px !important;
+		margin: 15vh auto;
+	}
+	.close-modal {
+		position: absolute;
+		top: -50px;
+		right: 0;
+		font-size: 25px;
+		color: $white-color;
+		font-weight: 700;
+		z-index: 10;
+	}
+}
+
+.no-margin {
+	margin: 0px !important;
+}
+
+.no-padding-top {
+	padding-top: 0px !important;
+}
+
+.wpcf7-not-valid-tip {
+	font-size: 12px !important;
+}
+
+.instagram-feed {
+	.container {
+		display: flex;
+		gap: 20px;
+		justify-content: start;
+		align-items: center;
+		margin-bottom: 30px;
+		.sbi_header_hashtag_icon {
+			width: 80px;
+			height: 80px;
+			display: flex;
+			justify-content: center;
+			justify-items: center;
+			background-color: #000;
+			border-radius: 50%;
+			align-items: center;
+			svg {
+				width: 30px;
+				height: 30px;
+				path {
+					fill: #fff;
+				}
+			}
+		}
+		p {
+			font-size: 20px;
+			margin: 0px;
+		}
+		&:hover {
+			.sbi_header_hashtag_icon {
+				background-color: #0fc6bf;
+			}
+			p {
+				color: #0fc6bf;
+			}
+		}
+	}
+}

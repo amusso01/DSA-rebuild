@@ -1,0 +1,163 @@
+ /* Text */
+
+h1{ 
+    font:$font-h1; 
+    margin-bottom: 20px ; 
+    span{
+        background: -webkit-linear-gradient(#295684, #4BA0A3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    &.title-page{
+        font-size: 60px;
+        line-height: 76px;
+    }
+}
+h2{ font:$font-h2; margin-bottom: 20px ; }
+h3{ 
+    font:$font-h3; 
+    margin-bottom: 20px ; 
+    &.introduction{
+        display: block;
+        max-width: 1000px;
+        padding-top: 50px;
+        margin:0px auto 100px;
+        color: $third-color;
+        font-weight: 300;
+    }
+}
+h4{ font:$font-h4; margin-bottom: 20px ; }
+h5{ font:$font-h5; margin: 0px;}
+ p,li{
+    font: $font-normal;
+    color: $black-color;
+    margin-bottom: 20px;
+    strong{
+        font-weight: 700;
+    }
+ }
+
+
+ /* img */
+ img{
+    max-width: 100%;
+ }
+
+
+ /* BOTTOMS */
+ .read-more{
+    display: inline-block;
+    padding: 10px 20px;
+    color: $black-color;
+    border-radius: 25px;
+    border: 1px solid $black-color;
+    &:hover{
+        background-color: $black-color;
+        color: $white-color;
+    }
+    &.white{
+        background-color: rgba(255,255,255,0.3);
+        border: 0px solid $black-color;
+        color: $white-color;
+        &:hover{
+            background-color: $black-color;
+            color: $white-color;
+        }
+    }
+ }
+ 
+ /* container */
+.container{
+    width: 90%;
+    margin: auto;
+    max-width: 1300px;
+    &.second{
+        max-width: 1000px;
+    }
+}
+ 
+
+.container-video {
+    transition: 0.8s;
+    position: relative;
+    overflow: hidden;
+    width: 100%;  
+    padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+  }
+  
+  /* Then style the iframe to fit in the container div with full height and width */
+.responsive-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.wp-block-separator{
+    height: 2px !important;
+    background-image: url('../../../../uploads/2023/08/green-line.svg');//linear-gradient(to left, rgba(#000000,1),rgba(#071031,1),rgba(#2F6574,1),rgba(#5BC3BE,1));
+    opacity: 1 !important;
+    border: 0px !important;
+    margin: 0px auto 20px;
+    background-position: center;
+    background-size: cover;
+}
+
+
+.data-box{
+    p{
+        padding: 0px 40px 0 40px;
+        position: relative;
+        width: 500px;
+        font-size: 24px !important;
+        line-height: 30px !important;
+        &:before{
+             position: absolute;
+             top: 0;
+             left: 0;
+             font-size: 24px;
+             line-height: 40px;
+             font-weight: 700;
+        }
+        &.column-01{
+           /* &:before{
+                content: "01";
+            }*/
+        }
+        &.column-02{
+            padding: 0px 40px 0 40px;
+           /* &:before{
+                left: 60px;
+                content: "02"; 
+            }*/
+            &:after{
+                content: "";
+                background-image: url(../../../../uploads/2023/08/data-destruction-line.png);
+                height: 100px;
+                width: 2px;
+                background-position: center;
+                background-size: cover;
+                position: absolute;
+                display: block;
+                top: 0;
+                left: 0;
+            }
+            //border-left: 4px solid $white-color;
+
+        }
+    }
+}
+
+.site-main{
+    p{
+        a{
+            color: $second-color;
+            &:hover{
+                color: $third-color;
+            } 
+        }
+    }
+}
