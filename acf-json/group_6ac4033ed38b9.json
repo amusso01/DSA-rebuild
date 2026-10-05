@@ -16,7 +16,163 @@
                 "class": "",
                 "id": ""
             },
-            "layouts": [],
+            "layouts": {
+                "layout_6ac408cf4579f": {
+                    "key": "layout_6ac408cf4579f",
+                    "name": "hero_page",
+                    "label": "Hero page",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_6ac408cf45faa",
+                            "label": "Breadcrumb",
+                            "name": "breadcrumb",
+                            "aria-label": "",
+                            "type": "repeater",
+                            "instructions": "Links between Home and this page. Home is always added first.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "table",
+                            "pagination": 0,
+                            "min": 0,
+                            "max": 0,
+                            "collapsed": "",
+                            "button_label": "Add link",
+                            "rows_per_page": 20,
+                            "sub_fields": [
+                                {
+                                    "key": "field_6ac408cf4671e",
+                                    "label": "Link",
+                                    "name": "link",
+                                    "aria-label": "",
+                                    "type": "link",
+                                    "instructions": "",
+                                    "required": 1,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "allow_in_bindings": 0,
+                                    "parent_repeater": "field_6ac408cf45faa"
+                                }
+                            ],
+                            "parent_layout": "layout_6ac408cf4579f"
+                        },
+                        {
+                            "key": "field_6ac408cf46e81",
+                            "label": "Breadcrumb actual page",
+                            "name": "breadcrumb_actual_page",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Last crumb, not a link. Empty: the page title.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_layout": "layout_6ac408cf4579f"
+                        },
+                        {
+                            "key": "field_6ac408cf475e2",
+                            "label": "Hero title",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Empty: the page title. To highlight words, wrap them in &lt;span class=\"accent\"&gt;…&lt;/span&gt;.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_layout": "layout_6ac408cf4579f"
+                        },
+                        {
+                            "key": "field_6ac408cf47d48",
+                            "label": "H tag",
+                            "name": "title_tag",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "Changes the tag only, not the style. Keep one H1 per page.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "h1": "H1",
+                                "h2": "H2",
+                                "h3": "H3"
+                            },
+                            "default_value": "h1",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "create_options": 0,
+                            "save_options": 0,
+                            "parent_layout": "layout_6ac408cf4579f"
+                        },
+                        {
+                            "key": "field_6ac408cf484b5",
+                            "label": "Background image",
+                            "name": "image",
+                            "aria-label": "",
+                            "type": "image",
+                            "instructions": "Fills the hero, cropped to fit. Empty: plain dark background.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "id",
+                            "library": "all",
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": "",
+                            "allow_in_bindings": 0,
+                            "preview_size": "medium",
+                            "parent_layout": "layout_6ac408cf4579f"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                }
+            },
             "min": "",
             "max": "",
             "button_label": "Add section"
@@ -43,5 +199,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791230782
+    "modified": 1791232207
 }

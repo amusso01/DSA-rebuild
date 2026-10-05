@@ -64,7 +64,7 @@ components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php
-  sections/            Dynamic Layout 2026 sections: one file per flexible layout (none yet)
+  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php
   page/                (next)
 svg-templates/         inline SVGs: arrow, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
@@ -92,6 +92,7 @@ src-2026/
       _header.scss     header bar, logo, hamburger
       _navigation.scss main nav, dropdowns, mobile panel
       _footer.scss     certification strip, footer columns, bottom bar
+      _hero-page.scss  Dynamic Layout section: hero page (breadcrumb, title, accent lines)
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -112,7 +113,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with no sections yet. No public page uses `get_header('new')` yet.
+**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with one section so far: Hero page. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -293,7 +294,7 @@ main#main.site-main.site-main--layout
 
    | Layout name | Component | SCSS | Section class |
    | --- | --- | --- | --- |
-   | `hero` | `components-2026/sections/hero.php` | `_hero.scss` | `.hero` |
+   | `hero_page` | `components-2026/sections/hero-page.php` | `_hero-page.scss` | `.hero-page` |
    | `two_columns` | `components-2026/sections/two-columns.php` | `_two-columns.scss` | `.two-columns` |
 
 4. The component gets the row as `$args`: every sub field by name, plus `acf_fc_layout` and `index`. `index` is the row's position, `0` for the first section. **Never name a sub field `index` or `acf_fc_layout`.**
@@ -327,9 +328,60 @@ main#main.site-main.site-main--layout
    ```
 3. **Styles:** create `src-2026/scss/components/_<name>.scss` and add its `@use` to `main.scss`.
 4. **JS:** only if the section needs it. Create `src-2026/js/modules/<sectionName>.js` and call it from `main.js` (see "JS conventions").
-5. **Headings:** every page needs exactly one `<h1>`. The hero prints it, and every other section starts at `<h2>`.
+5. **Headings:** every page needs exactly one `<h1>`. The Hero page section prints it by default, and every other section starts at `<h2>`.
 
-**Reuse outside the builder:** a section is a normal component. Any template can render it by passing an array of the same shape, e.g. from an ACF Group field: `get_template_part('components-2026/sections/hero', null, get_field('hero'))`. No extra render helper is needed.
+**Reuse outside the builder:** a section is a normal component. Any template can render it by passing an array of the same shape, e.g. from an ACF Group field: `get_template_part('components-2026/sections/hero-page', null, get_field('hero'))`. No extra render helper is needed.
+
+### Hero page (`sections/hero-page.php` + `_hero-page.scss`)
+
+Layout `hero_page` ("Hero page"). Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `223:2966` (1440 × 237).
+
+```
+section.hero-page.content-block
+	img.hero-page__image                  (background, only when set)
+	.content-max
+		nav.hero-page__breadcrumb > ol.hero-page__crumbs > li.hero-page__crumb…
+		h1|h2|h3.hero-page__title.h1
+		span.hero-page__lines           (the two accent lines, ::before + ::after)
+```
+
+| Label | Name | Type | Fallback |
+| --- | --- | --- | --- |
+| Breadcrumb | `breadcrumb` | repeater of `link` (Link) | none: only Home |
+| Breadcrumb actual page | `breadcrumb_actual_page` | text | the page title |
+| Hero title (50%) | `title` | text | the page title |
+| H tag (50%) | `title_tag` | select `h1` / `h2` / `h3` | `h1` |
+| Background image | `image` | image (ID) | `$color__main-light` background |
+
+- **Breadcrumb:** Home (`home_url('/')`) is **always** first, then the repeater links in order (a row without a URL or text is skipped), then the current page.
+  - The current page is the "actual page" text, or the page title. It's never a link, and it carries `aria-current="page"`.
+  - The `/` separators are `aria-hidden`.
+- **Title:**
+  - **Highlighting:** wrap words in `<span class="accent">…</span>` to colour them `$color__link`. The title goes through `wp_kses()`, which keeps only `<span class>`.
+  - **H tag:** it changes only the tag, for SEO. The `.h1` class gives h1, h2 and h3 the same look.
+- **Image:**
+  - It's printed with `wp_get_attachment_image()` (`alt=""`, it's decorative) and covers the whole section (`object-fit: cover`).
+  - **First section:** `loading="eager"` + `fetchpriority="high"`, because it's above the fold. Lower down it's lazy-loaded.
+- **Styles:**
+  - **Breadcrumb:** Manrope 13px, `line-height: 1`, `$color__text-light`.
+    - The links are weight 500 and turn `$color__link` on hover.
+    - The current page is weight 600.
+    - The `/` is weight 400.
+    - There are 7px gaps around each `/`.
+  - **Title:** Titillium Web (`$header__fontname`), weight 400, `line-height: 1.05`, `$color__text-light`, max-width 670px.
+    - Its size follows the global h1 scale: 54px, ×0.9 below `desktop`, ×0.75 below `phone-land`.
+  - **Lines:** 10px under the title, 4px high, 2px radius, a 7px gap.
+    - The first is 48px wide, `$color__link`.
+    - The second is 15px wide, `$color__accent-hover`. Figma has 14px; Andrea's spec says 15px.
+  - **Spacing:** `padding-block` only, because the sides come from `.content-block`. At 1440px with a one-line title, the hero is 237px high, as in Figma.
+
+    | Width | Padding top / bottom | Breadcrumb → title |
+    | --- | --- | --- |
+    | Base (desktop) | 60px / 62px | 31px |
+    | `<tablet` | 48px / 48px | 24px |
+    | `<phone` | 40px / 40px | 20px |
+
+    The `tablet` and `phone` values aren't in Figma.
 
 ## ACF fields (`acf-json/`)
 
@@ -576,3 +628,8 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - a new ACF group "Dynamic Layout 2026" (`group_6ac4033ed38b9.json`) holds the flexible field `page_sections`, with no layouts yet;
     - `dsa_2026_render_sections()` in the new `inc/function-layout.php` renders `components-2026/sections/`.
   - See "Dynamic Layout 2026" and "Decisions".
+- **2026-10-05**
+  - First Dynamic Layout section, **Hero page**: layout `hero_page`, `components-2026/sections/hero-page.php` and `_hero-page.scss`.
+    - It has a breadcrumb (Home, the repeater links, then the current page), a title with an H-tag select and `<span class="accent">` highlighting, two accent lines, and an optional background image.
+    - Spacing comes from Figma node `223:2966`.
+  - `main.scss` has a new "Sections" group for section partials.

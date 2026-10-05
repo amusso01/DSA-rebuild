@@ -1,0 +1,123 @@
+/*==================================================================================
+  HERO PAGE (components-2026/sections/hero-page.php)
+  Dynamic Layout 2026 section: breadcrumb, title (h1/h2/h3, same look) with two
+  accent lines, optional background image. Figma: DSA, node 223:2966 (1440 × 237).
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+.hero-page {
+	position: relative;
+	overflow: hidden;
+	// only top/bottom: the sides come from .content-block (padding: X 0 would remove them)
+	// 60px: Figma puts the crumbs at 58px in an 18px line box, the spec's line-height 1 makes it 13px
+	padding-block: 60px 62px;
+	background-color: $color__main-light; // shown when there's no image
+	color: $color__text-light;
+
+	.content-max {
+		position: relative; // above the image
+	}
+
+	@include media('<tablet') {
+		padding-block: 48px;
+	}
+	@include media('<phone') {
+		padding-block: 40px;
+	}
+}
+
+.hero-page__image {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Breadcrumb
+/––––––––––––––––––––––––*/
+.hero-page__crumbs {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 7px;
+	font-family: $text__fontname;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
+}
+
+.hero-page__crumb {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+
+	a {
+		transition: color 0.25s ease;
+
+		&:hover {
+			color: $color__link;
+		}
+
+		&:focus-visible {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+}
+
+.hero-page__separator {
+	font-weight: 400;
+}
+
+.hero-page__crumb--current {
+	font-weight: 600;
+}
+
+/* Title + accent lines
+/––––––––––––––––––––––––*/
+// size: the .h1 class (global h1 scale in _general.scss), whatever the tag
+.hero-page__title {
+	max-width: 670px; // Figma "Title group"
+	margin-top: 31px;
+	color: $color__text-light;
+	font-family: $header__fontname;
+	font-weight: 400;
+	line-height: 1.05;
+
+	// editors wrap words in <span class="accent"> to highlight them
+	.accent {
+		color: $color__link;
+	}
+
+	@include media('<tablet') {
+		margin-top: 24px;
+	}
+	@include media('<phone') {
+		margin-top: 20px;
+	}
+}
+
+.hero-page__lines {
+	display: flex;
+	gap: 7px;
+	margin-top: 10px;
+
+	&::before,
+	&::after {
+		content: '';
+		height: 4px;
+		border-radius: 2px;
+	}
+
+	&::before {
+		width: 48px;
+		background-color: $color__link;
+	}
+
+	&::after {
+		width: 15px; // Andrea's spec (Figma has 14px)
+		background-color: $color__accent-hover;
+	}
+}
