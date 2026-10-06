@@ -480,7 +480,7 @@ section.wysiwyg-editor.content-block
   - **Lists:**
     - **`ul`:** no bullets or padding. Each `li` has a 14px `$color__link` dot (`::before`, centred on the first line) and 10px before the text, so wrapped lines hang.
     - **`ol`:** keeps its numbers, with `padding-left: 1.25em`.
-    - **Items:** Manrope 15px 500, `line-height: 1.5` (Figma).
+    - **Items:** the same text as `p`: they set no font rules and inherit Manrope 16px 400, `line-height: 1.6`. Figma's 15px 500 was overruled by Andrea.
   - **Links:** `$color__link`, underlined.
   - **Rhythm:** every gap is a `margin-top` between the content's direct children.
 
@@ -770,3 +770,5 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - Light is the default. Dark adds `--dark`, which sets `$color__text` (`#122c29`) on the section.
     - The accent, eyebrow, links and button are unchanged.
   - `__title` and `__text` no longer set their own colour. They inherit it from the section.
+- **2026-10-06**
+  - WYSIWYG editor: list items now match the body text, at Andrea's request. The 15px / 500 / 1.5 from Figma was removed, so they inherit 16px / 400 / 1.6 like `p`. The dot is re-centred on the 25.6px line.

@@ -50,14 +50,9 @@
 
 	ul,
 	ol {
-		li {
-			font-size: 15px;
-			font-weight: 500;
-			line-height: 1.5;
-
-			+ li {
-				margin-top: 12px;
-			}
+		// no font rules: li inherits the same text as p (Manrope 16px 400, line-height 1.6)
+		li + li {
+			margin-top: 12px;
 		}
 
 		// nested list
@@ -75,11 +70,11 @@
 			position: relative;
 			padding-left: 24px; // 14px dot + 10px gap
 
-			// dot, centred on the first line (li line-height 1.5)
+			// dot, centred on the first line (line-height 1.6, as p)
 			&::before {
 				content: '';
 				position: absolute;
-				top: calc((1.5em - 14px) / 2);
+				top: calc((1.6em - 14px) / 2);
 				left: 0;
 				width: 14px;
 				height: 14px;
