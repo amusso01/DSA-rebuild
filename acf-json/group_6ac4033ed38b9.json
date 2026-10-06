@@ -902,6 +902,209 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_6ac5138005e95": {
+                    "key": "layout_6ac5138005e95",
+                    "name": "service_cards",
+                    "label": "Service cards",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_6ac5138005f47",
+                            "label": "Options",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac5138005e95"
+                        },
+                        {
+                            "key": "field_6ac5138005f4c",
+                            "label": "Padding top",
+                            "name": "padding_top",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 104,
+                            "min": 0,
+                            "max": 150,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac5138005e95"
+                        },
+                        {
+                            "key": "field_6ac5138005f52",
+                            "label": "Padding bottom",
+                            "name": "padding_bottom",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 104,
+                            "min": 0,
+                            "max": 150,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac5138005e95"
+                        },
+                        {
+                            "key": "field_6ac5138005f59",
+                            "label": "Content",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac5138005e95"
+                        },
+                        {
+                            "key": "field_6ac5138005f5f",
+                            "label": "Title",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "textarea",
+                            "instructions": "Optional: rendered as an H2 above the cards. To highlight words, wrap them in &lt;span class=\"accent\"&gt;…&lt;/span&gt;.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "rows": 2,
+                            "placeholder": "",
+                            "new_lines": "br",
+                            "parent_layout": "layout_6ac5138005e95"
+                        },
+                        {
+                            "key": "field_6ac5138005f64",
+                            "label": "Cards",
+                            "name": "cards",
+                            "aria-label": "",
+                            "type": "repeater",
+                            "instructions": "Two per row on desktop, with alternating backgrounds.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "block",
+                            "pagination": 0,
+                            "min": 0,
+                            "max": 0,
+                            "collapsed": "field_6ac5138005f69",
+                            "button_label": "Add card",
+                            "rows_per_page": 20,
+                            "sub_fields": [
+                                {
+                                    "key": "field_6ac5138005f69",
+                                    "label": "Title",
+                                    "name": "title",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 1,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "allow_in_bindings": 0,
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "parent_repeater": "field_6ac5138005f64"
+                                },
+                                {
+                                    "key": "field_6ac5138005f6e",
+                                    "label": "Content",
+                                    "name": "content",
+                                    "aria-label": "",
+                                    "type": "textarea",
+                                    "instructions": "Plain text: the whole card is already a link.",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "maxlength": "",
+                                    "allow_in_bindings": 0,
+                                    "rows": 3,
+                                    "placeholder": "",
+                                    "new_lines": "br",
+                                    "parent_repeater": "field_6ac5138005f64"
+                                },
+                                {
+                                    "key": "field_6ac5138005f73",
+                                    "label": "Link",
+                                    "name": "link",
+                                    "aria-label": "",
+                                    "type": "link",
+                                    "instructions": "The whole card links here. The link text is shown at the bottom of the card (empty: \"Read more\").",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "allow_in_bindings": 0,
+                                    "parent_repeater": "field_6ac5138005f64"
+                                }
+                            ],
+                            "parent_layout": "layout_6ac5138005e95"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
             "min": "",
@@ -930,5 +1133,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791298265
+    "modified": 1791300480
 }

@@ -65,7 +65,7 @@ components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php, blog-card.php
-  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php
+  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php, service-cards.php
   page/                components of fixed page templates: get-in-touch.php (Contact 2026)
 svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
@@ -100,6 +100,7 @@ src-2026/
       _wysiwyg-editor.scss  Dynamic Layout section: editor content (h4 bar, dot lists, 12/30px rhythm)
       _introduction.scss  Dynamic Layout section: H2 left, text + two buttons right, background/text colour
       _blog-row.scss   Dynamic Layout section: title + count, blog card grid, Load more
+      _service-cards.scss  Dynamic Layout section: H2 + accent lines, notched cards (full-card link), checkerboard fills
       _get-in-touch.scss  Contact 2026: centred intro, Call and Email cards
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
@@ -121,7 +122,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero and a Get in touch section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with five sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction and Blog row. No public page uses `get_header('new')` yet.
+**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero and a Get in touch section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with six sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row and Service cards. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -153,7 +154,7 @@ Every new section and component, the header and footer sections included, uses t
 
 ### Section padding (`.section-padding`)
 
-This is for sections whose editors set the top and bottom padding with ACF sliders. Today only the WYSIWYG editor uses it.
+This is for sections whose editors set the top and bottom padding with ACF sliders: today the WYSIWYG editor, Blog row and Service cards.
 
 - **The slider value is the desktop padding.** Smaller screens multiply it by the same ratios as the default (76 / 64 / 35), so a section left at the default looks exactly as before.
 
@@ -164,11 +165,12 @@ This is for sections whose editors set the top and bottom padding with ACF slide
   | `<phone` | 35 / 76 | 35px | 46px | 18px |
 
 - **CSS:** `.section-padding` in `_helper.scss` reads `--padding-top` and `--padding-bottom` (px, set inline). It multiplies them by `--padding-scale`, which is set per breakpoint. Without the custom properties the padding is 76px.
-- **PHP:** `dsa_2026_section_padding_style($top, $bottom)` (`inc/function-layout.php`) returns the inline style, e.g. `--padding-top: 100px; --padding-bottom: 40px`.
-  - It only includes numeric values, capped at 100.
+- **PHP:** `dsa_2026_section_padding_style($top, $bottom, $max = 100)` (`inc/function-layout.php`) returns the inline style, e.g. `--padding-top: 100px; --padding-bottom: 40px`.
+  - It only includes numeric values, capped at `$max`.
+  - **`$max` is the slider's max.** It's 100 by default. A section whose default is higher passes its own: Service cards (default 104) has 0–150 sliders and passes `150`.
   - It returns `''` when neither is set, e.g. on rows saved before the sliders existed.
 - **To add it to another section:**
-  1. **ACF:** add two **Range** fields first in its Options tab: `padding_top` and `padding_bottom`, 50% each, 0–100, step 1, `px`, default 76.
+  1. **ACF:** add two **Range** fields first in its Options tab: `padding_top` and `padding_bottom`, 50% each, 0–100, step 1, `px`, default 76. If the default is above 100, raise the max, and pass the same max to the helper.
   2. **Markup:** add the `section-padding` class to the `<section>`, and print the helper's string as its `style` (through `esc_attr()`). If the section already has an inline style, join the two strings with `; `.
   3. **Styles:** remove the section's own `padding-block` and its media queries. Component CSS loads after `common/`, so it would override the helper.
 
@@ -677,6 +679,78 @@ section.blog-row.content-block.section-padding   [style=padding]   [data-blog-re
     | `<tablet` | 2 |
     | `<phone` | 1 |
 
+### Service cards (`sections/service-cards.php` + `_service-cards.scss`)
+
+Layout `service_cards` ("Service cards"): an optional H2 with the accent lines, then a grid of notched cards. Each card has a title, a text and a link, and the link covers the whole card. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `399:5611` ("Services", 1440 wide).
+
+```
+section.service-cards.content-block.section-padding   [style=padding]
+	.content-max
+		.service-cards__heading                     (only with a title)
+			h2.service-cards__title + span.service-cards__lines
+		ul.service-cards__list                      (grid)
+			li.service-card                         (::before border + ::after fill: the notched shape)
+				h3.service-card__title.h5
+				p.service-card__text
+				a.service-card__link                (only with a URL; ::after covers the card)
+					span (link text) + span.service-card__arrow > svg-arrow-right
+```
+
+| Tab | Label | Name | Type | Notes |
+| --- | --- | --- | --- | --- |
+| Options | Padding top (50%) | `padding_top` | range 0–150, step 1, `px` | default 104 (Figma) |
+| Options | Padding bottom (50%) | `padding_bottom` | range 0–150, step 1, `px` | default 104 (Figma) |
+| Content | Title | `title` | textarea (new lines → `<br>`) | optional, always an `<h2>` |
+| Content | Cards | `cards` | repeater (block, "Add card", collapsed on the title) | |
+| ↳ | Title | `title` | text | required |
+| ↳ | Content | `content` | textarea (new lines → `<br>`) | plain text |
+| ↳ | Link | `link` | link | optional |
+
+- **Empty:** a card with no title and no text is skipped. With no cards left, the section prints nothing. The title is optional.
+- **Title:** `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` highlights words in `$color__link`. Its look comes from the base `h2`.
+- **Full-card link:** this is the stretched-link pattern of the blog card.
+  - **The `<a>` is the CTA.** Its text is the link's text ("Explore IT Asset Disposal"), or "Read more" when that's empty ("Read more" is the Figma component's own label).
+  - **Its `::after` covers the card,** so a click anywhere follows the link. Screen readers get one short, descriptive link per card, and the title stays a real `<h3>`.
+  - **Why the card isn't wrapped in an `<a>`:** the link name would be every word on the card.
+  - **Content is a textarea, not a WYSIWYG:** a link inside the card would be a nested `<a>`.
+  - A card without a URL has no link and isn't clickable. `target="_blank"` gets `rel="noopener"`.
+  - **Focus:** a 2px `$color__link` outline on the `::after`, 2px outside the card. It's a rectangle, and the notch corners are clickable too.
+- **Notched shape:** Figma's "Subtract" vector is a rectangle with 31 × 46px cut out of the top-left and bottom-right corners, and a 1px border inside.
+  - **Two pseudo-elements, the same `clip-path` polygon (`--card-shape`):**
+    - `::before`, `inset: 0`, is the border colour;
+    - `::after`, `inset: 1px`, is the fill.
+  - Drawn this way, the same polygon gives an even 1px border on every edge, the notches included.
+  - The card is `isolation: isolate`, so the `z-index: -1` layers stay behind its content and above the section background.
+  - **Not `corner-shape: notch`:** that property draws this exact shape natively (`border-radius: 31px 0 / 46px 0`), but Safari only has it in Technology Preview, and iOS not at all. Andrea chose the pseudo-elements so the shape works everywhere.
+- **Colours** (Figma, approved by Andrea):
+  - **Border:** `$color__service-card-border` `#24433f`.
+  - **Fills:** `$color__service-card` `#173632` (dark) and `$color__border-alt` `#004242` (teal), set through `--card-fill`.
+  - **Two columns:** a checkerboard, as in Figma. `:nth-child(4n + 2)` and `:nth-child(4n + 3)` are teal (1 dark, 2 teal / 3 teal, 4 dark…).
+  - **One column:** odd cards are dark, even cards teal.
+- **Card:**
+  - It's 208px high at least (Figma), with `padding: 25px 52px` and the content centred.
+    - A two-line text gets Figma's 38px of top space.
+    - A three-line text stays 208px high, as in Figma.
+  - `<phone`: the padding is 32px 40px, still clear of the notch.
+  - The title, text and link are 16px apart (margins, so a missing one leaves no gap).
+- **Card text:**
+  - **Title:** `.h5` (22px), with weight 700 and `line-height: 1.28` (Figma "H4"), the same as the blog card title.
+  - **Text:** Manrope 16px, `line-height: 1.6`.
+  - **Link:** Manrope 14px 700, `$color__link`, with the 15px `svg-arrow-right` after a 6px gap.
+    - Its colour is also set on `:hover` and `:focus`, against the global `a:hover { color: inherit }`.
+    - **Hover and focus (not in Figma, Andrea's choice):** the arrow slides 4px right. The transform is on the arrow's span, because on the `<a>` it would become the containing block of the link's `::after`.
+- **Heading:** the lines sit 16px under the title. They're 58 × 4px `$color__link` + 18 × 4px `$color__accent-hover`, with a 2px radius and a 7px gap. The heading is 46px above the cards.
+- **Padding and grid:** padding comes from `.section-padding`, with the 104px defaults on the class. At 1440 the cards are 580px wide, as in Figma.
+
+  | Width | Padding top / bottom (default) | Grid |
+  | --- | --- | --- |
+  | Base (desktop) | 104px (Figma) | 2 columns, gap 30px / 40px (Figma) |
+  | `<tablet` | 88px | 2 columns |
+  | `<phone-land` | 88px | 1 column, gap 24px |
+  | `<phone` | 48px | 1 column, gap 24px |
+
+  Only the desktop values are in Figma.
+
 ## Contact 2026 (`templates-2026/page-contact-2026.php`)
 
 A fixed page: the template sets the sections and their order, and editors fill one ACF tab per section. The pages have no editor (see "No editor" under Dynamic Layout 2026).
@@ -1092,3 +1166,13 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - **Cause:** `$acf = function_exists('get_field');` in the template. Templates run in the global scope, so it overwrote ACF's global `$acf` instance.
     - **Fix:** the new `dsa_2026_field()` (`inc/function-acf.php`) reads the fields, and the template no longer sets any variable.
     - The rule is now in "PHP conventions".
+- **2026-10-06**
+  - Sixth Dynamic Layout section, **Service cards**: layout `service_cards`, `components-2026/sections/service-cards.php` and `_service-cards.scss`. Figma node `399:5611`.
+    - **Options tab:** padding sliders, 0–150px, default 104 (Figma).
+    - **Content tab:** an optional H2 title (accent span), and a **Cards** repeater: title, text, link.
+    - The link covers the whole card (stretched link, as in the blog card). Its text is the CTA, "Read more" when empty.
+    - The notched shape is two pseudo-elements with the same `clip-path` polygon, the border and the fill. `corner-shape: notch` was rejected because Safari and iOS don't support it.
+    - The fills are a checkerboard in two columns, and alternate in one.
+    - The hover (the arrow slides 4px right) isn't in Figma; Andrea chose it.
+  - `dsa_2026_section_padding_style()` has a new optional `$max` argument (default 100). Service cards passes 150, and the other calls are unchanged.
+  - New colours, approved by Andrea (Figma): `$color__service-card` `#173632` and `$color__service-card-border` `#24433f`. The teal fill is the existing `$color__border-alt`.

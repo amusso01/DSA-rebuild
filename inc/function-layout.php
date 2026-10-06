@@ -97,15 +97,16 @@ function dsa_2026_render_sections()
 	}
 }
 
-// Inline style for .section-padding (_helper.scss): the ACF "Padding top/bottom" sliders (desktop px, 0–100).
+// Inline style for .section-padding (_helper.scss): the ACF "Padding top/bottom" sliders (desktop px).
+// $max is the slider's max: 100, or more for a section whose default is higher (Service cards: 150).
 // Returns '' when neither is set: the CSS default (76px) applies, e.g. on rows saved before the sliders.
-function dsa_2026_section_padding_style($top, $bottom)
+function dsa_2026_section_padding_style($top, $bottom, $max = 100)
 {
 	$style = array();
 
 	foreach (array('top' => $top, 'bottom' => $bottom) as $side => $value) {
 		if (is_numeric($value)) {
-			$style[] = '--padding-' . $side . ': ' . min(absint($value), 100) . 'px';
+			$style[] = '--padding-' . $side . ': ' . min(absint($value), $max) . 'px';
 		}
 	}
 

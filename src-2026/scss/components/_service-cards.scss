@@ -1,0 +1,185 @@
+/*==================================================================================
+  SERVICE CARDS (components-2026/sections/service-cards.php)
+  Dynamic Layout 2026 section: H2 title with the accent lines, then a 2-column grid of
+  notched cards (title, text, link) with alternating fills. Figma: DSA, node 399:5611 ("Services").
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+// padding: .section-padding (_helper.scss) from the ACF sliders; 104px is the Figma default
+.service-cards {
+	--padding-top: 104px;
+	--padding-bottom: 104px;
+	background-color: $color__main;
+	color: $color__text-light;
+}
+
+/* Heading: title with the accent lines
+/––––––––––––––––––––––––*/
+.service-cards__heading {
+	margin-bottom: 46px;
+}
+
+// size, weight, line-height and font: base h2 in _general.scss; colour from the section
+.service-cards__title {
+	// editors wrap words in <span class="accent"> to highlight them
+	.accent {
+		color: $color__link;
+	}
+}
+
+.service-cards__lines {
+	display: flex;
+	gap: 7px;
+	margin-top: 16px;
+
+	&::before,
+	&::after {
+		content: '';
+		height: 4px;
+		border-radius: 2px;
+	}
+
+	&::before {
+		width: 58px;
+		background-color: $color__link;
+	}
+
+	&::after {
+		width: 18px;
+		background-color: $color__accent-hover;
+	}
+}
+
+/* Grid
+/––––––––––––––––––––––––*/
+.service-cards__list {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 30px 40px;
+
+	@include media('<phone-land') {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 24px;
+	}
+}
+
+/* Card: notched shape (Figma "Subtract"), 31 × 46px cut from the top-left and bottom-right corners.
+   ::before is the 1px border, ::after the fill inset by 1px: the same polygon at a 1px inset keeps
+   the border 1px on every edge, notches included. Not corner-shape: notch, which Safari lacks.
+/––––––––––––––––––––––––*/
+.service-card {
+	--card-shape: polygon(
+		31px 0,
+		100% 0,
+		100% calc(100% - 46px),
+		calc(100% - 31px) calc(100% - 46px),
+		calc(100% - 31px) 100%,
+		0 100%,
+		0 46px,
+		31px 46px
+	);
+	--card-fill: #{$color__service-card};
+	position: relative; // the link's ::after covers the card
+	isolation: isolate; // the z-index: -1 shape layers stay above the section background
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	// Figma: 208px cards. Content centred: two-line cards get Figma's 38px, three-line ones stay 208px
+	min-height: 208px;
+	padding: 25px 52px;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		clip-path: var(--card-shape);
+	}
+
+	&::before {
+		inset: 0;
+		background-color: $color__service-card-border;
+	}
+
+	&::after {
+		inset: 1px;
+		background-color: var(--card-fill);
+	}
+
+	// margins instead of gap: a missing text or link leaves no hole
+	> * + * {
+		margin-top: 16px;
+	}
+
+	// two columns: checkerboard, as in Figma (1 dark, 2 teal / 3 teal, 4 dark…)
+	&:nth-child(4n + 2),
+	&:nth-child(4n + 3) {
+		--card-fill: #{$color__border-alt};
+	}
+
+	@include media('<phone-land') {
+		// one column: plain alternation
+		&:nth-child(odd) {
+			--card-fill: #{$color__service-card};
+		}
+		&:nth-child(even) {
+			--card-fill: #{$color__border-alt};
+		}
+	}
+	@include media('<phone') {
+		padding: 32px 40px; // still clear of the 31px notch
+	}
+}
+
+// size: .h5 (22px) in _general.scss; Figma "H4": Titillium 700 / 1.28
+.service-card__title {
+	font-weight: 700;
+	line-height: 1.28;
+}
+
+// Manrope 16px 400 from html, colour from the section
+.service-card__text {
+	line-height: 1.6;
+}
+
+.service-card__link {
+	display: inline-flex;
+	align-self: flex-start;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: normal;
+
+	// :hover/:focus too: the global a:hover, a:focus { color: inherit } would turn it light
+	&,
+	&:hover,
+	&:focus {
+		color: $color__link;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+
+	&:focus-visible::after {
+		outline: 2px solid $color__link;
+		outline-offset: 2px;
+	}
+}
+
+// transform on the arrow only: on the <a> it would become the containing block of its ::after
+.service-card__arrow {
+	display: flex;
+	flex-shrink: 0;
+	transition: transform 0.25s ease;
+}
+
+// not in Figma: the arrow slides right
+.service-card:hover .service-card__arrow,
+.service-card:focus-within .service-card__arrow {
+	transform: translateX(4px);
+}
