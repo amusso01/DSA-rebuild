@@ -59,7 +59,7 @@ inc/                   2026 PHP
   function-helpers.php    dsa_2026_get_svg()
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
   function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option()
-  function-layout.php     Dynamic Layout 2026: no editor, A–Z "Add section" menu, dsa_2026_render_sections()
+  function-layout.php     Dynamic Layout 2026: no editor, A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style()
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
@@ -85,7 +85,7 @@ src-2026/
       _variables.scss  colors, fonts, type scale, no CSS output
       _media.scss      include-media + breakpoints (single source of truth)
       _general.scss    base typography: html, headings, links
-      _helper.scss     layout helpers: .content-block, .content-max, .content-narrow, %cover…
+      _helper.scss     layout helpers: .content-block, .content-max, .content-narrow, .section-padding, %cover…
     components/        one partial per component (mirrors components-2026/)
       _button.scss     .btn
       _accordion.scss  accordion-js base styles
@@ -145,6 +145,29 @@ Every new section and component, the header and footer sections included, uses t
   There is no `.content-block--footer`. The footer uses `.content-block` like everything else.
 - **`.content-max`** is the max-width: 1920px, then 1520px below `wideScreen`, then 1360px below `desktop`. **Don't change these values.**
 - **`.content-narrow`** (max-width 960px, then 800px below `desktop`, centred) is optional. Use it inside `.content-max` for text-heavy content.
+
+### Section padding (`.section-padding`)
+
+This is for sections whose editors set the top and bottom padding with ACF sliders. Today only the WYSIWYG editor uses it.
+
+- **The slider value is the desktop padding.** Smaller screens multiply it by the same ratios as the default (76 / 64 / 35), so a section left at the default looks exactly as before.
+
+  | Width | Factor | 76 (default) | 100 | 40 |
+  | --- | --- | --- | --- | --- |
+  | Base (desktop) | 1 | 76px | 100px | 40px |
+  | `<tablet` | 64 / 76 | 64px | 84px | 34px |
+  | `<phone` | 35 / 76 | 35px | 46px | 18px |
+
+- **CSS:** `.section-padding` in `_helper.scss` reads `--padding-top` and `--padding-bottom` (px, set inline). It multiplies them by `--padding-scale`, which is set per breakpoint. Without the custom properties the padding is 76px.
+- **PHP:** `dsa_2026_section_padding_style($top, $bottom)` (`inc/function-layout.php`) returns the inline style, e.g. `--padding-top: 100px; --padding-bottom: 40px`.
+  - It only includes numeric values, capped at 100.
+  - It returns `''` when neither is set, e.g. on rows saved before the sliders existed.
+- **To add it to another section:**
+  1. **ACF:** add two **Range** fields first in its Options tab: `padding_top` and `padding_bottom`, 50% each, 0–100, step 1, `px`, default 76.
+  2. **Markup:** add the `section-padding` class to the `<section>`, and print the helper's string as its `style` (through `esc_attr()`). If the section already has an inline style, join the two strings with `; `.
+  3. **Styles:** remove the section's own `padding-block` and its media queries. Component CSS loads after `common/`, so it would override the helper.
+
+  A section with a different default (e.g. Introduction's 86px) would also set its own fallback with `--padding-top: 86px; --padding-bottom: 86px` on its class.
 
 ## Components (`components-2026/`)
 
@@ -467,6 +490,8 @@ section.wysiwyg-editor.content-block
 
 | Tab | Label | Name | Type | Notes |
 | --- | --- | --- | --- | --- |
+| Options | Padding top (50%) | `padding_top` | range 0–100, step 1, `px` | default 76; desktop value, scaled down below |
+| Options | Padding bottom (50%) | `padding_bottom` | range 0–100, step 1, `px` | default 76 |
 | Options | Container (50%) | `container` | select `default` / `narrow` | default `default` |
 | Content | Content | `content` | WYSIWYG (full toolbar, no media) | |
 
@@ -498,15 +523,9 @@ section.wysiwyg-editor.content-block
     | anything → heading (h+h, p+h, ul+h) | 30px |
     | li → li, li → nested list | 12px |
 
-  - **Padding:** `padding-block` only.
-
-    | Width | Padding top / bottom |
-    | --- | --- |
-    | Base (desktop) | 76px |
-    | `<tablet` | 64px |
-    | `<phone` | 35px |
-
-    The padding isn't in Figma. It matches Two-column image text.
+  - **Padding:** set with the two sliders, and applied by `.section-padding` (see "Section padding").
+    - The default is 76px, then 64px `<tablet`, then 35px `<phone`. This matches Two-column image text; the padding isn't in Figma.
+    - Other values scale with the same ratios.
 
 ### Introduction (`sections/introduction.php` + `_introduction.scss`)
 
@@ -835,3 +854,9 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - New `.btn--outline` button variant in `_button.scss`: a `currentColor` border and the same size as `.btn`. On hover it fills with `$color__link` (Andrea's spec).
 - **2026-10-06**
   - The "Add section" menu of `page_sections` is now alphabetical, by label. `dsa_2026_sort_section_layouts()` in `inc/function-layout.php` sorts it on `acf/load_field`.
+- **2026-10-06**
+  - WYSIWYG editor: new **Padding top / Padding bottom** sliders (ACF Range, 0–100px, default 76) in the Options tab, before Container.
+  - New reusable section padding (see "Section padding"):
+    - `.section-padding` in `_helper.scss`: inline `--padding-top` / `--padding-bottom`, scaled by 64/76 `<tablet` and 35/76 `<phone`;
+    - `dsa_2026_section_padding_style()` in `inc/function-layout.php`.
+  - `.wysiwyg-editor` no longer sets `padding-block`, and its default spacing is unchanged (verified 76 / 64 / 35).

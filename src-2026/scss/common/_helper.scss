@@ -40,6 +40,22 @@
 	}
 }
 
+// Section padding from the ACF sliders: --padding-top / --padding-bottom (inline, px) are the
+// desktop values; smaller screens scale them like the default 76 / 64 / 35. Without them: 76px.
+// Markup: section.content-block.section-padding + dsa_2026_section_padding_style() as its style.
+.section-padding {
+	--padding-scale: 1;
+	padding-top: calc(var(--padding-top, 76px) * var(--padding-scale));
+	padding-bottom: calc(var(--padding-bottom, 76px) * var(--padding-scale));
+
+	@include media('<tablet') {
+		--padding-scale: calc(64 / 76);
+	}
+	@include media('<phone') {
+		--padding-scale: calc(35 / 76);
+	}
+}
+
 .noscroll {
 	overflow: hidden;
 }

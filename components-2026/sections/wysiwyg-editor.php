@@ -8,18 +8,21 @@
  */
 
 $args = wp_parse_args($args, array(
-	'container' => 'default', // default: .content-max width; narrow: .content-narrow inside it
-	'content'   => '',        // WYSIWYG
-	'index'     => 0,
+	'padding_top'    => '',        // slider, desktop px; empty: 76px from .section-padding
+	'padding_bottom' => '',
+	'container'      => 'default', // default: .content-max width; narrow: .content-narrow inside it
+	'content'        => '',        // WYSIWYG
+	'index'          => 0,
 ));
 
 if (!$args['content']) {
 	return;
 }
 
+$style   = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bottom']);
 $classes = 'wysiwyg-editor__content' . ($args['container'] === 'narrow' ? ' content-narrow' : '');
 ?>
-<section class="wysiwyg-editor content-block">
+<section class="wysiwyg-editor content-block section-padding"<?php if ($style) : ?> style="<?php echo esc_attr($style); ?>"<?php endif; ?>>
 	<div class="content-max">
 		<div class="<?php echo esc_attr($classes); ?>"><?php echo wp_kses_post($args['content']); ?></div>
 	</div>

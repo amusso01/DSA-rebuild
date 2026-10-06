@@ -4,20 +4,11 @@
   Figma: DSA, node 223:3103 (its "H3" style is our h4: accent bar, dot list).
 ==================================================================================*/
 @use '../common/variables' as *;
-@use '../common/media' as *;
 
+// padding: .section-padding (_helper.scss), from the ACF sliders (default 76 / 64 / 35)
 .wysiwyg-editor {
-	// only top/bottom: the sides come from .content-block
-	padding-block: 76px;
 	background-color: $color__main;
 	color: $color__text-light;
-
-	@include media('<tablet') {
-		padding-block: 64px;
-	}
-	@include media('<phone') {
-		padding-block: 35px;
-	}
 }
 
 /* Content: Manrope 16px from html, heading sizes/weights from _general.scss

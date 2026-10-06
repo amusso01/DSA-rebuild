@@ -429,6 +429,52 @@
                             "parent_layout": "layout_6ac41232a9163"
                         },
                         {
+                            "key": "field_6ac4d3426876d",
+                            "label": "Padding top",
+                            "name": "padding_top",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 76,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac41232a9163"
+                        },
+                        {
+                            "key": "field_6ac4d34268f8c",
+                            "label": "Padding bottom",
+                            "name": "padding_bottom",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 76,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac41232a9163"
+                        },
+                        {
                             "key": "field_6ac41232aa10d",
                             "label": "Container",
                             "name": "container",
@@ -708,5 +754,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791280530
+    "modified": 1791284034
 }
