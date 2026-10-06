@@ -100,6 +100,20 @@ h2,
 	line-height: 1.2;
 }
 
+// Figma heading style: Titillium Web Regular, line-height 1.3.
+// Figma names the 26px style "H3": it's our h4 ($text__h4).
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+	font-weight: 400;
+	line-height: 1.3;
+}
+
 h3,
 .h3 {
 	font-size: $text__h3;

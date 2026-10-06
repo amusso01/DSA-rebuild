@@ -64,7 +64,7 @@ components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php
-  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php
+  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php
   page/                (next)
 svg-templates/         inline SVGs: arrow, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
@@ -94,6 +94,7 @@ src-2026/
       _footer.scss     certification strip, footer columns, bottom bar
       _hero-page.scss  Dynamic Layout section: hero page (breadcrumb, title, accent lines)
       _two-column-image-text.scss  Dynamic Layout section: image + content, reverse, background colour
+      _wysiwyg-editor.scss  Dynamic Layout section: editor content (h4 bar, dot lists, 12/30px rhythm)
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -114,7 +115,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with two sections so far: Hero page and Two-column image text. No public page uses `get_header('new')` yet.
+**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with three sections so far: Hero page, Two-column image text and WYSIWYG editor. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -437,9 +438,62 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse]   (
     | `<desktop` | 76px | gap 64px |
     | `<tablet` | 64px | gap 48px |
     | `<phone-land` | 64px | 1 column, image on top, gap 40px |
-    | `<phone` | 48px | gap 32px |
+    | `<phone` | 35px | gap 32px |
 
     Only the desktop values are in Figma.
+
+### WYSIWYG editor (`sections/wysiwyg-editor.php` + `_wysiwyg-editor.scss`)
+
+Layout `wysiwyg_editor` ("WYSIWYG editor"): free text from the editor. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `223:3103` (the h4 with its bar, a paragraph, a dot list).
+
+```
+section.wysiwyg-editor.content-block
+	.content-max
+		.wysiwyg-editor__content[.content-narrow]   (the editor HTML)
+```
+
+| Tab | Label | Name | Type | Notes |
+| --- | --- | --- | --- | --- |
+| Options | Container (50%) | `container` | select `default` / `narrow` | default `default` |
+| Content | Content | `content` | WYSIWYG (full toolbar, no media) | |
+
+- **Container:**
+  - `default` is the `.content-max` width.
+  - `narrow` adds `.content-narrow` to the content div, inside `.content-max`.
+- **Empty content:** the section prints nothing.
+- **Output:** `wp_kses_post()`.
+  - It keeps the editor's `style="text-align: …"`. That's how editors centre text, so there's no centring option.
+- **Full toolbar:** the `basic` toolbar has no Paragraph/Heading dropdown.
+- **Headings:** start at H2 (the field instructions say so).
+  - Sizes, weight and line-height come from the global `h2`…`h6` in `_general.scss`. The section doesn't redeclare them.
+  - **Figma's "H3" text style (26px) is our h4.** Figma's heading names are one level off; the global scale is the reference.
+- **Styles:**
+  - **Section:** `$color__main` background, `$color__text-light` text.
+  - **Text:** Manrope 16px 400, `line-height: 1.6`.
+  - **h4:** an accent bar before the text: 4 × 28px, 2px radius, `$color__link`, 12px before the text.
+    - It's an inline-block `::before`, centred on the first line. It isn't flex, so inline tags (`<strong>`, links) stay in the line and `text-align` still works.
+  - **Lists:**
+    - **`ul`:** no bullets or padding. Each `li` has a 14px `$color__link` dot (`::before`, centred on the first line) and 10px before the text, so wrapped lines hang.
+    - **`ol`:** keeps its numbers, with `padding-left: 1.25em`.
+    - **Items:** Manrope 15px 500, `line-height: 1.5` (Figma).
+  - **Links:** `$color__link`, underlined.
+  - **Rhythm:** every gap is a `margin-top` between the content's direct children.
+
+    | Before → after | Gap |
+    | --- | --- |
+    | anything → p, list (p+p, h+p, p/h+ul, ul+p) | 12px |
+    | anything → heading (h+h, p+h, ul+h) | 30px |
+    | li → li, li → nested list | 12px |
+
+  - **Padding:** `padding-block` only.
+
+    | Width | Padding top / bottom |
+    | --- | --- |
+    | Base (desktop) | 76px |
+    | `<tablet` | 64px |
+    | `<phone` | 35px |
+
+    The padding isn't in Figma. It matches Two-column image text.
 
 ## ACF fields (`acf-json/`)
 
@@ -699,3 +753,10 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - The Options/Content tabs are now the convention for sections with settings (see "Adding a section").
   - The base `h2, .h2` in `_general.scss` now has `font-weight: 400; line-height: 1.2` (Figma "H2" style). The footer column titles and the hero title keep their own values.
   - Added Titillium Web 600 (Latin and Latin-extended), for section eyebrows.
+- **2026-10-05**
+  - Third Dynamic Layout section, **WYSIWYG editor**: layout `wysiwyg_editor`, `components-2026/sections/wysiwyg-editor.php` and `_wysiwyg-editor.scss`.
+    - The **Options** tab has the container (default or narrow). The **Content** tab has one WYSIWYG.
+    - The styles come from Figma node `223:3103`: the h4 accent bar, dot lists, and a 12px / 30px rhythm.
+  - Figma's "H3" text style (26px) is our h4: Figma's heading names are one level off, so the global type scale stays and is the reference.
+  - The global `h3`…`h6` (and `.h3`…`.h6`) in `_general.scss` now have `font-weight: 400; line-height: 1.3` (Figma heading style). Sizes are unchanged.
+  - Phone padding (`<phone`) is now 35px instead of 48px: Two-column image text, and the dark footer's top (`35px 0 32px`).

@@ -15,7 +15,7 @@ get_header('new'); ?>
 <main id="main" class="site-main site-main--layout" role="main">
 	<?php
 	while (have_posts()) : the_post();
-		dsa_2026_render_sections();
+	//dsa_2026_render_sections();
 	endwhile;
 	?>
 </main>
