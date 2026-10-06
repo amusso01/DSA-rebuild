@@ -25,6 +25,8 @@ get_header('new'); ?>
 		get_template_part('components-2026/sections/hero-page', null, (array) dsa_2026_field('hero'));
 		// Get in touch tab: title, text, phone and email cards
 		get_template_part('components-2026/page/get-in-touch', null, (array) dsa_2026_field('get_in_touch'));
+		// Contact form tab: title, text, multi-step Contact Form 7 form
+		get_template_part('components-2026/page/contact-form', null, (array) dsa_2026_field('contact_form'));
 	endwhile;
 	?>
 </main>

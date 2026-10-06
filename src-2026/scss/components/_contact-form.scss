@@ -1,0 +1,478 @@
+/*==================================================================================
+  CONTACT FORM (components-2026/page/contact-form.php)
+  Contact 2026: centred H2 and text, then the card with the progress steps and the
+  Contact Form 7 multi-step form. Figma: DSA, node 223:3175 ("Contact flow").
+  The Multi Step plugin's CSS is off on 2026 pages (inc/function-contact-form.php):
+  these rules replace it. CF7's own CSS stays, so some selectors are stronger than its.
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+// Figma's alert-circle (node 223:3215), drawn in currentColor through a mask: the .form-error
+// paragraphs are in the CF7 form, where an svg-templates/ file can't be printed
+$icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M8 5.33312V8M8 10.6669H8.00667M14.6672 8C14.6672 11.6822 11.6822 14.6672 8 14.6672C4.31781 14.6672 1.3328 11.6822 1.3328 8C1.3328 4.31781 4.31781 1.3328 8 1.3328C11.6822 1.3328 14.6672 4.31781 14.6672 8Z' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+
+.contact-form {
+	// only top/bottom: the sides come from .content-block
+	padding-block: 72px; // Figma
+	background-color: $color__main;
+	color: $color__text-light;
+
+	@include media('<tablet') {
+		padding-block: 64px;
+	}
+	@include media('<phone') {
+		padding-block: 35px;
+	}
+}
+
+.contact-form__inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 48px;
+
+	@include media('<phone') {
+		gap: 32px;
+	}
+}
+
+/* Intro: title + text
+/––––––––––––––––––––––––*/
+.contact-form__intro {
+	max-width: 760px;
+	text-align: center;
+
+	// margins instead of gap: a missing title or text leaves no hole
+	> * + * {
+		margin-top: 14px;
+	}
+}
+
+// size and its scale: the .h3 class (36px); Figma: Titillium Web Bold, line-height 1.2
+.contact-form__title {
+	font-weight: 700;
+	line-height: 1.2;
+
+	.accent {
+		color: $color__link;
+	}
+}
+
+.contact-form__text {
+	max-width: 560px;
+	margin-inline: auto;
+	line-height: 1.6;
+
+	a {
+		color: $color__link;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+
+		&:focus-visible {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+}
+
+/* Card + progress steps
+/––––––––––––––––––––––––*/
+.contact-form__card {
+	width: 100%;
+	max-width: 760px;
+	border: 1px solid $color__card-border;
+	background-color: $color__main-light;
+}
+
+.contact-form__steps {
+	display: flex;
+	border-bottom: 1px solid $color__card-border;
+}
+
+.contact-form__step {
+	position: relative;
+	flex: 1 1 0;
+	min-width: 0;
+	padding: 28px 28px 20px; // 4px bar + Figma's 24px
+	color: $color__card-label;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: normal;
+	text-align: center;
+
+	// the 4px bar on top
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		height: 4px;
+		background-color: $color__card-border;
+		transition: background-color 0.25s ease;
+	}
+
+	&.is-current,
+	&.is-done {
+		&::before {
+			background-color: $color__link;
+		}
+	}
+
+	&.is-current {
+		color: $color__card-value;
+		font-weight: 700;
+	}
+
+	@include media('<phone-land') {
+		padding-inline: 8px;
+	}
+	@include media('<phone') {
+		font-size: 13px;
+	}
+}
+
+// sent (contactForm.js): CF7's message replaces the steps
+.contact-form__card.is-sent {
+	.contact-form__steps,
+	.fieldset-cf7mls-wrapper {
+		display: none;
+	}
+}
+
+/* Steps (the plugin's fieldsets)
+/––––––––––––––––––––––––*/
+.contact-form .fieldset-cf7mls {
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+	min-width: 0;
+	margin: 0;
+	padding: 36px;
+	border: 0;
+
+	// only the current step shows (the plugin's CSS did this, it's off)
+	&:not(.cf7mls_current_fs) {
+		display: none;
+	}
+
+	// the plugin closes each step with an empty <p></p>
+	> p:empty {
+		display: none;
+	}
+
+	@include media('<phone-land') {
+		padding: 24px;
+	}
+	@include media('<phone') {
+		padding: 20px;
+	}
+}
+
+// Last step: the plugin's editor writes [submit] before its Back button.
+// A wrapping row puts Back and Complete side by side, Back first, as in the other steps.
+.contact-form .fieldset-cf7mls:last-of-type {
+	position: relative; // the spinner
+	flex-flow: row wrap;
+	justify-content: center;
+	gap: 28px 20px;
+
+	> * {
+		flex: 0 0 100%;
+	}
+
+	> .cf7mls-btns {
+		flex: 0 0 auto;
+		order: 1;
+	}
+
+	> .wpcf7-submit {
+		flex: 0 0 auto;
+		order: 2;
+	}
+
+	// the plugin's step message stays under the buttons, as in the other steps
+	> .wpcf7-response-output {
+		order: 3;
+	}
+}
+
+/* Chips (checkboxes)
+/––––––––––––––––––––––––*/
+.contact-form .form-chips {
+	.wpcf7-checkbox {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 12px;
+	}
+
+	.wpcf7-list-item {
+		margin: 0;
+	}
+
+	label {
+		position: relative;
+		display: flex;
+		align-items: center;
+		padding: 12px 16px;
+		border: 1px solid $color__card-border;
+		border-radius: 5px;
+		background-color: $color__card-icon;
+		color: $color__card-value;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: normal;
+		cursor: pointer;
+		transition: border-color 0.25s ease;
+
+		&:hover {
+			border-color: $color__card-label;
+		}
+
+		&:has(input:checked) {
+			border-color: $color__link;
+		}
+
+		&:has(input:focus-visible) {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+
+	// visually hidden, still focusable and toggled by its label
+	input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: 0;
+		opacity: 0;
+	}
+
+	// CF7 puts spaces around the label text
+	.wpcf7-list-item-label::before,
+	.wpcf7-list-item-label::after {
+		content: none;
+	}
+
+	// the step's .form-error says it instead
+	.wpcf7-not-valid-tip {
+		display: none;
+	}
+}
+
+/* Step error (.form-error in the CF7 form, shown by contactForm.js)
+/––––––––––––––––––––––––*/
+// inline icon, not flex: when the message wraps on phones, the icon stays beside its text
+.contact-form .form-error {
+	margin: 0;
+	color: $color__error;
+	font-size: 13px;
+	line-height: normal;
+	text-align: center;
+
+	&[hidden] {
+		display: none;
+	}
+
+	&::before {
+		content: '';
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		margin-right: 8px;
+		background-color: currentColor;
+		vertical-align: -3px;
+		mask: $icon-alert center / contain no-repeat;
+	}
+}
+
+/* Fields (step 3; not in Figma, built from its tokens)
+/––––––––––––––––––––––––*/
+.contact-form .form-fields {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px 12px;
+
+	@include media('<phone-land') {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	@include media('<phone') {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.contact-form .form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	color: $color__card-label;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: normal;
+	text-align: left;
+
+	input {
+		width: 100%;
+		padding: 12px 16px;
+		border: 1px solid $color__card-border;
+		border-radius: 5px;
+		background-color: $color__card-icon;
+		color: $color__card-value;
+		font-family: $text__fontname;
+		font-size: 14px;
+		font-weight: 400;
+		transition: border-color 0.25s ease;
+
+		&:focus {
+			border-color: $color__link;
+		}
+
+		&.wpcf7-not-valid {
+			border-color: $color__error;
+		}
+
+		// browser autofill keeps the dark field
+		&:-webkit-autofill {
+			-webkit-box-shadow: 0 0 0 100px $color__card-icon inset;
+			-webkit-text-fill-color: $color__card-value;
+		}
+	}
+
+	.wpcf7-form-control-wrap {
+		display: block;
+	}
+
+	.wpcf7-not-valid-tip {
+		margin-top: 6px;
+		color: $color__error;
+		font-size: 12px;
+		font-weight: 400;
+	}
+}
+
+/* Buttons: plugin's Back / Next, CF7's submit
+/––––––––––––––––––––––––*/
+.contact-form .cf7mls-btns {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 20px;
+}
+
+// The plugin prints the Back/Next colours of its "Multi-Step Settings" tab as inline styles
+// (background-color, color), copied along when a form is duplicated. !important is the only way
+// past an inline style, so the buttons follow these variables whatever is set there.
+.contact-form .cf7mls_back,
+.contact-form .cf7mls_next,
+.contact-form .wpcf7-submit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-width: 96px;
+	height: 46px; // Figma
+	padding: 0 28px;
+	border: 1px solid $color__link;
+	border-radius: 6px;
+	background-color: $color__link !important;
+	color: $color__text !important;
+	font-family: $text__fontname;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1;
+	text-transform: none;
+	cursor: pointer;
+	transition:
+		background-color 0.25s ease,
+		border-color 0.25s ease,
+		color 0.25s ease;
+
+	// like .btn
+	&:hover,
+	&:focus-visible {
+		border-color: $color__accent-hover;
+		background-color: $color__accent-hover !important;
+		color: $color__text !important;
+	}
+
+	&:focus-visible {
+		outline: 2px solid $color__link;
+		outline-offset: 2px;
+	}
+
+	// the plugin's loader while it validates the step
+	img {
+		width: 16px;
+		height: 16px;
+	}
+}
+
+// Back: dark with a teal border; fills like .btn--outline
+.contact-form .cf7mls_back {
+	background-color: $color__card-icon !important;
+	color: $color__link !important;
+
+	&:hover,
+	&:focus-visible {
+		border-color: $color__link;
+		background-color: $color__link !important;
+		color: $color__text !important;
+	}
+}
+
+// CF7's spinner while sending: beside the buttons, out of the flow so they stay centred
+.contact-form .wpcf7-spinner {
+	position: absolute;
+	right: 36px;
+	bottom: 47px; // padding 36 + (46 - 24) / 2: centred on the buttons
+	margin: 0;
+
+	@include media('<phone-land') {
+		right: 24px;
+		bottom: 35px;
+	}
+	@include media('<phone') {
+		right: 20px;
+		bottom: 31px;
+	}
+}
+
+/* Response (CF7's message under the steps)
+/––––––––––––––––––––––––*/
+.contact-form__card .wpcf7-form .wpcf7-response-output {
+	margin: 0 36px 36px;
+	padding: 0;
+	border: 0;
+	color: $color__error;
+	font-size: 14px;
+	text-align: center;
+}
+
+.contact-form__card.is-sent .wpcf7-form .wpcf7-response-output {
+	margin: 0;
+	padding: 48px 36px;
+	color: $color__link;
+	font-size: 16px;
+}
+
+// The plugin's step message ("One or more fields have an error…"): its JS appends it to the step,
+// with an icon and an inline display: block. !important is the only way past the inline style,
+// and only while it has .wpcf7-validation-errors: the plugin removes the class to hide it.
+.contact-form .fieldset-cf7mls .wpcf7-response-output {
+	margin: 0; // the step's padding already spaces it
+
+	&.wpcf7-validation-errors {
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+		column-gap: 12px;
+	}
+
+	// (sic) the plugin's class name
+	.wpcf7-icon-wraning {
+		flex-shrink: 0;
+		fill: $color__text-light;
+	}
+}

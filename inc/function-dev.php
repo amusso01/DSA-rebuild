@@ -21,6 +21,8 @@ require get_template_directory() . '/inc/function-acf.php';
 require get_template_directory() . '/inc/function-layout.php';
 // Blog: posts query, card markup, Load more REST route (Blog row section)
 require get_template_directory() . '/inc/function-blog.php';
+// Contact Form 7 multi-step on 2026 pages: form picker for ACF, plugin CSS and autop off
+require get_template_directory() . '/inc/function-contact-form.php';
 
 /*==================================================================================
   THEME SUPPORT

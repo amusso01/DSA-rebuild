@@ -1,6 +1,7 @@
 import { ready } from './utils/ready'
 import headerNavigation from './modules/headerNavigation'
 import blogRow from './modules/blogRow'
+import contactForm from './modules/contactForm'
 
 // One call per component module; each returns early when its element isn't on the page.
 // Libraries are imported normally inside the modules and bundled here. Use a lazy import()
@@ -8,4 +9,5 @@ import blogRow from './modules/blogRow'
 ready(() => {
 	headerNavigation()
 	blogRow()
+	contactForm()
 })

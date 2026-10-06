@@ -61,16 +61,17 @@ inc/                   2026 PHP
   function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option(), dsa_2026_field()
   function-layout.php     Dynamic Layout 2026: A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style(); no editor on Layout + Contact 2026 pages
   function-blog.php       blog posts query + cards (dsa_2026_blog_query/cards) and the Load more REST route
+  function-contact-form.php Contact Form 7 on 2026 pages: ACF form picker, Multi Step plugin CSS off, no autop
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php, blog-card.php
   sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php, service-cards.php
-  page/                components of fixed page templates: get-in-touch.php (Contact 2026)
+  page/                components of fixed page templates: get-in-touch.php, contact-form.php (Contact 2026)
 svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
 templates-2026/
-  page-contact-2026.php "Contact 2026" page template (main.site-main--contact): ACF tabs Hero + Get in touch
+  page-contact-2026.php "Contact 2026" page template (main.site-main--contact): ACF tabs Hero, Get in touch, Contact form
   page-layout-2026.php  "Dynamic Layout 2026" page template (main.site-main--layout)
 src-2026/
   js/
@@ -79,6 +80,7 @@ src-2026/
     modules/           one file per component: default-export function, called from main.js
       headerNavigation.js header dropdowns, mobile panel, accordion-js submenus
       blogRow.js       Blog row "Load more" (REST fetch, count, focus)
+      contactForm.js   Contact form: progress steps + step errors follow the Multi Step plugin
     utils/ready.js     DOM-ready helper
   scss/
     main.scss          entry: only @use lines (common first, then components)
@@ -102,6 +104,7 @@ src-2026/
       _blog-row.scss   Dynamic Layout section: title + count, blog card grid, Load more
       _service-cards.scss  Dynamic Layout section: H2 + accent lines, notched cards (full-card link), checkerboard fills
       _get-in-touch.scss  Contact 2026: centred intro, Call and Email cards
+      _contact-form.scss  Contact 2026: progress steps, CF7 multi-step form (chips, fields, buttons, errors)
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -122,7 +125,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero and a Get in touch section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with six sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row and Service cards. No public page uses `get_header('new')` yet.
+**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero, a Get in touch and a Contact form section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with six sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row and Service cards. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -759,10 +762,11 @@ A fixed page: the template sets the sections and their order, and editors fill o
 main#main.site-main.site-main--contact
 	section.hero-page.content-block       components-2026/sections/hero-page.php   (tab Hero, get_field('hero'))
 	section.get-in-touch.content-block    components-2026/page/get-in-touch.php    (tab Get in touch, get_field('get_in_touch'))
+	section.contact-form.content-block    components-2026/page/contact-form.php     (tab Contact form, get_field('contact_form'))
 ```
 
 - **Group:** the ACF group "Contact 2026" (`acf-json/group_6ac50cfa10bbb.json`), shown under the title when Page Template is `templates-2026/page-contact-2026.php`.
-- **One tab per section, one Group field per tab** (`hero`, `get_in_touch`). `get_field('<group>')` returns the section's `$args` as they are, and both tabs can have a `title`.
+- **One tab per section, one Group field per tab** (`hero`, `get_in_touch`, `contact_form`). `get_field('<group>')` returns the section's `$args` as they are, and both tabs can have a `title`.
 - **Template:** inside the loop, `dsa_2026_password_gate()` comes first (password form only), then one `get_template_part()` per section, with `(array) dsa_2026_field('<group>')` as its `$args`.
   - The template sets **no variables** (see "Page templates run in the global scope" in PHP conventions).
   - With ACF inactive, the hero falls back to Home and the page title, and Get in touch prints nothing.
@@ -839,6 +843,107 @@ section.get-in-touch.content-block
     | `<phone` | 35px | 1 column |
 
     Only the desktop values are in Figma.
+
+### Contact form (`page/contact-form.php` + `_contact-form.scss` + `modules/contactForm.js`)
+
+The multi-step **Contact Form 7** form, with the free **Multi Step for Contact Form 7** plugin (NinjaTeam, `cf7mls`), in a new layout. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `223:3175` ("Contact flow", 1440 wide). It comes after Get in touch, whose text points to "the service finder".
+
+```
+section.contact-form.content-block
+	.content-max > .contact-form__inner                 (flex column, centred, gap 48)
+		.contact-form__intro > h2.contact-form__title.h3 + div.contact-form__text
+		.contact-form__card[.is-sent]                    (only when the picked form exists and CF7 is active)
+			ol.contact-form__steps > li.contact-form__step[.is-current|.is-done][aria-current=step]
+			div.wpcf7 > form.wpcf7-form                  (CF7's markup, below)
+				.fieldset-cf7mls-wrapper > fieldset.fieldset-cf7mls[.cf7mls_current_fs]…   (one per step, the plugin's)
+					div.form-chips | div.form-fields      (from the CF7 form, below)
+					p.form-error[role=alert][hidden]
+					div.cf7mls-btns > button.cf7mls_back + button.cf7mls_next
+				div.wpcf7-response-output
+```
+
+| Label | Name | Type | Notes |
+| --- | --- | --- | --- |
+| Title | `title` | text | always an `<h2>`; `<span class="accent">` highlights |
+| Content | `content` | WYSIWYG (basic, no media) | |
+| Form | `form` | select | every CF7 form (ID → title), filled at runtime by `dsa_2026_contact_form_choices()`; empty: no card |
+
+- **Form picker:** a select rather than an ACF post object, because CF7's post type isn't public. Its choices come from the `acf/load_field/key=field_6ac519eb20123` filter in `inc/function-contact-form.php`.
+- **Step labels:** "Service", "Sector" and "Details" are **hard-coded** in `contact-form.php`, Andrea's choice. The free plugin can't rename its steps; that's a Pro feature. Keep the list in the form's step order.
+- **On 2026 pages only** (`dsa_2026_contact_form_setup()` on `get_header` `'new'`):
+  - `is_using_cf7mls_css` → false: the plugin's CSS (floats, button colours, sliding absolute fieldsets) is off, and `_contact-form.scss` replaces it.
+  - `wpcf7_autop_or_not` → false: CF7 adds no `<p>`/`<br>`, so the markup is exactly the form's.
+  - **CF7's own CSS stays.** It hides the screen-reader response and the hidden fields, and draws the spinner. Some of our selectors are stronger than its on purpose.
+- **JS (`contactForm.js`):** the plugin's jQuery switches steps by moving `.cf7mls_current_fs`, after an AJAX validation. A `MutationObserver` on the form's classes (one sync per frame):
+  - sets `is-current` and `aria-current="step"` on the step, and `is-done` on the earlier ones;
+  - un-hides a step's `.form-error` while that step has a `.wpcf7-not-valid` field (`role="alert"` announces it);
+  - adds `.is-sent` to the card while the form has `sent`. The steps are hidden, and CF7's message shows (CF7 Messages tab).
+- **Last step:** the plugin's editor writes `[submit]` *before* its Back button. The last fieldset is a wrapping row with `order`, so Back comes first and Complete second, centred, as in the other steps. CF7's spinner is absolutely positioned beside them.
+- **Styles** (Figma; every colour is a variable):
+  - **Section:** like Get in touch (`$color__main`, padding 72 / 64 / 35, the title `.h3` + 700). 14px between title and text, and 48px before the card (32px `<phone`).
+  - **Card:** max-width 760px, `$color__main-light`, 1px `$color__card-border`, no radius.
+  - **Steps:** equal columns, each with a 4px top bar (`$color__link` when current or done, else `$color__card-border`). Labels are Manrope 14px: current 700 `$color__card-value`, the others 600 `$color__card-label`.
+  - **Step content:** padding 36px (24px `<phone-land`, 20px `<phone`), with a 28px gap.
+  - **Chips (checkboxes):**
+    - The input is visually hidden, and the label is the chip: `$color__card-icon`, 1px `$color__card-border`, 5px radius, 12px 16px padding, 14px 600.
+    - **Checked** (`:has(input:checked)`): `$color__link` border. **Hover:** `$color__card-label` border. **Keyboard focus:** `$color__link` outline.
+  - **Error:** 13px `$color__error`, centred, after Figma's alert-circle (a CSS mask in `currentColor`, inline so it stays beside wrapped text). CF7's own tip is hidden for chips.
+  - **Fields** (step 3, not in Figma): a grid of 3 columns (2 `<phone-land`, 1 `<phone`). Labels are 12px 600 `$color__card-label`. Inputs match the chips, with a `$color__link` border on focus and `$color__error` when invalid, with CF7's tip under them.
+  - **Buttons:** 46px high (Figma), min-width 96px, padding 0 28px, radius 6px, 16px 600.
+    - **Next / Complete:** `$color__link` with `$color__text` text, `$color__accent-hover` on hover, like `.btn`.
+    - **Plugin colours ignored:** the plugin prints its Multi-Step Settings colours as inline styles, which a duplicated form inherits. The buttons' `background-color` and `color` are `!important`, the only way past an inline style, so those settings have no effect.
+    - **Back:** `$color__card-icon` with a `$color__link` border and text, and fills like `.btn--outline`.
+  - **Response:** no border, centred, 14px `$color__error`. When sent, 16px `$color__link`, in place of the steps.
+  - **Plugin step message:** "One or more fields have an error…" is appended to the step by the plugin's JS, with its own icon (`svg.wpcf7-icon-wraning`, sic) and an inline `display: block`. While it has `.wpcf7-validation-errors`, it's `display: flex !important` (to beat the inline style), centred, with a 12px column gap, and the icon is `$color__text-light`. The plugin removes the class to hide it. It sits under the buttons in every step (`order: 3` in the last step).
+- **Not built:**
+  - the old step icons (in Figma they're dark on dark, so invisible);
+  - Figma's bottom divider (it sits on the card border);
+  - a Back button on step 1 (the plugin has none on the first step).
+
+#### CF7 setup (WP admin)
+
+The 2026 page uses its own copy of the form, **"Multi Step 2026"**. The legacy contact page (page 16) keeps "Multi Step".
+
+1. **Duplicate:** Contact > Contact Forms > Multi Step > **Duplicate**, and rename it "Multi Step 2026".
+2. **Form tab:** the plugin shows one box per step. Replace each box's text with its snippet, and set the Back/Next labels: STEP 1 "Next", STEP 2 "Back" + "Next", STEP 3 "Back".
+3. **Multi-Step Settings tab:** the Back/Next colours can stay as they are: the 2026 CSS overrides them. Type the button labels as they should read ("Next", not "NEXT"): the CSS doesn't change their case.
+4. **Mail tab:** unchanged, because the field names are the same.
+5. **Contact 2026 page:** pick "Multi Step 2026" in the **Contact form** tab.
+
+STEP 1:
+```
+<div class="form-chips">[checkbox* service use_label_element "IT disposal" "Data destruction" "Data centre decommissioning"]</div>
+<p class="form-error" role="alert" hidden>Please select at least one service to continue.</p>
+```
+STEP 2:
+```
+<div class="form-chips">[checkbox* equipment use_label_element "Laptops" "PCs" "Monitors" "Printers" "Servers" "Networking" "Other"]</div>
+<p class="form-error" role="alert" hidden>Please select at least one type of equipment to continue.</p>
+```
+STEP 3:
+```
+<div class="form-fields">
+<label class="form-field"><span>First name *</span>[text* first-name autocomplete:given-name akismet:author]</label>
+<label class="form-field"><span>Last name *</span>[text* last-name autocomplete:family-name akismet:author]</label>
+<label class="form-field"><span>Telephone</span>[text your-telephone autocomplete:tel]</label>
+<label class="form-field"><span>Email *</span>[email* your-email autocomplete:email]</label>
+<label class="form-field"><span>Company *</span>[text* your-company autocomplete:organization]</label>
+<label class="form-field"><span>Post code *</span>[text* your-postcode autocomplete:postal-code]</label>
+</div>
+[submit "Complete"]
+```
+
+- **Class names the CSS and JS rely on:** `form-chips`, `form-error`, `form-fields`, `form-field`. Keep them when you edit the form.
+- **Telephone** is optional here. It was `text*` in the legacy form.
+
+#### Where the legacy layout lives (for the switch-over)
+
+None of this loads on 2026 pages: their legacy CSS and JS are dequeued, and `[progressbar]` isn't called.
+- `templates/page-blog.php` (page 16 only): `[progressbar]`, then `[contact-form-7 id="e3ba6e6" title="Multi Step"]`. With `?thank=1` it shows the thank-you block instead (paper plane, blog link, social SVGs).
+- `[progressbar]` is `wpb_progressbar()` in `library/function-setup.php`: the three step SVGs (Service, Sector, Details) and the bar.
+- `dist/scripts/main.js` moves the bar into the form, moves it on `cf7mls_current_fs`, toggles `.active` on checkboxes, and redirects to `/contact/?thank=1` on `wpcf7mailsent`.
+- `dist/styles/map/_form.scss` holds the multistep styles.
+- The legacy form shows its red hints as static `<p style="color:red">` lines.
 
 ## ACF fields (`acf-json/`)
 
@@ -1176,3 +1281,13 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - The hover (the arrow slides 4px right) isn't in Figma; Andrea chose it.
   - `dsa_2026_section_padding_style()` has a new optional `$max` argument (default 100). Service cards passes 150, and the other calls are unchanged.
   - New colours, approved by Andrea (Figma): `$color__service-card` `#173632` and `$color__service-card-border` `#24433f`. The teal fill is the existing `$color__border-alt`.
+- **2026-10-06**
+  - Contact 2026: a third tab, **Contact form** (`contact_form` group: title, content, form picker). It renders the CF7 multi-step form in the Figma layout (node `223:3175`). See "Contact form" under Contact 2026.
+    - New `components-2026/page/contact-form.php`, `_contact-form.scss` and `modules/contactForm.js` (called from `main.js`).
+    - New `inc/function-contact-form.php`: the ACF form picker, and on 2026 pages the Multi Step plugin's CSS and CF7's autop are off.
+    - The step labels (Service, Sector, Details) are hard-coded, because the free plugin can't rename steps. The old step icons are dropped.
+    - Andrea copies the form in CF7 as "Multi Step 2026" with the new markup, so the legacy contact page keeps its form.
+  - New colour, approved by Andrea (Figma): `$color__error` `#ff7a7a`, for form validation.
+- **2026-10-06**
+  - Contact form: the Next/Complete text is now `$color__text`. On live it was grey: the form copy inherited the original's Multi-Step Settings colours, which the plugin prints as inline styles. The buttons' colours are now `!important`, so those settings are ignored on 2026 pages.
+  - Contact form: the plugin's step message is a centred flex row (12px gap), with its icon in `$color__text-light`. See "Plugin step message".
