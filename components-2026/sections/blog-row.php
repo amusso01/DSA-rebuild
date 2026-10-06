@@ -48,7 +48,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 		<div class="blog-row__grid"><?php echo dsa_2026_blog_cards($query); ?></div>
 		<?php if ($show_all && $query->max_num_pages > 1) : ?>
 			<div class="blog-row__more">
-				<button class="btn blog-row__load" type="button" data-page="1"><?php esc_html_e('Load more'); ?></button>
+				<button class="btn blog-row__load" type="button" data-page="1"><span class="blog-row__load-label"><?php esc_html_e('Load more'); ?></span></button>
 			</div>
 		<?php endif; ?>
 	</div>

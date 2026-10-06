@@ -20,12 +20,11 @@ get_header('new'); ?>
 			continue;
 		}
 
-		$acf = function_exists('get_field');
-
+		// No variables here: templates run in the global scope (see dsa_2026_field())
 		// Hero tab: same fields as the hero_page layout, so the same component
-		get_template_part('components-2026/sections/hero-page', null, (array) ($acf ? get_field('hero') : array()));
+		get_template_part('components-2026/sections/hero-page', null, (array) dsa_2026_field('hero'));
 		// Get in touch tab: title, text, phone and email cards
-		get_template_part('components-2026/page/get-in-touch', null, (array) ($acf ? get_field('get_in_touch') : array()));
+		get_template_part('components-2026/page/get-in-touch', null, (array) dsa_2026_field('get_in_touch'));
 	endwhile;
 	?>
 </main>

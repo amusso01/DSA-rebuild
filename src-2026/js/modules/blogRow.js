@@ -12,12 +12,16 @@ export default function blogRow() {
 		if (!button || !grid) return
 
 		button.addEventListener('click', async () => {
+			if (button.classList.contains('is-loading')) return
+
 			const page = Number(button.dataset.page) + 1
 			// URL API: works with pretty (/wp-json/…) and plain (?rest_route=…) permalinks
 			const url = new URL(section.dataset.blogRest)
 			url.searchParams.set('page', page)
 
-			button.disabled = true
+			// spinner in the button (_blog-row.scss). aria-disabled, not disabled: the button keeps focus
+			button.classList.add('is-loading')
+			button.setAttribute('aria-disabled', 'true')
 			grid.setAttribute('aria-busy', 'true')
 
 			try {
@@ -39,7 +43,8 @@ export default function blogRow() {
 				// the button stays: the next click tries again
 				console.error(error)
 			} finally {
-				button.disabled = false
+				button.classList.remove('is-loading')
+				button.removeAttribute('aria-disabled')
 				grid.removeAttribute('aria-busy')
 			}
 		})

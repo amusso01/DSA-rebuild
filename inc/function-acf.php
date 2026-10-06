@@ -48,3 +48,11 @@ function dsa_2026_option($name)
 {
 	return function_exists('get_field') ? get_field($name, 'option') : null;
 }
+
+// Value of a field of the current post, or null when ACF is inactive.
+// Use it in page templates: they run in the global scope, where a variable can overwrite
+// a global (a template's $acf replaced ACF's instance and get_field() crashed).
+function dsa_2026_field($name)
+{
+	return function_exists('get_field') ? get_field($name) : null;
+}

@@ -58,7 +58,7 @@ inc/                   2026 PHP
   function-assets.php     fonts/CSS/JS on 2026 pages, dequeues legacy assets there
   function-helpers.php    dsa_2026_get_svg(), dsa_2026_password_gate()
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
-  function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option()
+  function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option(), dsa_2026_field()
   function-layout.php     Dynamic Layout 2026: A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style(); no editor on Layout + Contact 2026 pages
   function-blog.php       blog posts query + cards (dsa_2026_blog_query/cards) and the Load more REST route
 components-2026/       markup components, loaded with get_template_part()
@@ -220,7 +220,9 @@ article.blog-card
   - The focus outline is drawn on the `::after`, inside the card, because `overflow: hidden` would clip it outside.
 - **Styles** (Figma node `223:2978`, "Insight card"):
   - **Card:** `$color__main-light` background, a 1px `$color__border-alt` border, 12px radius. It's a flex column, so cards in a grid row are the same height.
-  - **Image:** `aspect-ratio: 382 / 218`, `object-fit: cover`. Figma's stroke is inside the 384px card, while the CSS border takes space, so 382 / 218 keeps the image 218px high.
+  - **Image:** a **fixed 218px high** box (Figma) on every card and every screen, with `object-fit: cover`, so it's cropped, never stretched.
+    - The height is known before the image loads, so the layout doesn't shift. Every image is the same height, whatever its ratio.
+    - It used to be `aspect-ratio`, but a tall image pushed its box taller, because the box's minimum height followed the content.
   - **Content:** padding 22px 24px 24px, `min-height: 230px`, so the card is 450px high at 1440 (1 + 218 + 230 + 1).
     - It has `margin-top: 0`, because the reset gives `article > * + *` a 1em margin.
   - **Date:** Manrope 12px, `$color__text-muted`.
@@ -619,7 +621,7 @@ section.blog-row.content-block.section-padding   [style=padding]   [data-blog-re
 			.blog-row__heading-group > h2.blog-row__title + span.blog-row__lines
 			p.blog-row__count[aria-live=polite]      "Showing <span.blog-row__shown>9</span> of 24 insights"   (Show all only)
 		.blog-row__grid                              (blog cards)
-		.blog-row__more > button.btn.blog-row__load[data-page]   (Show all, only while there are more pages)
+		.blog-row__more > button.btn.blog-row__load[data-page] > span.blog-row__load-label   (Show all, only while there are more pages)
 ```
 
 | Tab | Label | Name | Type | Notes |
@@ -644,6 +646,13 @@ section.blog-row.content-block.section-padding   [style=padding]   [data-blog-re
   - **Route:** `GET /wp-json/dsa-2026/v1/blog?page=N`. It's public and returns only published posts. The page size is fixed on the server.
   - **Response:** `{ html, shown, total, has_more }`.
   - **`modules/blogRow.js`:**
+    - **While loading:**
+      - it adds `.is-loading` and `aria-disabled="true"` to the button;
+      - the label hides but keeps its width, so the button doesn't change size;
+      - a 20px ring spins in the text colour (`::after`, `@keyframes blog-row-spin`, 0.7s);
+      - clicks are ignored until the posts arrive.
+      - It's `aria-disabled`, not `disabled`, so the button keeps keyboard focus.
+      - With reduced motion it still turns, slower (1.5s), because it's the only sign that something is loading. It overrides the reset's `!important` rule.
     - it appends the `html`;
     - it updates `.blog-row__shown`, which the `aria-live` count announces;
     - it moves focus to the first new card;
@@ -680,7 +689,8 @@ main#main.site-main.site-main--contact
 
 - **Group:** the ACF group "Contact 2026" (`acf-json/group_6ac50cfa10bbb.json`), shown under the title when Page Template is `templates-2026/page-contact-2026.php`.
 - **One tab per section, one Group field per tab** (`hero`, `get_in_touch`). `get_field('<group>')` returns the section's `$args` as they are, and both tabs can have a `title`.
-- **Template:** inside the loop, `dsa_2026_password_gate()` comes first (password form only), then one `get_template_part()` per section.
+- **Template:** inside the loop, `dsa_2026_password_gate()` comes first (password form only), then one `get_template_part()` per section, with `(array) dsa_2026_field('<group>')` as its `$args`.
+  - The template sets **no variables** (see "Page templates run in the global scope" in PHP conventions).
   - With ACF inactive, the hero falls back to Home and the page title, and Get in touch prints nothing.
 - **To add a section:**
   1. Add a tab and a Group field to the group.
@@ -764,6 +774,7 @@ section.get-in-touch.content-block
 - **Read 2026 fields with `get_field()`,** always behind a `function_exists('get_field')` check in `inc/` code.
   - The Dynamic Layout builder reads the whole flexible field once and hands each row to its section as `$args`. Sections never call `get_sub_field()` (see "Dynamic Layout 2026").
   - Fixed templates (Contact 2026) use one tab per section, holding one **Group** field: `get_field('<group>')` is that section's `$args`, and two sections can both have a `title`.
+  - **In page templates, read fields with `dsa_2026_field('name')`** (`inc/function-acf.php`): `get_field()` for the current post, or `null` with ACF inactive. It keeps the ACF check out of the template, so the template needs no variable.
 - **Options pages:**
   - Register them in `inc/function-acf.php` on `acf/init`, as children of the legacy "Options" page (`parent_slug` `acf-options`).
   - **Read options with `dsa_2026_option('name')`.**
@@ -788,6 +799,9 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
 
 - **Name files `inc/function-<topic>.php`**, the same pattern as the legacy `library/function-setup.php`, and require each one from `inc/function-dev.php`.
 - **Prefix functions with `dsa_2026_`** and asset handles with `dsa-2026`.
+- **Page templates run in the global scope.** WordPress `include`s them from `template-loader.php`, so a variable set in a template is a global and can overwrite one that WordPress or a plugin uses.
+  - **Example:** on 2026-10-06, `$acf = function_exists('get_field');` in the Contact template replaced ACF's own `$acf` instance. Every `get_field()` then died with "Call to a member function init() on bool".
+  - **Don't set variables in `templates-2026/`.** Put the logic in an `inc/` helper or in a component. Components loaded with `get_template_part()` run inside a function, so their variables are local.
 - **Code style:** tabs, `array()` and the `/*===…*/` section headers, like the legacy files.
 - **Theme support** (`add_theme_support`) and **2026 nav menu locations** (`register_nav_menus`) go in `dsa_2026_theme_support()` in `function-dev.php`, hooked on `after_setup_theme`.
 - **Custom logo is enabled.** Editors set it in Appearance > Customize > Site Identity > Logo, and templates print it with `the_custom_logo()` (or `get_custom_logo()` to get it as a string).
@@ -1065,3 +1079,16 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - The password-form guard moved into `dsa_2026_password_gate()` (`function-helpers.php`). `dsa_2026_render_sections()` and the Contact template both use it.
   - New colours, approved by Andrea (Figma): `$color__card-border` `#1f3a35`, `$color__card-icon` `#0b1f1d`, `$color__card-label` `#c9d8d5`, `$color__card-value` `#e7f9f7`.
   - `main.scss` has a new "Page components" group for `components-2026/page/`.
+- **2026-10-06**
+  - Blog card images are now a **fixed 218px** box with `object-fit: cover`, instead of `aspect-ratio`. On the live page, tall images stretched their cards. Every image is now the same height, whatever its ratio, and the layout doesn't shift while images load. Andrea confirmed the Figma value, 218px.
+- **2026-10-06**
+  - Blog row **Load more** now shows that it's loading, as Andrea asked.
+    - The label is swapped for a spinning ring inside the button, which keeps its width.
+    - The button gets `.is-loading` + `aria-disabled` (it keeps focus), and a double-click sends one request.
+    - The spinner still turns, slower, with reduced motion.
+  - The button label is now wrapped in `span.blog-row__load-label`.
+- **2026-10-06**
+  - **Fix:** Contact 2026 showed a critical error: "Call to a member function init() on bool" in ACF.
+    - **Cause:** `$acf = function_exists('get_field');` in the template. Templates run in the global scope, so it overwrote ACF's global `$acf` instance.
+    - **Fix:** the new `dsa_2026_field()` (`inc/function-acf.php`) reads the fields, and the template no longer sets any variable.
+    - The rule is now in "PHP conventions".

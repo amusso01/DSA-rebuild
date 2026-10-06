@@ -15,17 +15,18 @@
 	background-color: $color__main-light;
 }
 
-// Figma draws the 1px stroke inside the 384px card; CSS borders take space, so the image is
-// 382px wide at 1440: 382 / 218 keeps it 218px high, and the card 450px (1 + 218 + 230 + 1)
+// Fixed height on every card and screen (Figma 218px): known before the image loads, so no
+// layout shift, and every image the same height whatever its ratio. Card 450px: 1 + 218 + 230 + 1
 .blog-card__media {
-	aspect-ratio: 382 / 218;
+	flex-shrink: 0;
+	height: 218px;
 	background-color: $color__main; // shows when the post has no featured image
 }
 
 .blog-card__img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
+	object-fit: cover; // fills the 218px box, cropped, never stretched
 }
 
 .blog-card__content {

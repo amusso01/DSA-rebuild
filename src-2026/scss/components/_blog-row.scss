@@ -77,6 +77,44 @@
 	margin-top: 42px; // Figma: 34px gap + 8px
 }
 
-.blog-row__load[disabled] {
-	cursor: wait;
+// Loading (blogRow.js adds .is-loading): the label hides but keeps its width, so the button
+// doesn't change size, and a ring in the text colour spins in its place
+.blog-row__load {
+	position: relative;
+
+	&.is-loading {
+		cursor: wait;
+
+		.blog-row__load-label {
+			visibility: hidden;
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			width: 20px;
+			height: 20px;
+			margin: auto;
+			border: 2px solid currentColor;
+			border-right-color: transparent;
+			border-radius: 50%;
+			animation: blog-row-spin 0.7s linear infinite;
+		}
+	}
+
+	// the reset stops every animation for reduced motion: this one is the only sign that
+	// something is loading, so it keeps turning, slower
+	@media (prefers-reduced-motion: reduce) {
+		&.is-loading::after {
+			animation-duration: 1.5s !important;
+			animation-iteration-count: infinite !important;
+		}
+	}
+}
+
+@keyframes blog-row-spin {
+	to {
+		transform: rotate(360deg);
+	}
 }
