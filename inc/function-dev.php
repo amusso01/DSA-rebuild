@@ -19,6 +19,8 @@ require get_template_directory() . '/inc/function-navigation.php';
 require get_template_directory() . '/inc/function-acf.php';
 // Dynamic Layout 2026 template: no editor, flexible content sections renderer
 require get_template_directory() . '/inc/function-layout.php';
+// Blog: posts query, card markup, Load more REST route (Blog row section)
+require get_template_directory() . '/inc/function-blog.php';
 
 /*==================================================================================
   THEME SUPPORT

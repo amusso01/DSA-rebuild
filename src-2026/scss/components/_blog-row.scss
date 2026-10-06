@@ -1,0 +1,82 @@
+/*==================================================================================
+  BLOG ROW (components-2026/sections/blog-row.php)
+  Dynamic Layout 2026 section: title + "Showing x of y", a grid of blog cards
+  (_blog-card.scss) and Load more. Figma: DSA, node 223:2978 ("Latest insights").
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+// padding: .section-padding (_helper.scss) from the ACF sliders; these are the Figma defaults
+.blog-row {
+	--padding-top: 80px;
+	--padding-bottom: 62px;
+	background-color: $color__main;
+	color: $color__text-light;
+}
+
+/* Heading: title with the accent lines, count on the right
+/––––––––––––––––––––––––*/
+.blog-row__heading {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 24px;
+	margin-bottom: 34px;
+}
+
+// size, weight, line-height and font: base h2 in _general.scss; colour from the section
+.blog-row__lines {
+	display: flex;
+	gap: 7px;
+	margin-top: 7px;
+
+	&::before,
+	&::after {
+		content: '';
+		height: 3px;
+		border-radius: 2px;
+	}
+
+	&::before {
+		width: 42px;
+		background-color: $color__link;
+	}
+
+	&::after {
+		width: 12px;
+		background-color: $color__accent-hover;
+	}
+}
+
+.blog-row__count {
+	margin-left: auto; // stays on the right without a title too
+	color: $color__text-muted;
+	font-size: 13px;
+	line-height: normal;
+}
+
+/* Grid + Load more
+/––––––––––––––––––––––––*/
+.blog-row__grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 24px;
+
+	@include media('<tablet') {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	@include media('<phone') {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.blog-row__more {
+	display: flex;
+	justify-content: center;
+	margin-top: 42px; // Figma: 34px gap + 8px
+}
+
+.blog-row__load[disabled] {
+	cursor: wait;
+}

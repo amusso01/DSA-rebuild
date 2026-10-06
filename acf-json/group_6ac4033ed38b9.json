@@ -726,6 +726,182 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_6ac50ad935807": {
+                    "key": "layout_6ac50ad935807",
+                    "name": "blog_row",
+                    "label": "Blog row",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_6ac50ad9360b6",
+                            "label": "Options",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac50ad935807"
+                        },
+                        {
+                            "key": "field_6ac50ad9367ed",
+                            "label": "Padding top",
+                            "name": "padding_top",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 80,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac50ad935807"
+                        },
+                        {
+                            "key": "field_6ac50ad936f4f",
+                            "label": "Padding bottom",
+                            "name": "padding_bottom",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 62,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac50ad935807"
+                        },
+                        {
+                            "key": "field_6ac50ad9376b4",
+                            "label": "Show all posts",
+                            "name": "show_all",
+                            "aria-label": "",
+                            "type": "true_false",
+                            "instructions": "On: the latest posts, 9 at a time, with Load more and the count. Off: only the posts you pick.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "",
+                            "default_value": 1,
+                            "allow_in_bindings": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": "",
+                            "ui": 1,
+                            "parent_layout": "layout_6ac50ad935807"
+                        },
+                        {
+                            "key": "field_6ac50ad937e19",
+                            "label": "Posts",
+                            "name": "posts",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "Pick the posts to show, in order (drag to reorder). No Load more and no count.",
+                            "required": 0,
+                            "conditional_logic": [
+                                [
+                                    {
+                                        "field": "field_6ac50ad9376b4",
+                                        "operator": "!=",
+                                        "value": "1"
+                                    }
+                                ]
+                            ],
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "post"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": "",
+                            "return_format": "id",
+                            "multiple": 1,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_layout": "layout_6ac50ad935807"
+                        },
+                        {
+                            "key": "field_6ac50ad938525",
+                            "label": "Content",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac50ad935807"
+                        },
+                        {
+                            "key": "field_6ac50ad938c92",
+                            "label": "Title",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Rendered as an H2, with the accent lines under it. Leave empty for no title.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "Latest",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_layout": "layout_6ac50ad935807"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
             "min": "",
@@ -754,5 +930,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791284034
+    "modified": 1791298265
 }

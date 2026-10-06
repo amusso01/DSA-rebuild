@@ -60,13 +60,14 @@ inc/                   2026 PHP
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
   function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option()
   function-layout.php     Dynamic Layout 2026: no editor, A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style()
+  function-blog.php       blog posts query + cards (dsa_2026_blog_query/cards) and the Load more REST route
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
-  partials/            reusable: button.php
-  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php
+  partials/            reusable: button.php, blog-card.php
+  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php
   page/                (next)
-svg-templates/         inline SVGs: arrow, chevron-down, linkedin, x, youtube, map-pin, mail, phone
+svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
 templates-2026/
   page-contact-2026.php "Contact 2026" page template (main.site-main--contact)
@@ -77,6 +78,7 @@ src-2026/
     main.js            entry: list of eager modules, init on DOM ready
     modules/           one file per component: default-export function, called from main.js
       headerNavigation.js header dropdowns, mobile panel, accordion-js submenus
+      blogRow.js       Blog row "Load more" (REST fetch, count, focus)
     utils/ready.js     DOM-ready helper
   scss/
     main.scss          entry: only @use lines (common first, then components)
@@ -87,7 +89,8 @@ src-2026/
       _general.scss    base typography: html, headings, links
       _helper.scss     layout helpers: .content-block, .content-max, .content-narrow, .section-padding, %cover…
     components/        one partial per component (mirrors components-2026/)
-      _button.scss     .btn
+      _button.scss     .btn, .btn--outline
+      _blog-card.scss  blog post card (partials/blog-card.php)
       _accordion.scss  accordion-js base styles
       _header.scss     header bar, logo, hamburger
       _navigation.scss main nav, dropdowns, mobile panel
@@ -96,6 +99,7 @@ src-2026/
       _two-column-image-text.scss  Dynamic Layout section: image + content, reverse, background colour
       _wysiwyg-editor.scss  Dynamic Layout section: editor content (h4 bar, dot lists, 12/30px rhythm)
       _introduction.scss  Dynamic Layout section: H2 left, text + two buttons right, background/text colour
+      _blog-row.scss   Dynamic Layout section: title + count, blog card grid, Load more
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -116,7 +120,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with four sections so far: Hero page, Two-column image text, WYSIWYG editor and Introduction. No public page uses `get_header('new')` yet.
+**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with five sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction and Blog row. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -196,6 +200,34 @@ get_template_part('components-2026/partials/button', null, array(
   - It's transparent, with a 1px `currentColor` border, and the text inherits the colour. On a dark section with light text, it turns light by itself.
   - Its padding is 11px 27px, so it's the same size as the filled `.btn`.
   - **Hover and focus:** it fills with `$color__link`, with `$color__main-light` text (Andrea's spec). The focus outline is `$color__link`.
+
+### Blog card (`partials/blog-card.php` + `_blog-card.scss`)
+
+A card for the **current post in the loop**. `dsa_2026_blog_cards()` renders it, for the Blog row section and its Load more. A future blog archive can reuse it too.
+
+```
+article.blog-card
+	.blog-card__media > img.blog-card__img      (featured image, medium_large, alt=""; empty $color__main box when missing)
+	.blog-card__content
+		time.blog-card__date[datetime]           (j F Y: "13 August 2026")
+		h3.blog-card__title.h5 > a.blog-card__link
+		span.blog-card__more[aria-hidden]        "Read now" + svg-arrow-right
+```
+
+- **One link per card:** the title link's `::after` covers the whole card. Screen readers hear one link, named after the title.
+  - "Read now" is visual only (`aria-hidden`).
+  - The focus outline is drawn on the `::after`, inside the card, because `overflow: hidden` would clip it outside.
+- **Styles** (Figma node `223:2978`, "Insight card"):
+  - **Card:** `$color__main-light` background, a 1px `$color__border-alt` border, 12px radius. It's a flex column, so cards in a grid row are the same height.
+  - **Image:** `aspect-ratio: 382 / 218`, `object-fit: cover`. Figma's stroke is inside the 384px card, while the CSS border takes space, so 382 / 218 keeps the image 218px high.
+  - **Content:** padding 22px 24px 24px, `min-height: 230px`, so the card is 450px high at 1440 (1 + 218 + 230 + 1).
+    - It has `margin-top: 0`, because the reset gives `article > * + *` a 1em margin.
+  - **Date:** Manrope 12px, `$color__text-muted`.
+  - **Title:** 12px below the date. The `.h5` class gives 22px; on top of that, weight 700, `line-height: 1.28`, `$color__text-light`.
+  - **Read now:** Manrope 700 14px, a 6px gap, a 15px arrow. It sits at the bottom (`margin-top: auto`), with at least 24px above it.
+  - **Hover and focus (not in Figma):** "Read now" and its arrow (`currentColor`) turn `$color__link`.
+- **Colours:** `$color__border-alt` (`#004242`, Figma "Light Alt") and `$color__text-muted` (`#667c79`) were added for this card, with Andrea's approval.
+  - Figma's count grey `#6b7b79` uses `$color__text-muted` too.
 
 ### SVGs (`svg-templates/`)
 
@@ -574,6 +606,66 @@ section.introduction.content-block[.introduction--light]   (style="background-co
   | `<phone-land` | 64px | 1 column, gap 24px |
   | `<phone` | 35px | 1 column, gap 24px |
 
+### Blog row (`sections/blog-row.php` + `_blog-row.scss`)
+
+Layout `blog_row` ("Blog row"): a grid of blog cards. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `223:2978` ("Latest insights", 1440 wide).
+
+```
+section.blog-row.content-block.section-padding   [style=padding]   [data-blog-rest="…/wp-json/dsa-2026/v1/blog", Show all only]
+	.content-max
+		.blog-row__heading                           (when there's a title or a count)
+			.blog-row__heading-group > h2.blog-row__title + span.blog-row__lines
+			p.blog-row__count[aria-live=polite]      "Showing <span.blog-row__shown>9</span> of 24 insights"   (Show all only)
+		.blog-row__grid                              (blog cards)
+		.blog-row__more > button.btn.blog-row__load[data-page]   (Show all, only while there are more pages)
+```
+
+| Tab | Label | Name | Type | Notes |
+| --- | --- | --- | --- | --- |
+| Options | Padding top (50%) | `padding_top` | range 0–100, `px` | default 80 (Figma) |
+| Options | Padding bottom (50%) | `padding_bottom` | range 0–100, `px` | default 62 (Figma) |
+| Options | Show all posts | `show_all` | true/false (switch) | default on |
+| Options | Posts | `posts` | post object, multiple, `post`, published, return ID | only when Show all is off |
+| Content | Title | `title` | text | default "Latest"; empty: no title |
+
+- **Show all on:**
+  - It shows the latest published posts, **9 at a time** (`DSA_2026_BLOG_PER_PAGE`, a fixed number, Andrea's choice).
+  - It adds the "Showing x of y insights" count and the Load more button.
+- **Show all off:** only the picked posts, in the picked order (drag to reorder). There's no count and no Load more.
+- **No posts** (none published, none picked, or only unpublished ones): the section prints nothing.
+- **Query and cards:** `inc/function-blog.php`.
+  - `dsa_2026_blog_query($page, $ids)`:
+    - with `$ids === null`, the latest posts, page `$page`;
+    - with an array, only those IDs, ordered by `post__in`. An empty array gives no posts, never every post.
+  - `dsa_2026_blog_cards($query)` returns the cards' HTML.
+- **Load more:**
+  - **Route:** `GET /wp-json/dsa-2026/v1/blog?page=N`. It's public and returns only published posts. The page size is fixed on the server.
+  - **Response:** `{ html, shown, total, has_more }`.
+  - **`modules/blogRow.js`:**
+    - it appends the `html`;
+    - it updates `.blog-row__shown`, which the `aria-live` count announces;
+    - it moves focus to the first new card;
+    - it removes the button when `has_more` is false;
+    - on an error, the button stays and the next click retries.
+  - The URL is built with the URL API, so plain permalinks (`?rest_route=`) work too.
+  - Each Blog row on a page works on its own.
+- **Padding:** `.section-padding` with the sliders. The section's defaults are on its class (`--padding-top: 80px; --padding-bottom: 62px`), and they scale down like every slider.
+- **Styles:**
+  - **Section:** `$color__main` background, `$color__text-light` text.
+  - **Heading:**
+    - flex, `space-between`, `align-items: end`, wrapping, 34px above the grid;
+    - the title is the base h2;
+    - the lines are 42×3 `$color__link` + 12×3 `$color__accent-hover`, with a 2px radius, a 7px gap and 7px under the title;
+    - the count is Manrope 13px, `$color__text-muted`, and stays on the right (`margin-left: auto`).
+  - **Load more:** the `.btn`, centred, 42px under the grid (Figma 34 + 8).
+  - **Grid:** 24px gap.
+
+    | Width | Columns |
+    | --- | --- |
+    | Base (desktop) | 3 (384px cards at 1440, as in Figma) |
+    | `<tablet` | 2 |
+    | `<phone` | 1 |
+
 ## ACF fields (`acf-json/`)
 
 - ACF saves every field group as JSON in `acf-json/`, which it detects automatically in the theme. Commit these files.
@@ -860,3 +952,15 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - `.section-padding` in `_helper.scss`: inline `--padding-top` / `--padding-bottom`, scaled by 64/76 `<tablet` and 35/76 `<phone`;
     - `dsa_2026_section_padding_style()` in `inc/function-layout.php`.
   - `.wysiwyg-editor` no longer sets `padding-block`, and its default spacing is unchanged (verified 76 / 64 / 35).
+- **2026-10-06**
+  - Fifth Dynamic Layout section, **Blog row**: layout `blog_row`, `components-2026/sections/blog-row.php` and `_blog-row.scss`. Figma node `223:2978`.
+    - **Options tab:**
+      - padding sliders (default 80 / 62);
+      - **Show all posts**: the latest 9, then Load more and the count;
+      - when it's off, a **Posts** post object picker, with no Load more and no count.
+    - **Content tab:** the title ("Latest").
+  - New reusable **blog card**: `components-2026/partials/blog-card.php` + `_blog-card.scss`.
+  - New `inc/function-blog.php`, with the query, the cards and the REST route `dsa-2026/v1/blog`. It's required from `function-dev.php`.
+  - New `src-2026/js/modules/blogRow.js` (Load more), called from `main.js`.
+  - New icon `svg-arrow-right` (Figma asset, `currentColor` stroke).
+  - New colours, approved by Andrea: `$color__border-alt` `#004242` and `$color__text-muted` `#667c79`.

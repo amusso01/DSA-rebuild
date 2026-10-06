@@ -1,0 +1,91 @@
+/*==================================================================================
+  BLOG CARD (components-2026/partials/blog-card.php)
+  Post card: image, date, title, "Read now". The title link covers the card.
+  Figma: DSA, node 223:2978 ("Insight card").
+==================================================================================*/
+@use '../common/variables' as *;
+
+.blog-card {
+	position: relative; // the title link's ::after covers the card
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid $color__border-alt;
+	border-radius: 12px;
+	background-color: $color__main-light;
+}
+
+// Figma draws the 1px stroke inside the 384px card; CSS borders take space, so the image is
+// 382px wide at 1440: 382 / 218 keeps it 218px high, and the card 450px (1 + 218 + 230 + 1)
+.blog-card__media {
+	aspect-ratio: 382 / 218;
+	background-color: $color__main; // shows when the post has no featured image
+}
+
+.blog-card__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.blog-card__content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 230px; // card 450px high at 1440, as in Figma (232 minus the border)
+	margin-top: 0; // the reset's article > * + * { margin-top: 1em }
+	padding: 22px 24px 24px;
+}
+
+.blog-card__date {
+	color: $color__text-muted;
+	font-size: 12px;
+	line-height: normal;
+}
+
+// size: .h5 (22px) in _general.scss
+.blog-card__title {
+	margin-top: 12px;
+	color: $color__text-light;
+	font-weight: 700;
+	line-height: 1.28;
+}
+
+.blog-card__link {
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 11px; // inside the card's 1px border
+	}
+
+	// on the ::after, inside the card: overflow: hidden would clip an outline outside it
+	&:focus-visible::after {
+		outline: 2px solid $color__link;
+		outline-offset: -2px;
+	}
+}
+
+.blog-card__more {
+	display: inline-flex;
+	align-self: flex-start;
+	align-items: center;
+	gap: 6px;
+	margin-top: auto; // pinned to the bottom of the card
+	padding-top: 24px;
+	color: $color__text-light;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: normal;
+	transition: color 0.25s ease;
+
+	svg {
+		flex-shrink: 0;
+	}
+}
+
+// not in Figma: "Read now" and its arrow (currentColor) turn teal
+.blog-card:hover .blog-card__more,
+.blog-card:focus-within .blog-card__more {
+	color: $color__link;
+}

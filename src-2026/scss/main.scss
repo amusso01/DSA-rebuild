@@ -10,9 +10,11 @@
 @use 'components/header';
 @use 'components/navigation';
 @use 'components/footer';
+@use 'components/blog-card';
 
 // Sections (Dynamic Layout 2026, components-2026/sections/)
 @use 'components/hero-page';
 @use 'components/two-column-image-text';
 @use 'components/wysiwyg-editor';
 @use 'components/introduction';
+@use 'components/blog-row';
