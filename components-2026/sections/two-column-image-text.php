@@ -2,13 +2,14 @@
 /**
  * Section: two-column image text (layout two_column_image_text in Dynamic Layout 2026).
  * Image + content (eyebrow, H2 title, text, optional button) side by side.
- * Options: background colour, reverse (content first). Rendered by dsa_2026_render_sections().
+ * Options: background colour, text colour, reverse (content first). Rendered by dsa_2026_render_sections().
  *
  * @package FDRY
  */
 
 $args = wp_parse_args($args, array(
 	'background_color' => '',      // hex; empty or invalid: $color__main from the SCSS
+	'text_color'       => 'light', // light | dark (dark: for light backgrounds)
 	'grid_reverse'     => false,   // true: content, then image
 	'eyebrow'          => '',
 	'title'            => '',      // textarea (new lines → <br>); <span class="accent"> highlights
@@ -19,7 +20,9 @@ $args = wp_parse_args($args, array(
 ));
 
 $bg      = sanitize_hex_color($args['background_color']);
-$classes = 'two-column-image-text content-block' . ($args['grid_reverse'] ? ' two-column-image-text--reverse' : '');
+$classes = 'two-column-image-text content-block'
+	. ($args['grid_reverse'] ? ' two-column-image-text--reverse' : '')
+	. ($args['text_color'] === 'dark' ? ' two-column-image-text--dark' : '');
 ?>
 <section class="<?php echo esc_attr($classes); ?>"<?php if ($bg) : ?> style="background-color: <?php echo esc_attr($bg); ?>"<?php endif; ?>>
 	<div class="content-max">

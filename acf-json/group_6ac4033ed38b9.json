@@ -203,7 +203,7 @@
                             "name": "background_color",
                             "aria-label": "",
                             "type": "color_picker",
-                            "instructions": "Default #091C1E. The text stays light, so pick a dark colour (e.g. #122C29).",
+                            "instructions": "Default #091C1E. Match it with Text color: Light on dark backgrounds, Dark on light ones.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -215,6 +215,36 @@
                             "enable_transparency": 0,
                             "return_format": "string",
                             "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac40d3d9259e"
+                        },
+                        {
+                            "key": "field_6ac4b61215f04",
+                            "label": "Text color",
+                            "name": "text_color",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "Light (default) for dark backgrounds, Dark for light ones. Highlighted words, the eyebrow and the button keep their colours.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "light": "Light",
+                                "dark": "Dark"
+                            },
+                            "default_value": "light",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "create_options": 0,
+                            "save_options": 0,
                             "parent_layout": "layout_6ac40d3d9259e"
                         },
                         {
@@ -500,5 +530,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791234610
+    "modified": 1791276562
 }

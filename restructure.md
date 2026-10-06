@@ -393,7 +393,7 @@ Layout `two_column_image_text` ("Two-column image text"). Figma: file `ZaphlvDdg
 - node `223:3278`: reversed, `#122C29`, with a button.
 
 ```
-section.two-column-image-text.content-block[.two-column-image-text--reverse]   (style="background-color: …")
+section.two-column-image-text.content-block[.two-column-image-text--reverse][.two-column-image-text--dark]   (style="background-color: …")
 	.content-max > .two-column-image-text__inner                  (grid 1fr 1fr)
 		.two-column-image-text__media > img.two-column-image-text__img
 		.two-column-image-text__content
@@ -403,6 +403,7 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse]   (
 | Tab | Label | Name | Type | Notes |
 | --- | --- | --- | --- | --- |
 | Options | Background color (50%) | `background_color` | color picker | default `#091C1E` |
+| Options | Text color (50%) | `text_color` | select `light` / `dark` | default `light` |
 | Options | Image layout grid reverse (50%) | `grid_reverse` | true/false | off: image, content. On: content, image |
 | Content | Eyebrow | `eyebrow` | text | optional |
 | Content | Content title | `title` | textarea (new lines → `<br>`) | always an `<h2>` |
@@ -413,7 +414,11 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse]   (
 - **Background:**
   - **Valid colour:** it's printed as an inline `style`, after `sanitize_hex_color()`.
   - **Empty or invalid colour:** the SCSS default `$color__main` applies.
-  - The text always stays `$color__text-light`, so editors should pick dark colours.
+- **Text color:** pair it with the background.
+  - **Light** (default): `$color__text-light`, for dark backgrounds.
+  - **Dark:** adds `.two-column-image-text--dark`, which sets `$color__text`, for light backgrounds.
+  - The colour is set on the section, and the title and text inherit it.
+  - The accent span, eyebrow, WYSIWYG links and button keep their own colours.
 - **Reverse:** it only changes the visual order (CSS `order`). The DOM is always image, then content. In one column (below `phone-land`) the image is always on top.
 - **Title:**
   - It goes through `wp_kses()`, which keeps only `<span class>` and `<br>`.
@@ -760,3 +765,8 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - Figma's "H3" text style (26px) is our h4: Figma's heading names are one level off, so the global type scale stays and is the reference.
   - The global `h3`…`h6` (and `.h3`…`.h6`) in `_general.scss` now have `font-weight: 400; line-height: 1.3` (Figma heading style). Sizes are unchanged.
   - Phone padding (`<phone`) is now 35px instead of 48px: Two-column image text, and the dark footer's top (`35px 0 32px`).
+- **2026-10-06**
+  - Two-column image text: a new **Text color** option (`text_color`, Options tab, next to Background color).
+    - Light is the default. Dark adds `--dark`, which sets `$color__text` (`#122c29`) on the section.
+    - The accent, eyebrow, links and button are unchanged.
+  - `__title` and `__text` no longer set their own colour. They inherit it from the section.

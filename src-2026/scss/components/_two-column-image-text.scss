@@ -20,6 +20,12 @@
 	}
 }
 
+// Text color "dark" (ACF): title and text, for light backgrounds.
+// Accent, eyebrow, links and button keep their own colours.
+.two-column-image-text--dark {
+	color: $color__text;
+}
+
 .two-column-image-text__inner {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -85,10 +91,8 @@
 	}
 }
 
-// size, weight, line-height and font: base h2 in _general.scss
+// size, weight, line-height and font: base h2 in _general.scss; colour from the section
 .two-column-image-text__title {
-	color: $color__text-light;
-
 	// editors wrap words in <span class="accent"> to highlight them
 	.accent {
 		color: $color__link;
@@ -96,8 +100,7 @@
 }
 
 .two-column-image-text__text {
-	// Manrope 16px 400 from html; paragraphs have no gap, as in Figma (reset)
-	color: $color__text-light;
+	// Manrope 16px 400 from html, colour from the section; paragraphs have no gap, as in Figma (reset)
 	line-height: 1.6;
 
 	ul,
