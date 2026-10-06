@@ -4,6 +4,7 @@
   Figma: DSA, node 223:3103 (its "H3" style is our h4: accent bar, dot list).
 ==================================================================================*/
 @use '../common/variables' as *;
+@use '../common/editor-content' as *;
 
 // padding: .section-padding (_helper.scss), from the ACF sliders (default 76 / 64 / 35)
 .wysiwyg-editor {
@@ -11,82 +12,8 @@
 	color: $color__text-light;
 }
 
-/* Content: Manrope 16px from html, heading sizes/weights from _general.scss
+/* Content: the shared editor styles (common/_editor-content.scss), also used by blog posts
 /––––––––––––––––––––––––*/
 .wysiwyg-editor__content {
-	line-height: 1.6;
-
-	// rhythm, all margin-top: 12px after any block (p+p, h+p, p/h+list, list+p),
-	// 30px before any heading that follows something (h+h, p+h, list+h)
-	> * + * {
-		margin-top: 12px;
-	}
-	> * + :is(h1, h2, h3, h4, h5, h6) {
-		margin-top: 30px;
-	}
-
-	// accent bar before the text. Inline, not flex: inline tags inside the heading stay
-	// in one line and the editor's text-align still works. Centred on the first line (h4 line-height 1.3)
-	h4::before {
-		content: '';
-		display: inline-block;
-		width: 4px;
-		height: 28px;
-		margin-top: calc((1.3em - 28px) / 2);
-		margin-right: 12px;
-		vertical-align: top;
-		border-radius: 2px;
-		background-color: $color__link;
-	}
-
-	ul,
-	ol {
-		// no font rules: li inherits the same text as p (Manrope 16px 400, line-height 1.6)
-		li + li {
-			margin-top: 12px;
-		}
-
-		// nested list
-		li > ul,
-		li > ol {
-			margin-top: 12px;
-		}
-	}
-
-	ul {
-		list-style: none;
-		padding: 0;
-
-		> li {
-			position: relative;
-			padding-left: 24px; // 14px dot + 10px gap
-
-			// dot, centred on the first line (line-height 1.6, as p)
-			&::before {
-				content: '';
-				position: absolute;
-				top: calc((1.6em - 14px) / 2);
-				left: 0;
-				width: 14px;
-				height: 14px;
-				border-radius: 50%; // Figma 11px on 14px: a full circle
-				background-color: $color__link;
-			}
-		}
-	}
-
-	ol {
-		padding-left: 1.25em; // the reset zeroes it, numbers would hang outside
-	}
-
-	a {
-		color: $color__link;
-		text-decoration: underline;
-		text-underline-offset: 2px;
-
-		&:focus-visible {
-			outline: 2px solid $color__link;
-			outline-offset: 2px;
-		}
-	}
+	@include editor-content;
 }

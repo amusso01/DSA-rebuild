@@ -23,3 +23,6 @@
 // Page components (components-2026/page/)
 @use 'components/get-in-touch';
 @use 'components/contact-form';
+
+// Pages: legacy templates on header-new, styled on their own markup
+@use 'pages/single-post';

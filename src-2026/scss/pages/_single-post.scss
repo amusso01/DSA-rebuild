@@ -1,0 +1,195 @@
+/*==================================================================================
+  SINGLE POST (single.php: legacy markup on header-new)
+  Blog posts in the 2026 style: dark page, 2026 type, Gutenberg blocks.
+  Only in the 2026 CSS, so nothing changes until single.php calls get_header('new').
+  single.php (untouched): section#primary.content-area > main#main.site-main > h1 + the_content()
+  Not in Figma: 2026 tokens + the editor styles of the WYSIWYG section (Figma 223:3103).
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+@use '../common/helper';
+@use '../common/editor-content' as *;
+@use '../components/button';
+
+// blocks spaced like headings: 30px before and after
+$blocks: 'figure, blockquote, hr, .wp-block-image, .wp-block-columns, .wp-block-buttons, .wp-block-group, .wp-block-media-text, .wp-block-cover';
+
+// .single-post: WordPress body class on blog posts only (projects get .single-project)
+.single-post {
+	// full width: this page's .content-block (gutter) and .section-padding (76 / 64 / 35)
+	.content-area {
+		@extend .content-block;
+		@extend .section-padding;
+		background-color: $color__main;
+		color: $color__text-light;
+	}
+
+	// the text column: this page's .content-narrow (960 / 800)
+	.site-main {
+		@extend .content-narrow;
+		@include editor-content;
+
+		// block-library adds margin-bottom (.wp-block-image 1em, columns 1.75em…): the rhythm is margin-top only
+		> * {
+			margin-bottom: 0;
+		}
+
+		// :where(): stays weaker than h1 + * below
+		> * + :where(#{$blocks}),
+		> :where(#{$blocks}) + * {
+			margin-top: 30px;
+		}
+
+		// the post title (single.php): the 2026 H1, as the hero title. Size: the global h1 scale
+		> h1 {
+			font-weight: 400;
+			line-height: 1.05;
+
+			+ * {
+				margin-top: 40px;
+
+				@include media('<phone') {
+					margin-top: 30px;
+				}
+			}
+		}
+
+		// the reset's ol[class] drops the numbers of Gutenberg's ol.wp-block-list
+		ol {
+			list-style: decimal;
+		}
+
+		// Columns and groups: the column's rhythm for their own blocks
+		:is(.wp-block-column, .wp-block-group, .wp-block-group__inner-container, .wp-block-media-text__content, .wp-block-cover__inner-container) {
+			> * + * {
+				margin-top: 12px;
+			}
+			> * + :is(h1, h2, h3, h4, h5, h6) {
+				margin-top: 30px;
+			}
+		}
+
+		// columns left empty in the editor would still take a gap, or blank space once stacked
+		.wp-block-column:empty {
+			display: none;
+		}
+
+		// Images
+		img {
+			height: auto;
+		}
+
+		.wp-block-image:not(.is-style-rounded) img {
+			border-radius: 12px; // as every 2026 image
+		}
+
+		figcaption {
+			margin: 12px 0 0;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+
+		// Quote, table, separator
+		.wp-block-quote {
+			padding-left: 24px;
+			border-left: 4px solid $color__link;
+
+			> * + * {
+				margin-top: 12px;
+			}
+
+			cite {
+				display: block;
+				font-size: 14px;
+				font-style: normal;
+			}
+		}
+
+		.wp-block-table {
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+
+			th,
+			td {
+				padding: 12px 16px;
+				border: 1px solid $color__border-alt;
+				vertical-align: top;
+			}
+
+			th {
+				font-weight: 700;
+			}
+
+			// block-library: 3px currentColor borders
+			thead {
+				border-bottom: 0;
+				background-color: $color__main-light;
+			}
+
+			tfoot {
+				border-top: 0;
+			}
+
+			// block-library stripes are #f0f0f0: unreadable with light text
+			&.is-style-stripes {
+				border-bottom: 0;
+
+				tbody tr:nth-child(odd) {
+					background-color: $color__main-light;
+				}
+			}
+		}
+
+		// the dots style keeps block-library's own rules
+		hr:not(.is-style-dots) {
+			height: 0;
+			border: 0;
+			border-top: 1px solid $color__border-alt;
+			opacity: 1;
+		}
+
+		// Buttons and embeds
+		.wp-block-buttons {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		// the 2026 .btn instead of classic-theme's grey pill
+		.wp-block-button__link {
+			@extend .btn;
+		}
+
+		.is-style-outline > .wp-block-button__link {
+			@extend .btn--outline;
+		}
+
+		iframe {
+			max-width: 100%;
+		}
+
+		// the theme has no responsive-embeds support: iframes keep their 560 × 315 attributes
+		.wp-block-embed.is-type-video iframe {
+			display: block;
+			width: 100%;
+			height: auto;
+			aspect-ratio: 16 / 9;
+		}
+
+		// Editor colours
+		// Old posts were written for the white legacy page: a colour picked in the editor could be
+		// unreadable on $color__main. Palette classes print with !important (global styles) and
+		// custom colours inline, so !important is the only way back to the 2026 colours.
+		:is(.has-text-color, .has-inline-color):not(.wp-block-button__link) {
+			color: inherit !important;
+		}
+
+		.has-background:not(.wp-block-button__link) {
+			background: none !important;
+		}
+	}
+}

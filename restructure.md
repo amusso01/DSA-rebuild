@@ -90,6 +90,9 @@ src-2026/
       _media.scss      include-media + breakpoints (single source of truth)
       _general.scss    base typography: html, headings, links
       _helper.scss     layout helpers: .content-block, .content-max, .content-narrow, .section-padding, %cover…
+      _editor-content.scss  mixin editor-content: editor rich text (rhythm, h4 bar, dot lists, links), WYSIWYG section + blog posts
+    pages/             styles for legacy templates on header-new, written for their own markup
+      _single-post.scss  blog posts (single.php): dark page, 2026 type, Gutenberg blocks
     components/        one partial per component (mirrors components-2026/)
       _button.scss     .btn, .btn--outline
       _blog-card.scss  blog post card (partials/blog-card.php)
@@ -125,7 +128,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero, a Get in touch and a Contact form section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with six sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row and Service cards. No public page uses `get_header('new')` yet.
+**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero, a Get in touch and a Contact form section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with six sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row and Service cards. No public page uses `get_header('new')` yet. Blog post styles are ready for `single.php`, waiting for its switch (see "Blog posts").
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -547,6 +550,7 @@ section.wysiwyg-editor.content-block
   - Sizes, weight and line-height come from the global `h2`…`h6` in `_general.scss`. The section doesn't redeclare them.
   - **Figma's "H3" text style (26px) is our h4.** Figma's heading names are one level off; the global scale is the reference.
 - **Styles:**
+  - **Shared with blog posts:** everything from "Text" to "Rhythm" is the `editor-content` mixin (`common/_editor-content.scss`). `.wysiwyg-editor__content` includes it, and so does the blog post column. Change it there, and both follow.
   - **Section:** `$color__main` background, `$color__text-light` text.
   - **Text:** Manrope 16px 400, `line-height: 1.6`.
   - **h4:** an accent bar before the text: 4 × 28px, 2px radius, `$color__link`, 12px before the text.
@@ -945,6 +949,52 @@ None of this loads on 2026 pages: their legacy CSS and JS are dequeued, and `[pr
 - `dist/styles/map/_form.scss` holds the multistep styles.
 - The legacy form shows its red hints as static `<p style="color:red">` lines.
 
+## Blog posts (`single.php`, `pages/_single-post.scss`)
+
+Blog posts are written in Gutenberg and rendered by the **legacy** `single.php`. Their 2026 look is styled on that template's own markup, so the switch-over is two lines in `single.php`. There's no new template and no component.
+
+```
+body.single-post                                  (WordPress body class: blog posts only, projects get .single-project)
+	section#primary.content-area.page-area        full width: .content-block + .section-padding (@extend), $color__main
+		main#main.site-main.container.second      the text column: .content-narrow (@extend) + the editor-content mixin
+			h1                                    the post title (single.php)
+			…blocks (the_content())               p.wp-block-paragraph, h2–h6.wp-block-heading, ul/ol.wp-block-list, figure.wp-block-image, div.wp-block-columns…
+```
+
+- **Nothing changes on live until the switch.** The styles are in the 2026 CSS, which only loads with `get_header('new')`.
+- **Switch-over (Andrea, legacy file):** in `single.php`, `get_header()` → `get_header('new')` and `get_footer()` → `get_footer('new')`.
+  - Without the footer change, the legacy footer prints unstyled.
+  - The 2026 footer has no Instagram strip, unlike the legacy one.
+  - `.container` and `.second` have no 2026 styles: Bootstrap and the legacy CSS are dequeued there.
+- **Layout:** `@extend` of the helpers, so the values stay in `_helper.scss`:
+  - `.content-area` gets the gutter (120/80/48/25) and the padding (76/64/35);
+  - `.site-main` is the 960px column (800px below `desktop`).
+- **Text:** the `editor-content` mixin (`common/_editor-content.scss`), the same as the WYSIWYG editor section: Manrope 16px / 1.6, the 12px / 30px rhythm, dot lists, the h4 bar, and `$color__link` underlined links.
+- **Title:** the hero title's H1. It follows the global h1 scale (54px, ×0.9, ×0.75), in Titillium 400 with `line-height: 1.05`, 40px above the content (30px `<phone`).
+- **Headings:** the global scale and weight. A `<strong>` the editor put in a heading stays bold (Titillium 700), Andrea's choice. Old posts wrap whole headings in it.
+- **Gutenberg blocks** (not in Figma, built from the 2026 tokens):
+  - **Rhythm:** 30px before and after media-like blocks (figure, quote, separator, image, columns, buttons, group, media-text, cover). Block-library's `margin-bottom`s are reset.
+    - Columns, groups, media-text and cover content repeat the 12px / 30px rhythm.
+    - **Empty columns** are hidden (`:empty`). The example post has three, which would add gaps.
+  - **Lists:** `ol` gets its numbers back. The reset's `ol[class]` removed them from `ol.wp-block-list`. Consecutive one-item lists read as one list.
+  - **Images:** `height: auto`, 12px radius (except `.is-style-rounded`). Captions are 14px / 1.5, 12px above.
+  - **Quote:** a 4px `$color__link` left bar, 24px padding, `cite` 14px.
+  - **Table:** 14px, 12px 16px cells, 1px `$color__border-alt` borders, `$color__main-light` header. Stripes are `$color__main-light`, because WP's `#f0f0f0` is unreadable with light text.
+  - **Separator:** a 1px `$color__border-alt` line. The dots style keeps WP's rules.
+  - **Buttons:** `.wp-block-button__link` `@extend .btn`, and the outline style extends `.btn--outline`. This replaces classic-theme's grey pill.
+  - **Embeds:** video iframes are 100% wide at 16:9 (the theme has no `responsive-embeds`).
+- **Editor colours, a safety net:** old posts were written for the white legacy page.
+  - Inside the post, `.has-text-color` / `.has-inline-color` → `color: inherit !important` and `.has-background` → `background: none !important` (buttons excluded).
+  - `!important` is needed because WP prints palette classes with `!important` and custom colours inline.
+  - Remove the rule if editors should keep their colours.
+- **Not built:** date, author, featured image, categories. `single.php` prints none of them today.
+- **Check on real posts after the switch** (the example post, 3588, only uses lists, paragraphs, h3, links, images and columns):
+  - font-size presets (`has-*-font-size`, `!important` in WP);
+  - coloured buttons;
+  - galleries or table-of-contents lists (a `ul` gets the dots);
+  - custom HTML using legacy classes (`.container-video`).
+- **Testing:** the live site's firewall blocks scripted requests (HTTP 425/403). To test real markup, paste the page source, and test it on a local `file://` page with `dist-2026/main.css` and WP's block-library CSS.
+
 ## ACF fields (`acf-json/`)
 
 - ACF saves every field group as JSON in `acf-json/`, which it detects automatically in the theme. Commit these files.
@@ -999,6 +1049,8 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
 
 - Use the module system, `@use`/`@forward`. **Never `@import`**, which is deprecated in Dart Sass.
 - **New partial:** create `_name.scss` in the right folder, then add `@use 'folder/name';` to `main.scss`.
+- **Shared mixins** go in `common/` (e.g. `_editor-content.scss`). They output nothing, so they aren't in `main.scss`: the partials that need them `@use` them.
+- **Legacy markup on header-new** (`pages/`): reuse the helpers with `@extend .content-block` etc. (and `@use '../common/helper'`), so their values aren't copied.
 - **Each partial pulls in only what it needs:**
   - Inside `common/`: `@use 'variables' as *;` and `@use 'media' as *;`
   - Elsewhere: `@use '../common/variables' as *;` and `@use '../common/media' as *;`
@@ -1291,3 +1343,12 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
 - **2026-10-06**
   - Contact form: the Next/Complete text is now `$color__text`. On live it was grey: the form copy inherited the original's Multi-Step Settings colours, which the plugin prints as inline styles. The buttons' colours are now `!important`, so those settings are ignored on 2026 pages.
   - Contact form: the plugin's step message is a centred flex row (12px gap), with its icon in `$color__text-light`. See "Plugin step message".
+- **2026-10-06**
+  - **Blog posts** in the 2026 style, for the legacy `single.php` once it calls `get_header('new')` / `get_footer('new')` (Andrea's switch). See "Blog posts".
+    - The new `pages/_single-post.scss` is written on `single.php`'s own markup and scoped by `body.single-post`:
+      - a dark page, the 960px column and the hero H1;
+      - Gutenberg blocks: lists, images, columns (empty ones hidden), quote, table, separator, buttons, embeds;
+      - a safety net for old editor colours.
+    - Andrea chose to style today's `single.php` rather than add a post template. Headings wrapped in `<strong>` stay bold (Titillium 700).
+  - The WYSIWYG editor's content styles moved verbatim into the `editor-content` mixin (`common/_editor-content.scss`), shared with blog posts. The compiled CSS is unchanged.
+  - New folder `src-2026/scss/pages/` for legacy templates on header-new. It reuses the helpers with `@extend`.
