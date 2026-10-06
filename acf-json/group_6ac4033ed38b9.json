@@ -502,6 +502,184 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_6ac4c592da74c": {
+                    "key": "layout_6ac4c592da74c",
+                    "name": "introduction",
+                    "label": "Introduction",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_6ac4c592dae6e",
+                            "label": "Options",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6ac4c592db5de",
+                            "label": "Background color",
+                            "name": "background_color",
+                            "aria-label": "",
+                            "type": "color_picker",
+                            "instructions": "Default #F3F3F1. Pair it with the text colour.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "#F3F3F1",
+                            "enable_transparency": 0,
+                            "return_format": "string",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6ac4c592dbd78",
+                            "label": "Text color",
+                            "name": "text_color",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "Dark (default) for light backgrounds, Light for dark ones. Highlighted words, links and the primary button keep their colours.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "dark": "Dark",
+                                "light": "Light"
+                            },
+                            "default_value": "dark",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "create_options": 0,
+                            "save_options": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6ac4c592dc509",
+                            "label": "Content",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6ac4c592dcca8",
+                            "label": "Title",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "textarea",
+                            "instructions": "Rendered as an H2, in the left column. To highlight words, wrap them in &lt;span class=\"accent\"&gt;…&lt;/span&gt;.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "rows": 2,
+                            "placeholder": "",
+                            "new_lines": "br",
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6ac4c592dd443",
+                            "label": "Content",
+                            "name": "content",
+                            "aria-label": "",
+                            "type": "wysiwyg",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "allow_in_bindings": 0,
+                            "tabs": "all",
+                            "toolbar": "basic",
+                            "media_upload": 0,
+                            "delay": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6ac4c592ddbf2",
+                            "label": "Primary button",
+                            "name": "button_primary",
+                            "aria-label": "",
+                            "type": "link",
+                            "instructions": "Optional: filled button.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6ac4c592de38f",
+                            "label": "Secondary button",
+                            "name": "button_secondary",
+                            "aria-label": "",
+                            "type": "link",
+                            "instructions": "Optional: outline button.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
             "min": "",
@@ -530,5 +708,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791276562
+    "modified": 1791280530
 }

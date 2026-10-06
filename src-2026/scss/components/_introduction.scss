@@ -1,0 +1,88 @@
+/*==================================================================================
+  INTRODUCTION (components-2026/sections/introduction.php)
+  Dynamic Layout 2026 section: H2 title on the left, text and buttons on the right,
+  optional background and text colour. Figma: DSA, node 223:3244 ("Methods introduction").
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+.introduction {
+	// only top/bottom: the sides come from .content-block
+	padding-block: 86px;
+	background-color: $color__text-light; // default; the ACF colour is an inline style
+	color: $color__text;
+
+	@include media('<tablet') {
+		padding-block: 64px;
+	}
+	@include media('<phone') {
+		padding-block: 35px;
+	}
+}
+
+// Text color "light" (ACF): title, text and outline button, for dark backgrounds.
+// Accent, links and the filled button keep their own colours.
+.introduction--light {
+	color: $color__text-light;
+}
+
+.introduction__inner {
+	display: grid;
+	grid-template-columns: 480px minmax(0, 1fr); // Figma: title column 480px
+	align-items: start;
+	gap: 64px;
+
+	@include media('<tablet') {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 48px;
+	}
+	@include media('<phone-land') {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 24px;
+	}
+}
+
+// size, weight, line-height and font: base h2 in _general.scss; colour from the section
+.introduction__title {
+	// editors wrap words in <span class="accent"> to highlight them
+	.accent {
+		color: $color__link;
+	}
+}
+
+/* Summary: text, then buttons
+/––––––––––––––––––––––––*/
+.introduction__summary {
+	// margins instead of gap: a missing text or button row leaves no hole
+	> * + * {
+		margin-top: 24px;
+	}
+}
+
+.introduction__text {
+	// Manrope 16px 400 from html, colour from the section; paragraphs have no gap, as in Figma (reset)
+	max-width: 580px;
+	line-height: 1.6;
+
+	ul,
+	ol {
+		padding-left: 1.25em; // the reset zeroes it, bullets would hang outside
+	}
+
+	a {
+		color: $color__link;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+
+		&:focus-visible {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+}
+
+.introduction__buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}

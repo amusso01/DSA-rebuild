@@ -35,3 +35,28 @@
 		outline-offset: 2px;
 	}
 }
+
+// Outline: transparent, 1px border in the text colour (follows the section's text colour).
+// Padding 1px less on each side, so it's the same size as the filled .btn.
+.btn--outline {
+	padding: 11px 27px;
+	border: 1px solid currentColor;
+	background-color: transparent;
+	color: inherit;
+	transition:
+		background-color 0.25s ease,
+		border-color 0.25s ease,
+		color 0.25s ease;
+
+	// Andrea: fills with $color__link (teal text on the light grey would be unreadable)
+	&:hover,
+	&:focus-visible {
+		border-color: $color__link;
+		background-color: $color__link;
+		color: $color__main-light;
+	}
+
+	&:focus-visible {
+		outline-color: $color__link;
+	}
+}

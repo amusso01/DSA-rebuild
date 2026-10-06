@@ -42,6 +42,24 @@ function dsa_2026_layout_no_classic_editor()
 }
 
 /*==================================================================================
+  ADD SECTION MENU
+==================================================================================*/
+// "Add section" lists the layouts in the order they're stored: sort them by label, so it's
+// always alphabetical, new layouts included. Only the menu changes: saved rows keep their order.
+add_filter('acf/load_field/name=page_sections', 'dsa_2026_sort_section_layouts');
+
+function dsa_2026_sort_section_layouts($field)
+{
+	if (!empty($field['layouts'])) {
+		uasort($field['layouts'], function ($a, $b) {
+			return strnatcasecmp($a['label'], $b['label']);
+		});
+	}
+
+	return $field;
+}
+
+/*==================================================================================
   SECTIONS
 ==================================================================================*/
 // Render every row of page_sections, in order. Call it inside the loop.

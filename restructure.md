@@ -59,12 +59,12 @@ inc/                   2026 PHP
   function-helpers.php    dsa_2026_get_svg()
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
   function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option()
-  function-layout.php     Dynamic Layout 2026: no editor + dsa_2026_render_sections()
+  function-layout.php     Dynamic Layout 2026: no editor, A–Z "Add section" menu, dsa_2026_render_sections()
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php
-  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php
+  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php
   page/                (next)
 svg-templates/         inline SVGs: arrow, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
@@ -95,6 +95,7 @@ src-2026/
       _hero-page.scss  Dynamic Layout section: hero page (breadcrumb, title, accent lines)
       _two-column-image-text.scss  Dynamic Layout section: image + content, reverse, background colour
       _wysiwyg-editor.scss  Dynamic Layout section: editor content (h4 bar, dot lists, 12/30px rhythm)
+      _introduction.scss  Dynamic Layout section: H2 left, text + two buttons right, background/text colour
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -115,7 +116,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with three sections so far: Hero page, Two-column image text and WYSIWYG editor. No public page uses `get_header('new')` yet.
+**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with four sections so far: Hero page, Two-column image text, WYSIWYG editor and Introduction. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -168,6 +169,10 @@ get_template_part('components-2026/partials/button', null, array(
 
 - It renders nothing without a URL and a label.
 - `target="_blank"` gets `rel="noopener"`.
+- **Outline variant:** pass `'class' => 'btn--outline'`.
+  - It's transparent, with a 1px `currentColor` border, and the text inherits the colour. On a dark section with light text, it turns light by itself.
+  - Its padding is 11px 27px, so it's the same size as the filled `.btn`.
+  - **Hover and focus:** it fills with `$color__link`, with `$color__main-light` text (Andrea's spec). The focus outline is `$color__link`.
 
 ### SVGs (`svg-templates/`)
 
@@ -282,6 +287,9 @@ main#main.site-main.site-main--layout
   - **Group:** the ACF group "Dynamic Layout 2026" (`acf-json/group_6ac4033ed38b9.json`), shown when Page Template is `templates-2026/page-layout-2026.php`.
   - **The field:** one flexible content field, `page_sections` ("Page sections", button "Add section").
   - **Layouts:** every section is a layout of this field. Its sub fields are defined **directly in the layout**, with no clone groups (see "Decisions").
+  - **"Add section" menu:** always in alphabetical order by label.
+    - `dsa_2026_sort_section_layouts()` (`acf/load_field/name=page_sections`) sorts the layouts, so a new layout doesn't need to be dragged into place.
+    - It only changes the menu. Saved rows keep the order the editor gave them.
 - **No editor:** `inc/function-layout.php` changes the edit screen of pages on this template only. `dsa_2026_is_layout_page()` is the only place the template path is written.
   - **Block editor:** turned off with the `use_block_editor_for_post` filter.
   - **Classic content box:** removed with `remove_post_type_support()` on `load-post.php`.
@@ -499,6 +507,53 @@ section.wysiwyg-editor.content-block
     | `<phone` | 35px |
 
     The padding isn't in Figma. It matches Two-column image text.
+
+### Introduction (`sections/introduction.php` + `_introduction.scss`)
+
+Layout `introduction` ("Introduction"): an H2 on the left, with text and up to two buttons on the right. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `223:3244` ("Methods introduction", 1440 wide).
+
+```
+section.introduction.content-block[.introduction--light]   (style="background-color: …")
+	.content-max > .introduction__inner                      (grid 480px | 1fr)
+		h2.introduction__title
+		.introduction__summary
+			div.introduction__text                           (only when filled)
+			.introduction__buttons > a.btn + a.btn.btn--outline  (each only when set)
+```
+
+| Tab | Label | Name | Type | Notes |
+| --- | --- | --- | --- | --- |
+| Options | Background color (50%) | `background_color` | color picker | default `#F3F3F1` |
+| Options | Text color (50%) | `text_color` | select `dark` / `light` | default `dark` |
+| Content | Title | `title` | textarea (new lines → `<br>`) | **required**, always an `<h2>` |
+| Content | Content | `content` | WYSIWYG (basic, no media) | |
+| Content | Primary button (50%) | `button_primary` | link | optional, filled `.btn` |
+| Content | Secondary button (50%) | `button_secondary` | link | optional, `.btn--outline` |
+
+- **Background:** like Two-column image text. A valid colour is an inline `style` (`sanitize_hex_color()`). An empty or invalid one falls back to the SCSS default, `$color__text-light`.
+- **Text color:**
+  - **Dark** (default) is `$color__text`, for light backgrounds.
+  - **Light** adds `.introduction--light`, which sets `$color__text-light`, for dark backgrounds.
+  - The title, the text and the outline button inherit it. The accent, the links and the filled button keep their own colours.
+- **Title:**
+  - It's required, because it holds the left column. Without it, the section prints nothing.
+  - `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` highlights words in `$color__link`.
+  - Its look comes from the base `h2`: don't redeclare it.
+- **Text:** `wp_kses_post()`, Manrope 16px 400, `line-height: 1.6`, max-width 580px (Figma).
+  - Paragraphs have no gap, as in Figma.
+  - Links are `$color__link` and underlined. Lists get their padding back.
+- **Buttons:** both use `partials/button.php`, and the secondary one gets `btn--outline`.
+  - The row is `flex-wrap` with a 12px gap, 24px under the text.
+  - It's only printed when at least one button has a URL.
+- **Height:** Figma draws the buttons 46px high, but the shared `.btn` is 44px. It's left as it is, so at 1440px the section is 368px high (Figma ~372).
+- **Grid and padding:** `padding-block` only. The title column is top-aligned.
+
+  | Width | Padding top / bottom | Grid |
+  | --- | --- | --- |
+  | Base (desktop) | 86px (Figma) | `480px 1fr`, gap 64px (Figma) |
+  | `<tablet` | 64px | `1fr 1fr`, gap 48px |
+  | `<phone-land` | 64px | 1 column, gap 24px |
+  | `<phone` | 35px | 1 column, gap 24px |
 
 ## ACF fields (`acf-json/`)
 
@@ -772,3 +827,11 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - `__title` and `__text` no longer set their own colour. They inherit it from the section.
 - **2026-10-06**
   - WYSIWYG editor: list items now match the body text, at Andrea's request. The 15px / 500 / 1.5 from Figma was removed, so they inherit 16px / 400 / 1.6 like `p`. The dot is re-centred on the 25.6px line.
+- **2026-10-06**
+  - Fourth Dynamic Layout section, **Introduction**: layout `introduction`, `components-2026/sections/introduction.php` and `_introduction.scss`. Figma node `223:3244`.
+    - **Options tab:** background colour (default `#F3F3F1`) and text colour (default dark).
+    - **Content tab:** a required H2 title, a WYSIWYG, and primary and secondary buttons.
+    - The fields were proposed in a plan and approved by Andrea.
+  - New `.btn--outline` button variant in `_button.scss`: a `currentColor` border and the same size as `.btn`. On hover it fills with `$color__link` (Andrea's spec).
+- **2026-10-06**
+  - The "Add section" menu of `page_sections` is now alphabetical, by label. `dsa_2026_sort_section_layouts()` in `inc/function-layout.php` sorts it on `acf/load_field`.
