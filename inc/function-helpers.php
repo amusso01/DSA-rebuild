@@ -16,3 +16,18 @@ function dsa_2026_get_svg($name)
 	get_template_part('svg-templates/svg-' . $name);
 	return ob_get_clean();
 }
+
+/*==================================================================================
+  PASSWORD
+==================================================================================*/
+// Password-protected page, password not entered yet: print the form (as the_content() would)
+// and return true, so the template skips its sections. Otherwise they'd be public.
+function dsa_2026_password_gate()
+{
+	if (!post_password_required()) {
+		return false;
+	}
+
+	echo '<section class="content-block"><div class="content-max">' . get_the_password_form() . '</div></section>';
+	return true;
+}

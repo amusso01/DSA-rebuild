@@ -3,6 +3,7 @@
  * 2026 layout: "Dynamic Layout 2026" template (templates-2026/page-layout-2026.php).
  * Pages on it are built only from the ACF flexible content field page_sections:
  * the editor is removed, and each row renders components-2026/sections/<layout>.php.
+ * The editor is also removed on "Contact 2026" pages, which are built only from ACF tabs.
  *
  * @package FDRY
  */
@@ -16,27 +17,34 @@ function dsa_2026_is_layout_page($post = null)
 	return get_page_template_slug($post) === 'templates-2026/page-layout-2026.php';
 }
 
+// True when the page's template is built only from ACF fields, so the editor is removed (see NO EDITOR).
+// Add a template here when it stops printing the_content().
+function dsa_2026_has_no_editor($post = null)
+{
+	return dsa_2026_is_layout_page($post) || get_page_template_slug($post) === 'templates-2026/page-contact-2026.php';
+}
+
 /*==================================================================================
   NO EDITOR
 ==================================================================================*/
 // Block editor off: the page opens on the classic screen, with only the ACF fields.
 // The switch shows after a reload: pick the template, save, then reload.
-add_filter('use_block_editor_for_post', 'dsa_2026_layout_no_block_editor', 10, 2);
+add_filter('use_block_editor_for_post', 'dsa_2026_no_block_editor', 10, 2);
 
-function dsa_2026_layout_no_block_editor($use_block_editor, $post)
+function dsa_2026_no_block_editor($use_block_editor, $post)
 {
-	return dsa_2026_is_layout_page($post) ? false : $use_block_editor;
+	return dsa_2026_has_no_editor($post) ? false : $use_block_editor;
 }
 
 // Classic content box off too. load-post.php fires before post.php prints the edit screen,
 // and only for this request. The post_content stays in the database, just hidden.
-add_action('load-post.php', 'dsa_2026_layout_no_classic_editor');
+add_action('load-post.php', 'dsa_2026_no_classic_editor');
 
-function dsa_2026_layout_no_classic_editor()
+function dsa_2026_no_classic_editor()
 {
 	$post_id = isset($_GET['post']) ? absint($_GET['post']) : 0;
 
-	if ($post_id && dsa_2026_is_layout_page($post_id)) {
+	if ($post_id && dsa_2026_has_no_editor($post_id)) {
 		remove_post_type_support('page', 'editor');
 	}
 }
@@ -68,8 +76,7 @@ function dsa_2026_sort_section_layouts($field)
 function dsa_2026_render_sections()
 {
 	// the_content() would show the password form: without this the sections would be public
-	if (post_password_required()) {
-		echo '<section class="content-block"><div class="content-max">' . get_the_password_form() . '</div></section>';
+	if (dsa_2026_password_gate()) {
 		return;
 	}
 

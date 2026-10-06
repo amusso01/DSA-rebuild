@@ -2,7 +2,8 @@
 /**
  * Section: hero page (layout hero_page in Dynamic Layout 2026).
  * Breadcrumb (Home / repeater links / current page), title with the two accent lines,
- * optional background image over $color__main-light. Rendered by dsa_2026_render_sections().
+ * optional background image over $color__main-light. Rendered by dsa_2026_render_sections(),
+ * and by Contact 2026 from its ACF group field "hero" (same sub fields).
  *
  * @package FDRY
  */

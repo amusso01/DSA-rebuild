@@ -56,21 +56,21 @@ footer-new.php         2026 footer (loaded by get_footer('new')): markup only, p
 inc/                   2026 PHP
   function-dev.php        entry: requires the other inc files + theme support (custom logo, 2026 nav menus)
   function-assets.php     fonts/CSS/JS on 2026 pages, dequeues legacy assets there
-  function-helpers.php    dsa_2026_get_svg()
+  function-helpers.php    dsa_2026_get_svg(), dsa_2026_password_gate()
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
   function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option()
-  function-layout.php     Dynamic Layout 2026: no editor, A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style()
+  function-layout.php     Dynamic Layout 2026: A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style(); no editor on Layout + Contact 2026 pages
   function-blog.php       blog posts query + cards (dsa_2026_blog_query/cards) and the Load more REST route
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php, blog-card.php
   sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php
-  page/                (next)
+  page/                components of fixed page templates: get-in-touch.php (Contact 2026)
 svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, x, youtube, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
 templates-2026/
-  page-contact-2026.php "Contact 2026" page template (main.site-main--contact)
+  page-contact-2026.php "Contact 2026" page template (main.site-main--contact): ACF tabs Hero + Get in touch
   page-layout-2026.php  "Dynamic Layout 2026" page template (main.site-main--layout)
 src-2026/
   js/
@@ -100,6 +100,7 @@ src-2026/
       _wysiwyg-editor.scss  Dynamic Layout section: editor content (h4 bar, dot lists, 12/30px rhythm)
       _introduction.scss  Dynamic Layout section: H2 left, text + two buttons right, background/text colour
       _blog-row.scss   Dynamic Layout section: title + count, blog card grid, Load more
+      _get-in-touch.scss  Contact 2026: centred intro, Call and Email cards
 dist-2026/             build output (generated, committed)
 webpack.2026.config.js
 ```
@@ -120,7 +121,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-05):** the header and footer are built, and "Contact 2026" uses both. The "Dynamic Layout 2026" template and its `page_sections` field exist, with five sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction and Blog row. No public page uses `get_header('new')` yet.
+**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero and a Get in touch section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with five sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction and Blog row. No public page uses `get_header('new')` yet.
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -345,7 +346,8 @@ main#main.site-main.site-main--layout
   - **"Add section" menu:** always in alphabetical order by label.
     - `dsa_2026_sort_section_layouts()` (`acf/load_field/name=page_sections`) sorts the layouts, so a new layout doesn't need to be dragged into place.
     - It only changes the menu. Saved rows keep the order the editor gave them.
-- **No editor:** `inc/function-layout.php` changes the edit screen of pages on this template only. `dsa_2026_is_layout_page()` is the only place the template path is written.
+- **No editor:** `inc/function-layout.php` changes the edit screen of pages on this template and on Contact 2026, the two templates built only from ACF.
+  - `dsa_2026_has_no_editor()` decides which pages: `dsa_2026_is_layout_page()` (the only place the layout template path is written) or the Contact 2026 template. Add a template there when it stops printing `the_content()`.
   - **Block editor:** turned off with the `use_block_editor_for_post` filter.
   - **Classic content box:** removed with `remove_post_type_support()` on `load-post.php`.
   - **The editor only goes away after a reload.** Create the page, pick the template, save the draft, then reload.
@@ -353,7 +355,7 @@ main#main.site-main.site-main--layout
 
 ### How the loop works (`dsa_2026_render_sections()`)
 
-1. A password-protected page shows only the password form, as `the_content()` would.
+1. A password-protected page shows only the password form, as `the_content()` would (`dsa_2026_password_gate()` in `inc/function-helpers.php`).
 2. `get_field('page_sections')` returns every row. With no rows, or with ACF inactive, nothing is printed.
 3. Each row loads one component. The file name is the layout name with `_` replaced by `-`:
 
@@ -666,6 +668,94 @@ section.blog-row.content-block.section-padding   [style=padding]   [data-blog-re
     | `<tablet` | 2 |
     | `<phone` | 1 |
 
+## Contact 2026 (`templates-2026/page-contact-2026.php`)
+
+A fixed page: the template sets the sections and their order, and editors fill one ACF tab per section. The pages have no editor (see "No editor" under Dynamic Layout 2026).
+
+```
+main#main.site-main.site-main--contact
+	section.hero-page.content-block       components-2026/sections/hero-page.php   (tab Hero, get_field('hero'))
+	section.get-in-touch.content-block    components-2026/page/get-in-touch.php    (tab Get in touch, get_field('get_in_touch'))
+```
+
+- **Group:** the ACF group "Contact 2026" (`acf-json/group_6ac50cfa10bbb.json`), shown under the title when Page Template is `templates-2026/page-contact-2026.php`.
+- **One tab per section, one Group field per tab** (`hero`, `get_in_touch`). `get_field('<group>')` returns the section's `$args` as they are, and both tabs can have a `title`.
+- **Template:** inside the loop, `dsa_2026_password_gate()` comes first (password form only), then one `get_template_part()` per section.
+  - With ACF inactive, the hero falls back to Home and the page title, and Get in touch prints nothing.
+- **To add a section:**
+  1. Add a tab and a Group field to the group.
+  2. Add one `get_template_part()` line to the template.
+  3. Reuse a `sections/` component when the design matches. Otherwise, create the component in `components-2026/page/`.
+
+### Hero tab
+
+- The `hero` Group has **the same sub fields as the `hero_page` layout**: same names, labels and settings, only the keys differ.
+- It renders with the same component, `sections/hero-page.php` (see "Hero page"). It's the first section, so its image is eager-loaded.
+- The fields are a **copy, not a clone** (see "Decisions"). When you change a `hero_page` field, change this group too.
+
+### Get in touch (`page/get-in-touch.php` + `_get-in-touch.scss`)
+
+Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `223:3151` ("Contact details section", 1440 wide).
+
+```
+section.get-in-touch.content-block
+	.content-max > .get-in-touch__inner                 (flex column, centred)
+		.get-in-touch__intro                            (when there's a title or content)
+			h2.get-in-touch__title.h3
+			div.get-in-touch__text
+		ul.get-in-touch__cards                          (when there's a phone or an email)
+			li.get-in-touch__card > a.get-in-touch__link[href=tel:…|mailto:…]
+				span.get-in-touch__icon[aria-hidden] > svg-phone | svg-mail
+				span.get-in-touch__detail > span.__label + span.__value
+```
+
+| Label | Name | Type | Notes |
+| --- | --- | --- | --- |
+| Title | `title` | text | always an `<h2>`; `<span class="accent">` highlights |
+| Content | `content` | WYSIWYG (basic, no media) | |
+| Phone number (50%) | `phone` | text | shown as typed |
+| Email (50%) | `email` | email | |
+
+- **Nothing filled:** the section prints nothing. Each card is printed only when its field is set.
+- **Phone:** the card shows the number as typed (`0800 000 0000`).
+  - The `tel:` link keeps only the digits and `+`.
+  - A value without digits gives no card.
+- **Email:** `sanitize_email()` + `is_email()`. The address and the `mailto:` go through `antispambot()`, so they're entity-encoded in the source.
+- **Labels:** "Call" and "Email" are hard-coded.
+- **Icons:** the footer's `svg-phone` and `svg-mail` (16px, `$color__link` stroke), drawn at Figma's 19px.
+- **Title:**
+  - `wp_kses()` keeps only `<span class>`.
+  - Figma's style is Titillium Web Bold 36 / 1.2, so the `<h2>` takes the `.h3` class (36px and its scale) plus `font-weight: 700; line-height: 1.2`.
+- **Text:** `wp_kses_post()`, Manrope 16px, `line-height: 1.6`, max-width 560px, centred.
+  - Paragraphs have no gap.
+  - Links are `$color__link` and underlined.
+- **Colours:** the section is `$color__main` with `$color__text-light` text. The cards use four Figma colours that Andrea approved:
+
+  | Variable | Value | Used for |
+  | --- | --- | --- |
+  | `$color__card-border` | `#1f3a35` | card border and divider |
+  | `$color__card-icon` | `#0b1f1d` | icon tile |
+  | `$color__card-label` | `#c9d8d5` | "Call" / "Email" |
+  | `$color__card-value` | `#e7f9f7` | number and address |
+
+- **Styles:**
+  - **Intro:** max-width 760px, centred text, 12px between the title and the text, 32px above the cards.
+  - **Cards:** a 760px row with a 24px gap. Each card is half the row; a single card stays half width, centred.
+    - **Card:** `$color__main-light`, a 1px border, 12px radius, 24px padding. The detail comes first, then a 1px divider 20px below it (Figma).
+    - **Icon tile:** 42px with an 8px radius, 14px from the text.
+    - **Text:** the label is Manrope 12px 600, the value 15px 700, 3px apart, `line-height: normal`. Long addresses wrap.
+    - **Hover:** the value turns `$color__link`. **Focus:** a `$color__link` outline.
+  - **Not built:** Figma's empty 60×20 "Text-hover" element above the title. Because of it, at 1440px the section is about 421px high (Figma: 453px).
+
+    | Width | Padding top / bottom | Cards |
+    | --- | --- | --- |
+    | Base (desktop) | 72px (Figma) | 2 columns |
+    | `<tablet` | 64px | 2 columns |
+    | `<phone-land` | 64px | 1 column, full width |
+    | `<phone` | 35px | 1 column |
+
+    Only the desktop values are in Figma.
+
 ## ACF fields (`acf-json/`)
 
 - ACF saves every field group as JSON in `acf-json/`, which it detects automatically in the theme. Commit these files.
@@ -673,6 +763,7 @@ section.blog-row.content-block.section-padding   [style=padding]   [data-blog-re
 - **Never upload an older `acf-json/` over the server's copy.** Groups showing "Awaiting save" just haven't been written to JSON yet: open the group and save it.
 - **Read 2026 fields with `get_field()`,** always behind a `function_exists('get_field')` check in `inc/` code.
   - The Dynamic Layout builder reads the whole flexible field once and hands each row to its section as `$args`. Sections never call `get_sub_field()` (see "Dynamic Layout 2026").
+  - Fixed templates (Contact 2026) use one tab per section, holding one **Group** field: `get_field('<group>')` is that section's `$args`, and two sections can both have a `title`.
 - **Options pages:**
   - Register them in `inc/function-acf.php` on `acf/init`, as children of the legacy "Options" page (`parent_slug` `acf-options`).
   - **Read options with `dsa_2026_option('name')`.**
@@ -815,6 +906,8 @@ Choices that were weighed and settled. Don't reopen them without a new reason.
 **Revisit only if** another field group (another template or an options page) needs a section's fields.
 - Move just that section's fields into their own group, and clone it into the layout as **seamless**. `$args` keeps the same shape, so the component doesn't change.
 - Moving fields can affect content already saved on live pages, so check the data first.
+
+**2026-10-06:** Contact 2026 needed the Hero page fields. Andrea chose to **copy** them into a `hero` Group in the "Contact 2026" group (`group_6ac50cfa10bbb.json`) instead of cloning, so the Dynamic Layout group stayed untouched. **When you change a `hero_page` field, change the Contact 2026 `hero` group too.**
 
 ### 2026-10-05: JS libraries are bundled with normal imports, not lazy-loaded chunks
 
@@ -964,3 +1057,11 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - New `src-2026/js/modules/blogRow.js` (Load more), called from `main.js`.
   - New icon `svg-arrow-right` (Figma asset, `currentColor` stroke).
   - New colours, approved by Andrea: `$color__border-alt` `#004242` and `$color__text-muted` `#667c79`.
+- **2026-10-06**
+  - **Contact 2026** is now built only from ACF tabs, in the new group "Contact 2026" (`group_6ac50cfa10bbb.json`). `the_content()` is gone. See "Contact 2026".
+    - **Hero tab:** a `hero` Group with the `hero_page` layout's fields, copied (Andrea's choice, see "Decisions"). It's rendered by `sections/hero-page.php`.
+    - **Get in touch tab:** a title, a WYSIWYG, a phone (text) and an email (email field). It's rendered by the new `components-2026/page/get-in-touch.php` + `_get-in-touch.scss`. Figma node `223:3151`.
+  - No editor on Contact 2026 pages either: the new `dsa_2026_has_no_editor()` checks both templates. The callbacks are renamed `dsa_2026_no_block_editor` / `dsa_2026_no_classic_editor`.
+  - The password-form guard moved into `dsa_2026_password_gate()` (`function-helpers.php`). `dsa_2026_render_sections()` and the Contact template both use it.
+  - New colours, approved by Andrea (Figma): `$color__card-border` `#1f3a35`, `$color__card-icon` `#0b1f1d`, `$color__card-label` `#c9d8d5`, `$color__card-value` `#e7f9f7`.
+  - `main.scss` has a new "Page components" group for `components-2026/page/`.
