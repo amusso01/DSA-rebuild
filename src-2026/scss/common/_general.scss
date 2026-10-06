@@ -91,6 +91,8 @@ h6 {
 h1,
 .h1 {
 	font-size: $text__h1;
+	font-weight: 400; // Figma hero title: Titillium Web Regular 54 / 1.05
+	line-height: 1.05;
 }
 
 h2,

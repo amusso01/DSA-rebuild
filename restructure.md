@@ -419,7 +419,7 @@ section.hero-page.content-block
 	img.hero-page__image                  (background, only when set)
 	.content-max
 		nav.hero-page__breadcrumb > ol.hero-page__crumbs > li.hero-page__crumb…
-		h1|h2|h3.hero-page__title.h1
+		h1|h2|h3.hero-page__title
 		span.hero-page__lines           (the two accent lines, ::before + ::after)
 ```
 
@@ -436,7 +436,7 @@ section.hero-page.content-block
   - The `/` separators are `aria-hidden`.
 - **Title:**
   - **Highlighting:** wrap words in `<span class="accent">…</span>` to colour them `$color__link`. The title goes through `wp_kses()`, which keeps only `<span class>`.
-  - **H tag:** it changes only the tag, for SEO. The `.h1` class gives h1, h2 and h3 the same look.
+  - **H tag:** it sets the tag and its look. The title has no `.h1`/`.h2` class, so the picked tag's global style applies (see "Styles" below).
 - **Image:**
   - It's printed with `wp_get_attachment_image()` (`alt=""`, it's decorative) and covers the whole section (`object-fit: cover`).
   - **First section:** `loading="eager"` + `fetchpriority="high"`, because it's above the fold. Lower down it's lazy-loaded.
@@ -446,12 +446,16 @@ section.hero-page.content-block
     - The current page is weight 600.
     - The `/` is weight 400.
     - There are 7px gaps around each `/`.
-  - **Title:** Titillium Web (`$header__fontname`), weight 400, `line-height: 1.05`, `$color__text-light`, max-width 670px.
-    - Its size follows the global h1 scale: 54px, ×0.9 below `desktop`, ×0.75 below `phone-land`.
+  - **Title:** the font (Titillium Web), size, weight, line-height and scale come from the global heading of the picked tag in `_general.scss`. Don't redeclare them in the section.
+    - **h1** (default): 54px, 400 / 1.05.
+    - **h2:** 44px, 400 / 1.2.
+    - **h3:** 36px, 400 / 1.3.
+    - Each is ×0.9 below `desktop` and ×0.75 below `phone-land`.
+    - The section only sets `$color__text-light`, max-width 670px and the margin above.
   - **Lines:** 10px under the title, 4px high, 2px radius, a 7px gap.
     - The first is 48px wide, `$color__link`.
     - The second is 15px wide, `$color__accent-hover`. Figma has 14px; Andrea's spec says 15px.
-  - **Spacing:** `padding-block` only, because the sides come from `.content-block`. At 1440px with a one-line title, the hero is 237px high, as in Figma.
+  - **Spacing:** `padding-block` only, because the sides come from `.content-block`. At 1440px with a one-line h1 title, the hero is 237px high, as in Figma. An h2 or h3 title makes it a little shorter (about 233px / 227px).
 
     | Width | Padding top / bottom | Breadcrumb → title |
     | --- | --- | --- |
@@ -1352,3 +1356,7 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - Andrea chose to style today's `single.php` rather than add a post template. Headings wrapped in `<strong>` stay bold (Titillium 700).
   - The WYSIWYG editor's content styles moved verbatim into the `editor-content` mixin (`common/_editor-content.scss`), shared with blog posts. The compiled CSS is unchanged.
   - New folder `src-2026/scss/pages/` for legacy templates on header-new. It reuses the helpers with `@extend`.
+- **2026-10-06**
+  - Hero page: the **H tag** now sets the title's look as well as its tag, at Andrea's request. The `.h1` class is gone, and `.hero-page__title` no longer sets its font, weight or line-height, so an h2 title looks like the global h2 (44px, 400 / 1.2) and an h3 like the global h3.
+  - The global `h1, .h1` in `_general.scss` now has `font-weight: 400; line-height: 1.05` (the values the hero title had), so an h1 title looks exactly as before.
+  - The `title_tag` instructions now read "Sets the tag and its style (global H1 / H2 / H3). Keep one H1 per page." in both groups (Dynamic Layout 2026 and the Contact 2026 `hero` copy).

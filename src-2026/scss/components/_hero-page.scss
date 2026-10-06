@@ -1,6 +1,6 @@
 /*==================================================================================
   HERO PAGE (components-2026/sections/hero-page.php)
-  Dynamic Layout 2026 section: breadcrumb, title (h1/h2/h3, same look) with two
+  Dynamic Layout 2026 section: breadcrumb, title (h1/h2/h3, styled by its tag) with two
   accent lines, optional background image. Figma: DSA, node 223:2966 (1440 × 237).
 ==================================================================================*/
 @use '../common/variables' as *;
@@ -77,14 +77,11 @@
 
 /* Title + accent lines
 /––––––––––––––––––––––––*/
-// size: the .h1 class (global h1 scale in _general.scss), whatever the tag
+// font, size, weight, line-height and scale: the global h1/h2/h3 of the picked tag (_general.scss)
 .hero-page__title {
 	max-width: 670px; // Figma "Title group"
 	margin-top: 31px;
 	color: $color__text-light;
-	font-family: $header__fontname;
-	font-weight: 400;
-	line-height: 1.05;
 
 	// editors wrap words in <span class="accent"> to highlight them
 	.accent {

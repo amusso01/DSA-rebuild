@@ -116,7 +116,7 @@
                             "name": "title_tag",
                             "aria-label": "",
                             "type": "select",
-                            "instructions": "Changes the tag only, not the style. Keep one H1 per page.",
+                            "instructions": "Sets the tag and its style (global H1 / H2 / H3). Keep one H1 per page.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -1133,5 +1133,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791300480
+    "modified": 1791307136
 }

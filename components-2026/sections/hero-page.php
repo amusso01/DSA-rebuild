@@ -57,7 +57,7 @@ $first = $args['index'] === 0;
 				<li class="hero-page__crumb hero-page__crumb--current" aria-current="page"><?php echo esc_html($current); ?></li>
 			</ol>
 		</nav>
-		<<?php echo tag_escape($tag); ?> class="hero-page__title h1"><?php echo wp_kses($title, array('span' => array('class' => true))); ?></<?php echo tag_escape($tag); ?>>
+		<<?php echo tag_escape($tag); ?> class="hero-page__title"><?php echo wp_kses($title, array('span' => array('class' => true))); ?></<?php echo tag_escape($tag); ?>>
 		<span class="hero-page__lines" aria-hidden="true"></span>
 	</div>
 </section>
