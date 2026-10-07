@@ -270,6 +270,28 @@
                             "parent_layout": "layout_6ac40d3d9259e"
                         },
                         {
+                            "key": "field_6ac6553e2b7d4",
+                            "label": "Show logo",
+                            "name": "show_logo",
+                            "aria-label": "",
+                            "type": "true_false",
+                            "instructions": "Shows the Connexions logo above the title.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "",
+                            "default_value": 0,
+                            "allow_in_bindings": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": "",
+                            "ui": 1,
+                            "parent_layout": "layout_6ac40d3d9259e"
+                        },
+                        {
                             "key": "field_6ac40d3d941a5",
                             "label": "Content",
                             "name": "",
@@ -1603,5 +1625,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791378453
+    "modified": 1791379482
 }

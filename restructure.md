@@ -71,7 +71,7 @@ components-2026/       markup components, loaded with get_template_part()
   partials/            reusable: button.php, blog-card.php
   sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-homepage.php, hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php, service-cards.php, certification-showcase.php
   page/                components of fixed page templates: get-in-touch.php, contact-form.php (Contact 2026)
-svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, facebook, instagram, map-pin, mail, phone
+svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, facebook, instagram, map-pin, mail, phone, dsa (Connexions logo)
 acf-json/              ACF field groups as JSON (synced with live)
 templates-2026/
   page-contact-2026.php "Contact 2026" page template (main.site-main--contact): ACF tabs Hero, Get in touch, Contact form
@@ -604,7 +604,7 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse][.tw
 	.content-max > .two-column-image-text__inner                  (grid 1fr 1fr)
 		.two-column-image-text__media > img.two-column-image-text__img
 		.two-column-image-text__content
-			p.__eyebrow, h2.__title, div.__text, a.btn.__button  (each only when filled)
+			div.__logo > svg (Show logo), p.__eyebrow, h2.__title, div.__text, a.btn.__button  (each only when set)
 ```
 
 | Tab | Label | Name | Type | Notes |
@@ -612,6 +612,7 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse][.tw
 | Options | Background color (50%) | `background_color` | color picker | default `#091C1E` |
 | Options | Text color (50%) | `text_color` | select `light` / `dark` | default `light` |
 | Options | Image layout grid reverse (50%) | `grid_reverse` | true/false | off: image, content. On: content, image |
+| Options | Show logo (50%) | `show_logo` | true/false | default off: the Connexions logo above the title |
 | Content | Eyebrow | `eyebrow` | text | optional |
 | Content | Content title | `title` | textarea (new lines → `<br>`) | always an `<h2>` |
 | Content | Content | `content` | WYSIWYG (basic, no media) | |
@@ -627,6 +628,11 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse][.tw
   - The colour is set on the section, and the title and text inherit it.
   - The accent span, eyebrow, WYSIWYG links and button keep their own colours.
 - **Reverse:** it only changes the visual order (CSS `order`). The DOM is always image, then content. In one column (below `phone-land`) the image is always on top.
+- **Logo** (Figma node `538:8445`, "Software erasure"):
+  - **Show logo** prints the Connexions logo ("a DSA CONNECT initiative", `svg-templates/svg-dsa.php`, 184 × 36) first in the content column, 24px above the next item. That's the column's usual margin, as in Figma.
+  - It's off by default, so rows saved before the option existed show no logo.
+  - **Colour:** the SVG is one `currentColor` group, so it follows Text color: light by default, `$color__text` with Dark.
+  - **Accessible name:** the logo names the programme, so the `<svg>` has `role="img"` and `aria-label="Connexions, a DSA Connect initiative"`.
 - **Title:**
   - It goes through `wp_kses()`, which keeps only `<span class>` and `<br>`.
   - **Highlighting:** wrap words in `<span class="accent">` to colour them `$color__link`.
@@ -641,7 +647,7 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse][.tw
   - **Button:** `.btn` as it is. It already matches Figma.
   - **Image:** `aspect-ratio: 556 / 542` (Figma), `object-fit: cover`, 12px radius on every image.
   - **Grid:** content vertically centred (`align-items: center`).
-  - **Column spacing:** eyebrow → title 18px, then 24px before the text and 24px before the button. These are margins, so a missing element leaves no gap.
+  - **Column spacing:** logo → next item 24px, eyebrow → title 18px, then 24px before the text and 24px before the button. These are margins, so a missing element leaves no gap.
   - **Padding and gap:** `padding-block` only. At 1440px the section is 694px high, as in Figma.
 
     | Width | Padding top / bottom | Grid |
@@ -1660,3 +1666,6 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - `.service-card` now sets `$color__text-light` itself, so the cards stay unchanged on any background. Existing rows look the same.
 - **2026-10-07**
   - Service cards: `<span class="accent">` now works in the **card title** (teal) and the **card text** (bold teal), as in Figma `475:7823`. Both go through `wp_kses()` with `<span class>`; the field instructions say how.
+- **2026-10-07**
+  - Two-column image text: a new **Show logo** option (`show_logo`, true/false, default off), after the reverse switch in the Options tab. It shows the Connexions logo above the title. Figma node `538:8445`.
+  - New `svg-templates/svg-dsa.php`: Andrea's Figma export of the logo (node `538:8448`), cleaned up. The empty `clipPath` is removed, the fills are one `currentColor` group (it follows Text color), and it has `role="img"` + an `aria-label`.

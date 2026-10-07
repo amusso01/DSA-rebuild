@@ -1,8 +1,8 @@
 <?php
 /**
  * Section: two-column image text (layout two_column_image_text in Dynamic Layout 2026).
- * Image + content (eyebrow, H2 title, text, optional button) side by side.
- * Options: background colour, text colour, reverse (content first). Rendered by dsa_2026_render_sections().
+ * Image + content (logo, eyebrow, H2 title, text, optional button) side by side.
+ * Options: background colour, text colour, reverse (content first), logo. Rendered by dsa_2026_render_sections().
  *
  * @package FDRY
  */
@@ -11,6 +11,7 @@ $args = wp_parse_args($args, array(
 	'background_color' => '',      // hex; empty or invalid: $color__main from the SCSS
 	'text_color'       => 'light', // light | dark (dark: for light backgrounds)
 	'grid_reverse'     => false,   // true: content, then image
+	'show_logo'        => false,   // true: the Connexions logo (svg-templates/svg-dsa.php) above the title
 	'eyebrow'          => '',
 	'title'            => '',      // textarea (new lines → <br>); <span class="accent"> highlights
 	'content'          => '',      // WYSIWYG
@@ -37,6 +38,9 @@ $classes = 'two-column-image-text content-block'
 				</div>
 			<?php endif; ?>
 			<div class="two-column-image-text__content" data-reveal="fade-up">
+				<?php if ($args['show_logo']) : ?>
+					<div class="two-column-image-text__logo"><?php get_template_part('svg-templates/svg-dsa'); ?></div>
+				<?php endif; ?>
 				<?php if ($args['eyebrow']) : ?>
 					<p class="two-column-image-text__eyebrow"><?php echo esc_html($args['eyebrow']); ?></p>
 				<?php endif; ?>

@@ -78,6 +78,12 @@
 	}
 }
 
+// ACF "Show logo" (Figma 538:8445): inline SVG (svg-templates/svg-dsa.php) in currentColor,
+// so it follows the section's text colour. 24px to the next item from the margins above
+.two-column-image-text__logo svg {
+	display: block; // no inline gap under it
+}
+
 .two-column-image-text__eyebrow {
 	color: $color__link;
 	font-family: $header__fontname;
