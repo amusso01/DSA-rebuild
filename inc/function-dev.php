@@ -23,6 +23,8 @@ require get_template_directory() . '/inc/function-layout.php';
 require get_template_directory() . '/inc/function-blog.php';
 // Contact Form 7 multi-step on 2026 pages: form picker for ACF, plugin CSS and autop off
 require get_template_directory() . '/inc/function-contact-form.php';
+// Editor content on 2026 pages (single.php, page.php): pasted <meta> stripped
+require get_template_directory() . '/inc/function-content.php';
 
 /*==================================================================================
   THEME SUPPORT

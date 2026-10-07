@@ -1,8 +1,8 @@
 /*==================================================================================
-  SINGLE POST (single.php: legacy markup on header-new)
-  Blog posts in the 2026 style: dark page, 2026 type, Gutenberg blocks.
-  Only in the 2026 CSS, so nothing changes until single.php calls get_header('new').
-  single.php (untouched): section#primary.content-area > main#main.site-main > h1 + the_content()
+  SINGULAR (single.php + page.php: legacy markup on header-new)
+  Blog posts and pages in the 2026 style: dark page, 2026 type, Gutenberg blocks.
+  Only in the 2026 CSS, so nothing changes until a template calls get_header('new').
+  Both templates (untouched): section#primary.content-area > main#main.site-main > h1 + the_content()
   Not in Figma: 2026 tokens + the editor styles of the WYSIWYG section (Figma 223:3103).
 ==================================================================================*/
 @use '../common/variables' as *;
@@ -14,8 +14,10 @@
 // blocks spaced like headings: 30px before and after
 $blocks: 'figure, blockquote, hr, .wp-block-image, .wp-block-columns, .wp-block-buttons, .wp-block-group, .wp-block-media-text, .wp-block-cover';
 
-// .single-post: WordPress body class on blog posts only (projects get .single-project)
-.single-post {
+// WordPress body classes: .single-post on blog posts only (projects get .single-project),
+// .page-template-default on pages using page.php (2026 and other legacy templates have their own)
+.single-post,
+.page-template-default {
 	// full width: this page's .content-block (gutter) and .section-padding (76 / 64 / 35)
 	.content-area {
 		@extend .content-block;
@@ -40,11 +42,8 @@ $blocks: 'figure, blockquote, hr, .wp-block-image, .wp-block-columns, .wp-block-
 			margin-top: 30px;
 		}
 
-		// the post title (single.php): the 2026 H1, as the hero title. Size: the global h1 scale
+		// the title (the template's h1): its look is the global h1
 		> h1 {
-			font-weight: 400;
-			line-height: 1.05;
-
 			+ * {
 				margin-top: 40px;
 
@@ -52,6 +51,12 @@ $blocks: 'figure, blockquote, hr, .wp-block-image, .wp-block-columns, .wp-block-
 					margin-top: 30px;
 				}
 			}
+		}
+
+		// empty blocks left in the editor (<p></p>, a heading of pasted <meta>, stripped in
+		// inc/function-content.php) would add a gap or a lone h4 bar
+		:is(p, h1, h2, h3, h4, h5, h6):empty {
+			display: none;
 		}
 
 		// the reset's ol[class] drops the numbers of Gutenberg's ol.wp-block-list
@@ -181,7 +186,7 @@ $blocks: 'figure, blockquote, hr, .wp-block-image, .wp-block-columns, .wp-block-
 		}
 
 		// Editor colours
-		// Old posts were written for the white legacy page: a colour picked in the editor could be
+		// Old posts and pages were written for the white legacy page: a colour picked in the editor could be
 		// unreadable on $color__main. Palette classes print with !important (global styles) and
 		// custom colours inline, so !important is the only way back to the 2026 colours.
 		:is(.has-text-color, .has-inline-color):not(.wp-block-button__link) {

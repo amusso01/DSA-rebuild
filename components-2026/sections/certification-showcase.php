@@ -46,7 +46,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 						<li class="certification-showcase__item">
 							<?php echo wp_get_attachment_image($row['image'], 'medium', false, array(
 								'class'   => 'certification-showcase__img',
-								'sizes'   => '190px',
+								'sizes'   => '215px',
 								'loading' => $args['index'] === 0 ? 'eager' : 'lazy',
 							)); ?>
 						</li>

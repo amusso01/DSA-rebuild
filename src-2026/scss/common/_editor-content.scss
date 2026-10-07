@@ -1,7 +1,7 @@
 /*==================================================================================
   EDITOR CONTENT (mixin)
   Rich text from an editor in the 2026 style: rhythm, h4 accent bar, dot lists, links.
-  Shared by the WYSIWYG editor section and the blog post body (pages/_single-post.scss).
+  Shared by the WYSIWYG editor section, the Hero homepage text and the blog post body (pages/_single-post.scss).
   Outputs nothing by itself. Figma: DSA, node 223:3103 (its "H3" style is our h4).
 ==================================================================================*/
 @use 'variables' as *;

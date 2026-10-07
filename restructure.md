@@ -64,6 +64,7 @@ inc/                   2026 PHP
   function-layout.php     Dynamic Layout 2026: A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style(); no editor on Layout, Homepage + Contact 2026 pages
   function-blog.php       blog posts query + cards (dsa_2026_blog_query/cards) and the Load more REST route
   function-contact-form.php Contact Form 7 on 2026 pages: ACF form picker, Multi Step plugin CSS off, no autop
+  function-content.php    the_content() on 2026 pages (single.php, page.php): pasted <meta> stripped
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
@@ -93,9 +94,9 @@ src-2026/
       _media.scss      include-media + breakpoints (single source of truth)
       _general.scss    base typography: html, headings, links
       _helper.scss     layout helpers: .content-block, .content-max, .content-narrow, .section-padding, %cover…
-      _editor-content.scss  mixin editor-content: editor rich text (rhythm, h4 bar, dot lists, links), WYSIWYG section + blog posts
+      _editor-content.scss  mixin editor-content: editor rich text (rhythm, h4 bar, dot lists, links), WYSIWYG section + Hero homepage text + blog posts
     pages/             styles for legacy templates on header-new, written for their own markup
-      _single-post.scss  blog posts (single.php): dark page, 2026 type, Gutenberg blocks
+      _singular.scss   blog posts + pages (single.php, page.php): dark page, 2026 type, Gutenberg blocks
     components/        one partial per component (mirrors components-2026/)
       _button.scss     .btn, .btn--outline
       _blog-card.scss  blog post card (partials/blog-card.php)
@@ -133,7 +134,7 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 
 **Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026", "Dynamic Layout 2026" or "Homepage 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-07):** the header and footer are built, and "Contact 2026" uses both, with a Hero, a Get in touch and a Contact form section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with eight sections so far: Hero homepage, Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row, Service cards and Certification showcase. The "Homepage 2026" template uses the same field, to test the new homepage before `front-page-new.php` goes live. No public page uses `get_header('new')` yet. Blog post styles are ready for `single.php`, waiting for its switch (see "Blog posts").
+**Status (2026-10-07):** the header and footer are built, and "Contact 2026" uses both, with a Hero, a Get in touch and a Contact form section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with eight sections so far: Hero homepage, Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row, Service cards and Certification showcase. The "Homepage 2026" template uses the same field, to test the new homepage before `front-page-new.php` goes live. No public page uses `get_header('new')` yet. Blog post and page styles are ready for `single.php` and `page.php`, waiting for their switch (see "Blog posts and pages").
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -435,7 +436,7 @@ section.hero-homepage.content-block.section-padding   [style=padding]
 | Options | Padding bottom (50%) | `padding_bottom` | range 0–100, step 1, `px` | default 82 (Figma) |
 | Options | Show title highlight | `show_highlight` | true/false (switch) | default on: the two lines above the title |
 | Content | Hero title | `title` | text | always an `<h1>`; empty: the page title |
-| Content | Content | `content` | WYSIWYG (basic, no media) | |
+| Content | Content | `content` | WYSIWYG (full toolbar, no media) | paragraphs and headings, starting at H2 |
 | Content | Primary button (50%) | `button_primary` | link | optional, filled `.btn` |
 | Content | Secondary button (50%) | `button_secondary` | link | optional, `.btn--outline` |
 | Content | Background image | `image` | image (ID) | empty: `$color__main` background |
@@ -447,7 +448,10 @@ section.hero-homepage.content-block.section-padding   [style=padding]
 - **Lines:**
   - **Show title highlight** prints or removes the `span`. A row saved before the option existed shows them (`$args` default `true`).
   - They're Hero page's values: 48 × 4 `$color__link` + 15 × 4 `$color__accent-hover`, a 2px radius and a 7px gap. Figma draws 14px and an 8px gap here; the two heroes were kept identical.
-- **Text:** `wp_kses_post()`, Manrope 16px, `line-height: 1.6`, `$color__text-light`. Paragraphs have no gap, links are `$color__link` and underlined, and lists get their padding back.
+- **Text:** `wp_kses_post()`, in `$color__text-light` from the section.
+  - **Full toolbar,** so editors can pick Paragraph or a heading. The `basic` toolbar has no Paragraph/Heading dropdown. The field instructions say to start at H2, because the title is the H1.
+  - **Styles:** the `editor-content` mixin (`common/_editor-content.scss`), the same as the WYSIWYG editor section and blog posts. That's Manrope 16px / 1.6, 12px between blocks, 30px before a heading, the h4 bar, dot lists, and `$color__link` underlined links.
+  - A single paragraph looks as in Figma.
 - **Buttons:**
   - Both use `partials/button.php`; the secondary one gets `btn--outline`.
   - The row sets `color: $color__link`, so the outline button is teal (border and text), as in Figma, without changing the shared `.btn--outline`. Its hover (teal fill) is unchanged.
@@ -614,7 +618,7 @@ section.wysiwyg-editor.content-block
   - Sizes, weight and line-height come from the global `h2`…`h6` in `_general.scss`. The section doesn't redeclare them.
   - **Figma's "H3" text style (26px) is our h4.** Figma's heading names are one level off; the global scale is the reference.
 - **Styles:**
-  - **Shared with blog posts:** everything from "Text" to "Rhythm" is the `editor-content` mixin (`common/_editor-content.scss`). `.wysiwyg-editor__content` includes it, and so does the blog post column. Change it there, and both follow.
+  - **Shared with blog posts:** everything from "Text" to "Rhythm" is the `editor-content` mixin (`common/_editor-content.scss`). `.wysiwyg-editor__content` includes it, and so does the blog post and page column. Change it there, and both follow.
   - **Section:** `$color__main` background, `$color__text-light` text.
   - **Text:** Manrope 16px 400, `line-height: 1.6`.
   - **h4:** an accent bar before the text: 4 × 28px, 2px radius, `$color__link`, 12px before the text.
@@ -793,6 +797,7 @@ section.service-cards.content-block.section-padding   [style=padding]
   - Drawn this way, the same polygon gives an even 1px border on every edge, the notches included.
   - The card is `isolation: isolate`, so the `z-index: -1` layers stay behind its content and above the section background.
   - **Not `corner-shape: notch`:** that property draws this exact shape natively (`border-radius: 31px 0 / 46px 0`), but Safari only has it in Technology Preview, and iOS not at all. Andrea chose the pseudo-elements so the shape works everywhere.
+  - **Hover rectangle:** a card with a link sets `--card-shape` to a rectangle written with the **same 8 points**, the notch points moved into their corners. Both layers have `transition: clip-path 0.25s ease`, and the same number of points lets the browser animate between the shapes, so the notches close smoothly instead of jumping.
 - **Colours** (Figma, approved by Andrea):
   - **Border:** `$color__service-card-border` `#24433f`.
   - **Fills:** `$color__service-card` `#173632` (dark) and `$color__border-alt` `#004242` (teal), set through `--card-fill`.
@@ -810,6 +815,7 @@ section.service-cards.content-block.section-padding   [style=padding]
   - **Link:** Manrope 14px 700, `$color__link`, with the 15px `svg-arrow-right` after a 6px gap.
     - Its colour is also set on `:hover` and `:focus`, against the global `a:hover { color: inherit }`.
     - **Hover and focus (not in Figma, Andrea's choice):** the arrow slides 4px right. The transform is on the arrow's span, because on the `<a>` it would become the containing block of the link's `::after`.
+    - **At the same time, the card turns rectangular** (see "Hover rectangle" above): `.service-card:has(.service-card__link):is(:hover, :focus-within)`. Keyboard focus does it too. A card without a link keeps its notches, because it isn't clickable. With reduced motion, the shape switches instantly.
 - **Heading:** the lines sit 16px under the title. They're 58 × 4px `$color__link` + 18 × 4px `$color__accent-hover`, with a 2px radius and a 7px gap. The heading is 46px above the cards.
 - **Padding and grid:** padding comes from `.section-padding`, with the 104px defaults on the class. At 1440 the cards are 580px wide, as in Figma.
 
@@ -854,8 +860,8 @@ section.certification-showcase.content-block.section-padding   [style=padding]
   - Every content heading (h3–h6) takes Figma's "H4" look: `$text__h5` (22px), Titillium 700, `line-height: 1.28`, the same as the service card title. It's 22px below the text.
 - **Images:**
   - **The light-blue notched tiles are part of the images** (Andrea's files). The section draws no tile and adds no colour: it shows each image as it is.
-  - Each image is 190px wide (Figma 190 × 112) and keeps its own ratio. Upload them at 380 × 224 for sharp screens.
-  - It's printed with `wp_get_attachment_image()` at `medium`, with `sizes="190px"`, so the srcset serves 2x screens.
+  - Each image is 215px wide (Andrea's choice, Figma has 190 × 112) and keeps its own ratio, so a Figma-ratio tile is 215 × 127. Upload them at 430 × 254 for sharp screens.
+  - It's printed with `wp_get_attachment_image()` at `medium`, with `sizes="215px"`, so the srcset serves 2x screens.
   - The alt text comes from the Media Library, because the logos carry meaning, so fill it in there.
   - Eager-loaded only when it's the first section.
 - **Styles:**
@@ -863,7 +869,7 @@ section.certification-showcase.content-block.section-padding   [style=padding]
   - **Copy column:** `flex: 1`. Lines, title and text are 22px apart. These are margins, so a missing part leaves no gap.
   - **Lines:** 54 × 4px `$color__link` + 16 × 4px `$color__accent-hover`, with a 2px radius and a 7px gap (Figma).
   - **Images:** a column with a 10px gap, vertically centred with the copy.
-  - **Padding:** `.section-padding` with the sliders. The defaults are on the class (`--padding-top: 54px; --padding-bottom: 54px`). At 1440 with three images, the section is about 464px high (356px of images + 2 × 54).
+  - **Padding:** `.section-padding` with the sliders. The defaults are on the class (`--padding-top: 54px; --padding-bottom: 54px`). At 1440 with three Figma-ratio images, the section is about 508px high (400px of images + 2 × 54).
 
     | Width | Padding top / bottom (default) | Layout |
     | --- | --- | --- |
@@ -1093,29 +1099,34 @@ None of this loads on 2026 pages: their legacy CSS and JS are dequeued, and `[pr
 - `dist/styles/map/_form.scss` holds the multistep styles.
 - The legacy form shows its red hints as static `<p style="color:red">` lines.
 
-## Blog posts (`single.php`, `pages/_single-post.scss`)
+## Blog posts and pages (`single.php`, `page.php`, `pages/_singular.scss`)
 
-Blog posts are written in Gutenberg and rendered by the **legacy** `single.php`. Their 2026 look is styled on that template's own markup, so the switch-over is two lines in `single.php`. There's no new template and no component.
+Blog posts and normal pages are written in Gutenberg and rendered by the **legacy** `single.php` and `page.php`. Both templates print the same markup, and their 2026 look is styled on it, so the switch-over is two lines in each file. There's no new template and no component.
 
 ```
-body.single-post                                  (WordPress body class: blog posts only, projects get .single-project)
+body.single-post | body.page-template-default     (WordPress body classes: blog posts only, projects get .single-project;
+                                                  pages on the default template, page.php. 2026 and other legacy templates have their own)
 	section#primary.content-area.page-area        full width: .content-block + .section-padding (@extend), $color__main
 		main#main.site-main.container.second      the text column: .content-narrow (@extend) + the editor-content mixin
-			h1                                    the post title (single.php)
+			h1                                    the title (the template's)
 			…blocks (the_content())               p.wp-block-paragraph, h2–h6.wp-block-heading, ul/ol.wp-block-list, figure.wp-block-image, div.wp-block-columns…
 ```
 
 - **Nothing changes on live until the switch.** The styles are in the 2026 CSS, which only loads with `get_header('new')`.
-- **Switch-over (Andrea, legacy file):** in `single.php`, `get_header()` → `get_header('new')` and `get_footer()` → `get_footer('new')`.
+- **Switch-over (Andrea, legacy files):** in `single.php` and in `page.php`, `get_header()` → `get_header('new')` and `get_footer()` → `get_footer('new')`. Each file can be switched on its own.
   - Without the footer change, the legacy footer prints unstyled.
   - The 2026 footer has no Instagram strip, unlike the legacy one.
   - `.container` and `.second` have no 2026 styles: Bootstrap and the legacy CSS are dequeued there.
+  - Pages on the other legacy templates (Full Page, Second Full Page, Blog Page, Sectors page) aren't covered.
 - **Layout:** `@extend` of the helpers, so the values stay in `_helper.scss`:
   - `.content-area` gets the gutter (120/80/48/25) and the padding (76/64/35);
   - `.site-main` is the 960px column (800px below `desktop`).
 - **Text:** the `editor-content` mixin (`common/_editor-content.scss`), the same as the WYSIWYG editor section: Manrope 16px / 1.6, the 12px / 30px rhythm, dot lists, the h4 bar, and `$color__link` underlined links.
-- **Title:** the hero title's H1. It follows the global h1 scale (54px, ×0.9, ×0.75), in Titillium 400 with `line-height: 1.05`, 40px above the content (30px `<phone`).
-- **Headings:** the global scale and weight. A `<strong>` the editor put in a heading stays bold (Titillium 700), Andrea's choice. Old posts wrap whole headings in it.
+- **Title:** the global h1 (54px, ×0.9, ×0.75, Titillium 400 / 1.05), 40px above the content (30px `<phone`).
+- **Headings:** the global scale and weight. A `<strong>` the editor put in a heading stays bold (Titillium 700), Andrea's choice. Old posts and pages wrap whole headings in it. Every h4 gets the accent bar (the Privacy Policy's section titles are h4).
+- **Empty blocks:** an empty paragraph or heading (`:empty`) is hidden, so it adds no gap. The Privacy Policy has many `<p></p>`.
+- **Pasted `<meta>`:** Google Docs pastes leave `<meta charset="utf-8">` in the content, and a heading holding only meta would show a lone h4 bar.
+  - `inc/function-content.php` strips every `<meta>` from `the_content()` on 2026 pages. It hooks `get_header` `'new'`, like the contact form setup. The heading is then empty, and `:empty` hides it.
 - **Gutenberg blocks** (not in Figma, built from the 2026 tokens):
   - **Rhythm:** 30px before and after media-like blocks (figure, quote, separator, image, columns, buttons, group, media-text, cover). Block-library's `margin-bottom`s are reset.
     - Columns, groups, media-text and cover content repeat the 12px / 30px rhythm.
@@ -1127,12 +1138,12 @@ body.single-post                                  (WordPress body class: blog po
   - **Separator:** a 1px `$color__border-alt` line. The dots style keeps WP's rules.
   - **Buttons:** `.wp-block-button__link` `@extend .btn`, and the outline style extends `.btn--outline`. This replaces classic-theme's grey pill.
   - **Embeds:** video iframes are 100% wide at 16:9 (the theme has no `responsive-embeds`).
-- **Editor colours, a safety net:** old posts were written for the white legacy page.
-  - Inside the post, `.has-text-color` / `.has-inline-color` → `color: inherit !important` and `.has-background` → `background: none !important` (buttons excluded).
+- **Editor colours, a safety net:** old posts and pages were written for the white legacy page.
+  - Inside the content, `.has-text-color` / `.has-inline-color` → `color: inherit !important` and `.has-background` → `background: none !important` (buttons excluded).
   - `!important` is needed because WP prints palette classes with `!important` and custom colours inline.
   - Remove the rule if editors should keep their colours.
-- **Not built:** date, author, featured image, categories. `single.php` prints none of them today.
-- **Check on real posts after the switch** (the example post, 3588, only uses lists, paragraphs, h3, links, images and columns):
+- **Not built:** date, author, featured image, categories. The templates print none of them today.
+- **Check on real content after the switch.** The examples, post 3588 and the Privacy Policy, only use lists, paragraphs, h3/h4, links, images and columns. Look for:
   - font-size presets (`has-*-font-size`, `!important` in WP);
   - coloured buttons;
   - galleries or table-of-contents lists (a `ul` gets the dots);
@@ -1522,3 +1533,16 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - Footer social links: **X → Facebook** and **YouTube → Instagram**, at Andrea's request. LinkedIn is unchanged.
     - **ACF** (Options > Footer, Social tab): `footer_x` / `footer_youtube` were replaced by the new link fields `footer_facebook` / `footer_instagram`, in the same places. They have new keys, so the old X and YouTube URLs aren't carried over: fill in the new fields after the sync.
     - `components-2026/footer/social.php` loads `svg-templates/svg-facebook.php` and `svg-instagram.php` (Andrea's icons, the same 36px `currentColor` circle as LinkedIn). `svg-x.php` and `svg-youtube.php` are no longer used.
+- **2026-10-07**
+  - **Pages** (the legacy `page.php`) get the blog post styles too, once `page.php` calls `get_header('new')` / `get_footer('new')` (Andrea's switch). See "Blog posts and pages".
+    - `page.php` prints the same markup as `single.php`. The partial is now scoped by `.single-post, .page-template-default`, and renamed `pages/_single-post.scss` → `pages/_singular.scss`.
+    - Empty paragraphs and headings (`:empty`) are hidden. The Privacy Policy has many `<p></p>`.
+    - New `inc/function-content.php`: on 2026 pages, `the_content()` loses any pasted `<meta>` (Google Docs junk). A heading holding only meta becomes empty and is hidden, instead of showing a lone h4 bar. Andrea's choice over cleaning it up in the editor.
+    - The title's own `font-weight` / `line-height` were removed: the global h1 has the same values since 2026-10-06.
+- **2026-10-07**
+  - Certification showcase: the images are now **215px** wide (was Figma's 190px), at Andrea's request. `sizes` is `215px` to match. A Figma-ratio tile is 215 × 127, so upload at 430 × 254.
+- **2026-10-07**
+  - Service cards: on hover and keyboard focus, a card with a link **turns rectangular** while its arrow slides, at Andrea's request (not in Figma). The rectangle is the notch polygon's same 8 points moved into the corners, so `clip-path` animates between the two shapes (0.25s, like the arrow). Cards without a link keep their notches.
+- **2026-10-07**
+  - Hero homepage: the **Content** WYSIWYG now has the full toolbar, so editors can pick Paragraph or a heading (instructions: start at H2).
+  - `.hero-homepage__text` now includes the shared `editor-content` mixin, with its rhythm, h4 bar, dot lists and links, instead of its own rules. A single paragraph is unchanged.

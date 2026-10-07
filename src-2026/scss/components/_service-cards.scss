@@ -67,6 +67,8 @@
 /* Card: notched shape (Figma "Subtract"), 31 × 46px cut from the top-left and bottom-right corners.
    ::before is the 1px border, ::after the fill inset by 1px: the same polygon at a 1px inset keeps
    the border 1px on every edge, notches included. Not corner-shape: notch, which Safari lacks.
+   Hover (linked cards): the same 8 points pulled into the corners make a rectangle, so clip-path
+   animates between the two shapes instead of jumping.
 /––––––––––––––––––––––––*/
 .service-card {
 	--card-shape: polygon(
@@ -95,6 +97,7 @@
 		position: absolute;
 		z-index: -1;
 		clip-path: var(--card-shape);
+		transition: clip-path 0.25s ease; // same timing as the arrow
 	}
 
 	&::before {
@@ -129,6 +132,11 @@
 	}
 	@include media('<phone') {
 		padding: 32px 40px; // still clear of the 31px notch
+	}
+
+	// not in Figma (Andrea): a clickable card turns rectangular, the notch points meet the corners
+	&:has(.service-card__link):is(:hover, :focus-within) {
+		--card-shape: polygon(0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%, 0 100%, 0 0, 0 0);
 	}
 }
 

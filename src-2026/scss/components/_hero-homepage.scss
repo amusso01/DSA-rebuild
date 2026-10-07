@@ -5,6 +5,7 @@
 ==================================================================================*/
 @use '../common/variables' as *;
 @use '../common/media' as *;
+@use '../common/editor-content' as *;
 
 // padding: .section-padding (_helper.scss) with the ACF sliders; defaults here (Figma)
 .hero-homepage {
@@ -70,25 +71,10 @@
 	}
 }
 
+// full toolbar (paragraphs and headings): the shared editor styles (common/_editor-content.scss),
+// as in the WYSIWYG editor section. Colour from the section; a single paragraph is as in Figma
 .hero-homepage__text {
-	// Manrope 16px 400 from html, colour from the section; paragraphs have no gap, as in Figma (reset)
-	line-height: 1.6;
-
-	ul,
-	ol {
-		padding-left: 1.25em; // the reset zeroes it, bullets would hang outside
-	}
-
-	a {
-		color: $color__link;
-		text-decoration: underline;
-		text-underline-offset: 2px;
-
-		&:focus-visible {
-			outline: 2px solid $color__link;
-			outline-offset: 2px;
-		}
-	}
+	@include editor-content;
 }
 
 .hero-homepage__buttons {
