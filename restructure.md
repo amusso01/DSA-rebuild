@@ -1669,3 +1669,5 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
 - **2026-10-07**
   - Two-column image text: a new **Show logo** option (`show_logo`, true/false, default off), after the reverse switch in the Options tab. It shows the Connexions logo above the title. Figma node `538:8445`.
   - New `svg-templates/svg-dsa.php`: Andrea's Figma export of the logo (node `538:8448`), cleaned up. The empty `clipPath` is removed, the fills are one `currentColor` group (it follows Text color), and it has `role="img"` + an `aria-label`.
+- **2026-10-07**
+  - **Fix:** the footer social hover only worked on LinkedIn. `svg-facebook.php` and `svg-instagram.php` had the circle hard-coded as `fill="#F3F3F1"`, so `$color__link` on hover couldn't reach it. Their circle is now `fill="currentColor"`, like LinkedIn, and looks the same at rest.
