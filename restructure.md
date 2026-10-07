@@ -823,7 +823,7 @@ section.blog-row.content-block.section-padding   [style=padding]   [data-blog-re
 Layout `service_cards` ("Service cards"): an optional H2 with the accent lines, then a grid of notched cards. Each card has a title, a text and a link, and the link covers the whole card. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `399:5611` ("Services", 1440 wide).
 
 ```
-section.service-cards.content-block.section-padding   [style=padding]
+section.service-cards.content-block.section-padding[.service-cards--dark]   [style=padding; background-color]
 	.content-max
 		.service-cards__heading                     (only with a title)
 			h2.service-cards__title + span.service-cards__lines
@@ -839,13 +839,20 @@ section.service-cards.content-block.section-padding   [style=padding]
 | --- | --- | --- | --- | --- |
 | Options | Padding top (50%) | `padding_top` | range 0–150, step 1, `px` | default 104 (Figma) |
 | Options | Padding bottom (50%) | `padding_bottom` | range 0–150, step 1, `px` | default 104 (Figma) |
+| Options | Background color (50%) | `background_color` | color picker | default `#091C1E` |
+| Options | Text color (50%) | `text_color` | select `light` / `dark` | default `light`; the heading only |
 | Content | Title | `title` | textarea (new lines → `<br>`) | optional, always an `<h2>` |
 | Content | Cards | `cards` | repeater (block, "Add card", collapsed on the title) | |
-| ↳ | Title | `title` | text | required |
-| ↳ | Content | `content` | textarea (new lines → `<br>`) | plain text |
+| ↳ | Title | `title` | text | required; `<span class="accent">` → teal |
+| ↳ | Content | `content` | textarea (new lines → `<br>`) | plain text; `<span class="accent">` → bold teal |
 | ↳ | Link | `link` | link | optional |
 
 - **Empty:** a card with no title and no text is skipped. With no cards left, the section prints nothing. The title is optional.
+- **Background and text color** (Figma node `475:7823`, "What we stand for": `#F3F3F1` + Dark):
+  - **Background:** a valid colour is added to the inline style, after the padding (joined with `; `, `sanitize_hex_color()`). An empty or invalid one falls back to the SCSS default, `$color__main`.
+  - **Dark** adds `.service-cards--dark`, which sets `$color__text` on the section. Only the heading changes: the H2's accent span and the lines keep their colours.
+  - **The cards never change:** they set `$color__text-light` themselves, so they don't follow the section, and their fills and border are fixed.
+  - Rows saved before the options existed look exactly as before.
 - **Title:** `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` highlights words in `$color__link`. Its look comes from the base `h2`.
 - **Full-card link:** this is the stretched-link pattern of the blog card.
   - **The `<a>` is the CTA.** Its text is the link's text ("Explore IT Asset Disposal"), or "Read more" when that's empty ("Read more" is the Figma component's own label).
@@ -875,7 +882,9 @@ section.service-cards.content-block.section-padding   [style=padding]
   - The title, text and link are 16px apart (margins, so a missing one leaves no gap).
 - **Card text:**
   - **Title:** `.h5` (22px), with weight 700 and `line-height: 1.28` (Figma "H4"), the same as the blog card title.
+    - `wp_kses()` keeps only `<span class>`, and `<span class="accent">` colours words `$color__link` (Figma `475:7823`: "Protect the **data.**").
   - **Text:** Manrope 16px, `line-height: 1.6`.
+    - `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` makes words **bold** (700) and `$color__link`, e.g. a closing line after a new line (Figma `475:7823`: "Every asset. Every outcome. Assured.").
   - **Link:** Manrope 14px 700, `$color__link`, with the 15px `svg-arrow-right` after a 6px gap.
     - Its colour is also set on `:hover` and `:focus`, against the global `a:hover { color: inherit }`.
     - **Hover and focus (not in Figma, Andrea's choice):** the arrow slides 4px right. The transform is on the arrow's span, because on the `<a>` it would become the containing block of the link's `::after`.
@@ -1645,3 +1654,9 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
     - Tested in headless Chrome with slow fonts and a slow or late `main.js`: no blink, no resize during the fade, the 1s cap and the 3s fallback work. Scroll, jumps, Load more, reduced motion, JS off and print still pass.
 - **2026-10-07**
   - Reveal on the footer certification strip, at Andrea's request: each logo (`footer-partners__item`) fades up 100ms after the previous one (`components-2026/footer/partner.php`). The logos share one row, so without the delay they'd arrive as one block. The rest of the footer doesn't animate.
+- **2026-10-07**
+  - Service cards: new **Background color** (default `#091C1E`) and **Text color** (`light` / `dark`, default light) options in the Options tab, after the padding sliders. Figma node `475:7823`.
+    - The background joins the padding in the section's inline style. Dark adds `.service-cards--dark` (`$color__text`), for the heading only.
+    - `.service-card` now sets `$color__text-light` itself, so the cards stay unchanged on any background. Existing rows look the same.
+- **2026-10-07**
+  - Service cards: `<span class="accent">` now works in the **card title** (teal) and the **card text** (bold teal), as in Figma `475:7823`. Both go through `wp_kses()` with `<span class>`; the field instructions say how.

@@ -10,8 +10,13 @@
 .service-cards {
 	--padding-top: 104px;
 	--padding-bottom: 104px;
-	background-color: $color__main;
+	background-color: $color__main; // default; the ACF colour is an inline style
 	color: $color__text-light;
+}
+
+// Text color "dark" (ACF): the heading, for light backgrounds (Figma 475:7823). The cards keep their colours
+.service-cards--dark {
+	color: $color__text;
 }
 
 /* Heading: title with the accent lines
@@ -84,6 +89,7 @@
 	--card-fill: #{$color__service-card};
 	position: relative; // the link's ::after covers the card
 	isolation: isolate; // the z-index: -1 shape layers stay above the section background
+	color: $color__text-light; // the cards are always dark: their text doesn't follow the section's text colour
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -144,11 +150,22 @@
 .service-card__title {
 	font-weight: 700;
 	line-height: 1.28;
+
+	// editors wrap words in <span class="accent"> to highlight them (Figma 475:7823)
+	.accent {
+		color: $color__link;
+	}
 }
 
-// Manrope 16px 400 from html, colour from the section
+// Manrope 16px 400 from html, colour from the card
 .service-card__text {
 	line-height: 1.6;
+
+	// <span class="accent">: bold teal, e.g. a closing line (Figma 475:7823, Manrope 700)
+	.accent {
+		color: $color__link;
+		font-weight: 700;
+	}
 }
 
 .service-card__link {

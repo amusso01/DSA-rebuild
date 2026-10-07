@@ -975,6 +975,56 @@
                             "parent_layout": "layout_6ac5138005e95"
                         },
                         {
+                            "key": "field_6ac642f61bec1",
+                            "label": "Background color",
+                            "name": "background_color",
+                            "aria-label": "",
+                            "type": "color_picker",
+                            "instructions": "Default #091C1E. Match it with Text color: Light on dark backgrounds, Dark on light ones.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "#091C1E",
+                            "enable_transparency": 0,
+                            "return_format": "string",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac5138005e95"
+                        },
+                        {
+                            "key": "field_6ac642f61bf4a",
+                            "label": "Text color",
+                            "name": "text_color",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "Light (default) for dark backgrounds, Dark for light ones. Only the section title changes: the cards keep their colours.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "light": "Light",
+                                "dark": "Dark"
+                            },
+                            "default_value": "light",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "create_options": 0,
+                            "save_options": 0,
+                            "parent_layout": "layout_6ac5138005e95"
+                        },
+                        {
                             "key": "field_6ac5138005f59",
                             "label": "Content",
                             "name": "",
@@ -1043,7 +1093,7 @@
                                     "name": "title",
                                     "aria-label": "",
                                     "type": "text",
-                                    "instructions": "",
+                                    "instructions": "To highlight words in teal, wrap them in &lt;span class=\"accent\"&gt;…&lt;/span&gt;.",
                                     "required": 1,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -1065,7 +1115,7 @@
                                     "name": "content",
                                     "aria-label": "",
                                     "type": "textarea",
-                                    "instructions": "Plain text: the whole card is already a link.",
+                                    "instructions": "Plain text: the whole card is already a link. To highlight words in bold teal, wrap them in &lt;span class=\"accent\"&gt;…&lt;/span&gt;.",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -1553,5 +1603,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791370992
+    "modified": 1791378453
 }

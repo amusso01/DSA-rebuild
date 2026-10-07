@@ -2,17 +2,20 @@
 /**
  * Section: service cards (layout service_cards in Dynamic Layout 2026).
  * Optional H2 title, then a 2-column grid of notched cards: title, text and a link.
- * The card's link covers the whole card: one link per card. Rendered by dsa_2026_render_sections().
+ * The card's link covers the whole card: one link per card. Options: padding, background colour,
+ * text colour (the heading only: the cards keep their colours). Rendered by dsa_2026_render_sections().
  *
  * @package FDRY
  */
 
 $args = wp_parse_args($args, array(
-	'padding_top'    => '',      // slider, desktop px (0–150); empty: 104px from .service-cards
-	'padding_bottom' => '',
-	'title'          => '',      // textarea (new lines → <br>); <span class="accent"> highlights
-	'cards'          => array(), // repeater rows: title, content (textarea, <br>), link (ACF Link array)
-	'index'          => 0,
+	'padding_top'      => '',      // slider, desktop px (0–150); empty: 104px from .service-cards
+	'padding_bottom'   => '',
+	'background_color' => '',      // hex; empty or invalid: $color__main from the SCSS
+	'text_color'       => 'light', // light | dark (dark: for light backgrounds, the heading only)
+	'title'            => '',      // textarea (new lines → <br>); <span class="accent"> highlights
+	'cards'            => array(), // repeater rows: title, content (textarea, <br>), link (ACF Link array)
+	'index'            => 0,
 ));
 
 // a row with neither title nor text would be an empty box
@@ -24,9 +27,15 @@ if (!$cards) {
 	return;
 }
 
-$style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bottom'], 150);
+$bg      = sanitize_hex_color($args['background_color']);
+$classes = 'service-cards content-block section-padding' . ($args['text_color'] === 'dark' ? ' service-cards--dark' : '');
+// one inline style: the padding sliders, then the background
+$style = implode('; ', array_filter(array(
+	dsa_2026_section_padding_style($args['padding_top'], $args['padding_bottom'], 150),
+	$bg ? 'background-color: ' . $bg : '',
+)));
 ?>
-<section class="service-cards content-block section-padding"<?php if ($style) : ?> style="<?php echo esc_attr($style); ?>"<?php endif; ?>>
+<section class="<?php echo esc_attr($classes); ?>"<?php if ($style) : ?> style="<?php echo esc_attr($style); ?>"<?php endif; ?>>
 	<div class="content-max">
 		<?php if ($args['title']) : ?>
 			<div class="service-cards__heading" data-reveal="fade-up">
@@ -40,10 +49,10 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 			?>
 				<li class="service-card" data-reveal="fade-up">
 					<?php if (!empty($card['title'])) : ?>
-						<h3 class="service-card__title h5"><?php echo esc_html($card['title']); ?></h3>
+						<h3 class="service-card__title h5"><?php echo wp_kses($card['title'], array('span' => array('class' => true))); ?></h3>
 					<?php endif; ?>
 					<?php if (!empty($card['content'])) : ?>
-						<p class="service-card__text"><?php echo wp_kses($card['content'], array('br' => array())); ?></p>
+						<p class="service-card__text"><?php echo wp_kses($card['content'], array('span' => array('class' => true), 'br' => array())); ?></p>
 					<?php endif; ?>
 					<?php if ($link) : ?>
 						<a class="service-card__link" href="<?php echo esc_url($link['url']); ?>"<?php if (($link['target'] ?? '') === '_blank') : ?> target="_blank" rel="noopener"<?php endif; ?>>
