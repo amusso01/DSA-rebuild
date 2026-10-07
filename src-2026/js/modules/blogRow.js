@@ -1,6 +1,8 @@
 // Blog row (components-2026/sections/blog-row.php): "Load more" fetches the next 9 cards
 // from the REST route in inc/function-blog.php and appends them to the grid.
 // Only sections in "Show all" mode have data-blog-rest.
+import { revealIn } from './reveal'
+
 export default function blogRow() {
 	const sections = document.querySelectorAll('.blog-row[data-blog-rest]')
 	if (!sections.length) return
@@ -32,6 +34,7 @@ export default function blogRow() {
 				const first = grid.children.length
 
 				grid.insertAdjacentHTML('beforeend', data.html)
+				revealIn(grid) // the new cards fade up (reveal.js)
 				button.dataset.page = page
 				if (shown) shown.textContent = data.shown
 

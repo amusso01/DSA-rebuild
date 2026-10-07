@@ -31,7 +31,7 @@ if (!$has_intro && !$has_form) {
 	<div class="content-max">
 		<div class="contact-form__inner">
 			<?php if ($has_intro) : ?>
-				<div class="contact-form__intro">
+				<div class="contact-form__intro" data-reveal="fade-up">
 					<?php if ($args['title']) : ?>
 						<h2 class="contact-form__title h3"><?php echo wp_kses($args['title'], array('span' => array('class' => true))); ?></h2>
 					<?php endif; ?>
@@ -41,7 +41,7 @@ if (!$has_intro && !$has_form) {
 				</div>
 			<?php endif; ?>
 			<?php if ($has_form) : ?>
-				<div class="contact-form__card">
+				<div class="contact-form__card" data-reveal="fade-up">
 					<ol class="contact-form__steps" aria-label="<?php esc_attr_e('Form steps'); ?>">
 						<?php foreach ($steps as $i => $label) : ?>
 							<li class="contact-form__step<?php echo $i === 0 ? ' is-current' : ''; ?>"<?php if ($i === 0) : ?> aria-current="step"<?php endif; ?>><?php echo esc_html($label); ?></li>

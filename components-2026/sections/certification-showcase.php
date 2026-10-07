@@ -30,7 +30,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 	<div class="content-max">
 		<div class="certification-showcase__inner">
 			<?php if ($args['title'] || $args['content']) : ?>
-				<div class="certification-showcase__copy">
+				<div class="certification-showcase__copy" data-reveal="fade-up">
 					<?php if ($args['title']) : ?>
 						<span class="certification-showcase__lines" aria-hidden="true"></span>
 						<h2 class="certification-showcase__title"><?php echo wp_kses($args['title'], array('span' => array('class' => true), 'br' => array())); ?></h2>
@@ -41,7 +41,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 				</div>
 			<?php endif; ?>
 			<?php if ($images) : ?>
-				<ul class="certification-showcase__images" aria-label="<?php esc_attr_e('Certifications'); ?>">
+				<ul class="certification-showcase__images" data-reveal="fade-up" aria-label="<?php esc_attr_e('Certifications'); ?>">
 					<?php foreach ($images as $row) : ?>
 						<li class="certification-showcase__item">
 							<?php echo wp_get_attachment_image($row['image'], 'medium', false, array(

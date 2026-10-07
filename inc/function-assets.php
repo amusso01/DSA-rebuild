@@ -18,12 +18,21 @@ function dsa_2026_setup_page($name)
 	// priority 20: after the legacy add_normalize_CSS() (10) has enqueued what we dequeue
 	add_action('wp_enqueue_scripts', 'dsa_2026_enqueue_assets', 20);
 	add_filter('body_class', 'dsa_2026_body_class');
+	add_action('wp_head', 'dsa_2026_reveal_script', 1);
 }
 
 function dsa_2026_body_class($classes)
 {
 	$classes[] = 'layout-2026';
 	return $classes;
+}
+
+// Reveal (src-2026/js/modules/reveal.js): html.reveal-on hides [data-reveal] from the first paint, so
+// nothing on screen blinks before main.js runs. If main.js hasn't started within 3s (failed, or delayed
+// by an optimisation plugin), the class is removed and everything shows.
+function dsa_2026_reveal_script()
+{
+	echo "<script>(function(h){h.classList.add('reveal-on');setTimeout(function(){if(!h.classList.contains('reveal-ready'))h.classList.remove('reveal-on')},3000)})(document.documentElement)</script>\n";
 }
 
 function dsa_2026_enqueue_assets()

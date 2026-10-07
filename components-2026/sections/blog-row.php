@@ -29,7 +29,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 <section class="blog-row content-block section-padding"<?php if ($style) : ?> style="<?php echo esc_attr($style); ?>"<?php endif; ?><?php if ($show_all) : ?> data-blog-rest="<?php echo esc_url(rest_url('dsa-2026/v1/blog')); ?>"<?php endif; ?>>
 	<div class="content-max">
 		<?php if ($args['title'] || $show_all) : ?>
-			<div class="blog-row__heading">
+			<div class="blog-row__heading" data-reveal="fade-up">
 				<?php if ($args['title']) : ?>
 					<div class="blog-row__heading-group">
 						<h2 class="blog-row__title"><?php echo esc_html($args['title']); ?></h2>

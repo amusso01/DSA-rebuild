@@ -1,0 +1,43 @@
+/*==================================================================================
+  REVEAL
+  Fade up once when scrolled into view (modules/reveal.js), the heroes included. Set in the markup:
+  data-reveal="fade-up" [data-reveal-delay="0–1000, step 50"] [data-reveal-duration="200–1500, step 100"]
+  Never on a <section>: its background would fade too. Nothing is hidden or moved with reduced motion, or in print.
+==================================================================================*/
+$reveal__distance: 24px;
+$reveal__duration: 1000ms;
+$reveal__ease: cubic-bezier(0.61, 1, 0.88, 1); // easeOutSine
+
+// steps, like AOS: CSS can't read a data attribute as a time
+@for $i from 1 through 20 {
+	[data-reveal-delay='#{$i * 50}'] {
+		--reveal-delay: #{$i * 50}ms;
+	}
+}
+@for $i from 2 through 15 {
+	[data-reveal-duration='#{$i * 100}'] {
+		--reveal-duration: #{$i * 100}ms;
+	}
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+	// html.reveal-on comes from the inline head script (inc/function-assets.php): hidden from the first
+	// paint, so nothing on screen blinks. Without the script, or after its 3s fallback, nothing is hidden
+	.reveal-on [data-reveal]:not(.is-revealed) {
+		opacity: 0;
+	}
+
+	// animation, not transition: components keep their own transitions.
+	// backwards: the from frame holds during the delay, then the element is back to its own styles
+	[data-reveal='fade-up'].is-revealed {
+		animation: reveal-fade-up var(--reveal-duration, #{$reveal__duration}) $reveal__ease var(--reveal-delay, 0ms) backwards;
+	}
+}
+
+// translate, not transform: a component's own transform is untouched
+@keyframes reveal-fade-up {
+	from {
+		opacity: 0;
+		translate: 0 $reveal__distance;
+	}
+}

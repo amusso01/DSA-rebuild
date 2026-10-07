@@ -6,7 +6,7 @@
  * @package FDRY
  */
 ?>
-<article class="blog-card">
+<article class="blog-card" data-reveal="fade-up">
 	<div class="blog-card__media">
 		<?php if (has_post_thumbnail()) : ?>
 			<?php the_post_thumbnail('medium_large', array(

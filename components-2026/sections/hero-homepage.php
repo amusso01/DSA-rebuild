@@ -38,7 +38,7 @@ $first = $args['index'] === 0;
 		)); ?>
 	<?php endif; ?>
 	<div class="content-max">
-		<div class="hero-homepage__copy">
+		<div class="hero-homepage__copy" data-reveal="fade-up">
 			<?php if ($args['show_highlight']) : ?>
 				<span class="hero-homepage__lines" aria-hidden="true"></span>
 			<?php endif; ?>

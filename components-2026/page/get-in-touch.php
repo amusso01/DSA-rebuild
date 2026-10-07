@@ -47,7 +47,7 @@ if (!$has_intro && !$cards) {
 	<div class="content-max">
 		<div class="get-in-touch__inner">
 			<?php if ($has_intro) : ?>
-				<div class="get-in-touch__intro">
+				<div class="get-in-touch__intro" data-reveal="fade-up">
 					<?php if ($args['title']) : ?>
 						<h2 class="get-in-touch__title h3"><?php echo wp_kses($args['title'], array('span' => array('class' => true))); ?></h2>
 					<?php endif; ?>
@@ -57,7 +57,7 @@ if (!$has_intro && !$cards) {
 				</div>
 			<?php endif; ?>
 			<?php if ($cards) : ?>
-				<ul class="get-in-touch__cards">
+				<ul class="get-in-touch__cards" data-reveal="fade-up">
 					<?php foreach ($cards as $card) : ?>
 						<li class="get-in-touch__card">
 							<a class="get-in-touch__link" href="<?php echo esc_url($card['url']); ?>">

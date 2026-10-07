@@ -24,6 +24,6 @@ $classes = 'wysiwyg-editor__content' . ($args['container'] === 'narrow' ? ' cont
 ?>
 <section class="wysiwyg-editor content-block section-padding"<?php if ($style) : ?> style="<?php echo esc_attr($style); ?>"<?php endif; ?>>
 	<div class="content-max">
-		<div class="<?php echo esc_attr($classes); ?>"><?php echo wp_kses_post($args['content']); ?></div>
+		<div class="<?php echo esc_attr($classes); ?>" data-reveal="fade-up"><?php echo wp_kses_post($args['content']); ?></div>
 	</div>
 </section>

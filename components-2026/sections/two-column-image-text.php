@@ -28,7 +28,7 @@ $classes = 'two-column-image-text content-block'
 	<div class="content-max">
 		<div class="two-column-image-text__inner">
 			<?php if ($args['image']) : ?>
-				<div class="two-column-image-text__media">
+				<div class="two-column-image-text__media" data-reveal="fade-up">
 					<?php echo wp_get_attachment_image($args['image'], 'large', false, array(
 						'class'   => 'two-column-image-text__img',
 						'sizes'   => '(max-width: 920px) 100vw, 50vw',
@@ -36,7 +36,7 @@ $classes = 'two-column-image-text content-block'
 					)); ?>
 				</div>
 			<?php endif; ?>
-			<div class="two-column-image-text__content">
+			<div class="two-column-image-text__content" data-reveal="fade-up">
 				<?php if ($args['eyebrow']) : ?>
 					<p class="two-column-image-text__eyebrow"><?php echo esc_html($args['eyebrow']); ?></p>
 				<?php endif; ?>

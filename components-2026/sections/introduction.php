@@ -29,8 +29,8 @@ $has_buttons = !empty($args['button_primary']['url']) || !empty($args['button_se
 <section class="<?php echo esc_attr($classes); ?>"<?php if ($bg) : ?> style="background-color: <?php echo esc_attr($bg); ?>"<?php endif; ?>>
 	<div class="content-max">
 		<div class="introduction__inner">
-			<h2 class="introduction__title"><?php echo wp_kses($args['title'], array('span' => array('class' => true), 'br' => array())); ?></h2>
-			<div class="introduction__summary">
+			<h2 class="introduction__title" data-reveal="fade-up"><?php echo wp_kses($args['title'], array('span' => array('class' => true), 'br' => array())); ?></h2>
+			<div class="introduction__summary" data-reveal="fade-up">
 				<?php if ($args['content']) : ?>
 					<div class="introduction__text"><?php echo wp_kses_post($args['content']); ?></div>
 				<?php endif; ?>

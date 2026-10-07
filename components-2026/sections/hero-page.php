@@ -46,7 +46,7 @@ $first = $args['index'] === 0;
 		)); ?>
 	<?php endif; ?>
 	<div class="content-max">
-		<nav class="hero-page__breadcrumb" aria-label="<?php esc_attr_e('Breadcrumb'); ?>">
+		<nav class="hero-page__breadcrumb" data-reveal="fade-up" aria-label="<?php esc_attr_e('Breadcrumb'); ?>">
 			<ol class="hero-page__crumbs">
 				<?php foreach ($crumbs as $crumb) : ?>
 					<li class="hero-page__crumb">
@@ -57,7 +57,7 @@ $first = $args['index'] === 0;
 				<li class="hero-page__crumb hero-page__crumb--current" aria-current="page"><?php echo esc_html($current); ?></li>
 			</ol>
 		</nav>
-		<<?php echo tag_escape($tag); ?> class="hero-page__title"><?php echo wp_kses($title, array('span' => array('class' => true))); ?></<?php echo tag_escape($tag); ?>>
-		<span class="hero-page__lines" aria-hidden="true"></span>
+		<<?php echo tag_escape($tag); ?> class="hero-page__title" data-reveal="fade-up" data-reveal-delay="100"><?php echo wp_kses($title, array('span' => array('class' => true))); ?></<?php echo tag_escape($tag); ?>>
+		<span class="hero-page__lines" aria-hidden="true" data-reveal="fade-up" data-reveal-delay="200"></span>
 	</div>
 </section>

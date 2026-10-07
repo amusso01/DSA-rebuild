@@ -29,7 +29,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 <section class="service-cards content-block section-padding"<?php if ($style) : ?> style="<?php echo esc_attr($style); ?>"<?php endif; ?>>
 	<div class="content-max">
 		<?php if ($args['title']) : ?>
-			<div class="service-cards__heading">
+			<div class="service-cards__heading" data-reveal="fade-up">
 				<h2 class="service-cards__title"><?php echo wp_kses($args['title'], array('span' => array('class' => true), 'br' => array())); ?></h2>
 				<span class="service-cards__lines" aria-hidden="true"></span>
 			</div>
@@ -38,7 +38,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 			<?php foreach ($cards as $card) :
 				$link = !empty($card['link']['url']) ? $card['link'] : null;
 			?>
-				<li class="service-card">
+				<li class="service-card" data-reveal="fade-up">
 					<?php if (!empty($card['title'])) : ?>
 						<h3 class="service-card__title h5"><?php echo esc_html($card['title']); ?></h3>
 					<?php endif; ?>
