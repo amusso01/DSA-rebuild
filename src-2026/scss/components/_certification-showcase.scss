@@ -1,0 +1,135 @@
+/*==================================================================================
+  CERTIFICATION SHOWCASE (components-2026/sections/certification-showcase.php)
+  Dynamic Layout 2026 section: accent lines, H2 title and text on the left, up to 3
+  certification images stacked on the right. Figma: DSA, node 462:6898 ("Experience and trust").
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+// padding: .section-padding (_helper.scss) with the ACF sliders; 54px is the Figma default
+.certification-showcase {
+	--padding-top: 54px;
+	--padding-bottom: 54px;
+	background-color: $color__text-light;
+	color: $color__text;
+}
+
+.certification-showcase__inner {
+	display: flex;
+	align-items: center;
+	gap: 78px; // Figma
+
+	@include media('<tablet') {
+		gap: 48px;
+	}
+	@include media('<phone-land') {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 40px;
+	}
+}
+
+/* Copy: lines, title, text
+/––––––––––––––––––––––––*/
+.certification-showcase__copy {
+	flex: 1 1 0;
+	min-width: 0;
+
+	// margins instead of gap: a missing title or text leaves no hole
+	> * + * {
+		margin-top: 22px;
+	}
+
+	@include media('<phone-land') {
+		flex: none;
+	}
+}
+
+// the accent lines above the title (Figma: 54 + 16px)
+.certification-showcase__lines {
+	display: flex;
+	gap: 7px;
+
+	&::before,
+	&::after {
+		content: '';
+		height: 4px;
+		border-radius: 2px;
+	}
+
+	&::before {
+		width: 54px;
+		background-color: $color__link;
+	}
+
+	&::after {
+		width: 16px;
+		background-color: $color__accent-hover;
+	}
+}
+
+// size, weight, line-height and font: base h2 in _general.scss; colour from the section
+.certification-showcase__title {
+	// editors wrap words in <span class="accent"> to highlight them
+	.accent {
+		color: $color__link;
+	}
+}
+
+.certification-showcase__text {
+	// Manrope 16px 400 from html, colour from the section
+	line-height: 1.6;
+
+	> * + * {
+		margin-top: 12px;
+	}
+
+	// the bold closing line: Figma gap before it
+	> * + :is(h3, h4, h5, h6) {
+		margin-top: 22px;
+	}
+
+	// size: $text__h5 (22px) on every heading level; Figma "H4": Titillium 700 / 1.28, as .service-card__title
+	:is(h3, h4, h5, h6) {
+		font-size: $text__h5;
+		font-weight: 700;
+		line-height: 1.28;
+	}
+
+	ul,
+	ol {
+		padding-left: 1.25em; // the reset zeroes it, bullets would hang outside
+	}
+
+	a {
+		color: $color__link;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+
+		&:focus-visible {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+}
+
+/* Images: each one already includes its tile, shown at the Figma size
+/––––––––––––––––––––––––*/
+.certification-showcase__images {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	gap: 10px;
+
+	@include media('<phone-land') {
+		// under the text: one row, wrapping on narrow phones
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+}
+
+.certification-showcase__img {
+	display: block;
+	width: 190px; // Figma 190 × 112; the image keeps its own ratio
+	height: auto;
+}

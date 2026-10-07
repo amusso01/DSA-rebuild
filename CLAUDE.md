@@ -12,6 +12,7 @@ This theme is being rebuilt alongside the live legacy code. The full context, bu
   - Functions go in `inc/function-<topic>.php`, required from `inc/function-dev.php`.
   - Page templates go in `templates-2026/`.
   - Header and footer variants are `header-new.php` and `footer-new.php`.
+  - The front page variant is `front-page-new.php` (it loads `templates-2026/page-homepage-2026.php`). It replaces `front-page.php` at go-live, which is Andrea's step.
   - Never modify the originals.
 - **Every `<main>` has `id="main"`** (the skip-link target), in all current and future templates. Identify a page with a modifier class (`site-main--contact`), never by changing the id.
 - **Every section is wrapped** `<section class="content-block"><div class="content-max">…</div></section>`, applied per section and never to `<main>` or a whole template (see "Layout wrappers" in restructure.md).

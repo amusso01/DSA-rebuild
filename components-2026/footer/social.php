@@ -1,16 +1,16 @@
 <?php
 /**
  * Footer: social icons.
- * Link fields footer_linkedin / footer_x / footer_youtube on Options > Footer
+ * Link fields footer_linkedin / footer_facebook / footer_instagram on Options > Footer
  * (acf-json "Footer 2026"). Icons from svg-templates/svg-{network}.php; empty links are hidden.
  *
  * @package FDRY
  */
 
 $networks = array(
-	'linkedin' => array('field' => 'footer_linkedin', 'label' => 'LinkedIn'),
-	'x'        => array('field' => 'footer_x', 'label' => 'X'),
-	'youtube'  => array('field' => 'footer_youtube', 'label' => 'YouTube'),
+	'linkedin'  => array('field' => 'footer_linkedin', 'label' => 'LinkedIn'),
+	'facebook'  => array('field' => 'footer_facebook', 'label' => 'Facebook'),
+	'instagram' => array('field' => 'footer_instagram', 'label' => 'Instagram'),
 );
 
 $links = array();

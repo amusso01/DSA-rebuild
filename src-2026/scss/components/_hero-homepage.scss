@@ -1,0 +1,101 @@
+/*==================================================================================
+  HERO HOMEPAGE (components-2026/sections/hero-homepage.php)
+  Dynamic Layout 2026 section: the two accent lines (optional) above the H1 title, text and
+  two buttons, optional background image. Figma: DSA, node 462:6887 ("Hero", 1440 × 499).
+==================================================================================*/
+@use '../common/variables' as *;
+@use '../common/media' as *;
+
+// padding: .section-padding (_helper.scss) with the ACF sliders; defaults here (Figma)
+.hero-homepage {
+	--padding-top: 72px;
+	--padding-bottom: 82px;
+	position: relative;
+	overflow: hidden;
+	background-color: $color__main; // Figma "Dark - Alt", shown when there's no image
+	color: $color__text-light;
+
+	.content-max {
+		position: relative; // above the image
+	}
+}
+
+.hero-homepage__image {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Copy: lines, title, text, buttons
+/––––––––––––––––––––––––*/
+.hero-homepage__copy {
+	max-width: 593px; // Figma "Hero copy"
+
+	// margins instead of gap: a hidden part (lines, text, buttons) leaves no hole
+	> * + * {
+		margin-top: 24px;
+	}
+}
+
+// same lines as .hero-page__lines, above the title here (Figma draws 14px and an 8px gap)
+.hero-homepage__lines {
+	display: flex;
+	gap: 7px;
+
+	&::before,
+	&::after {
+		content: '';
+		height: 4px;
+		border-radius: 2px;
+	}
+
+	&::before {
+		width: 48px;
+		background-color: $color__link;
+	}
+
+	&::after {
+		width: 15px; // Andrea's spec, as in the hero page
+		background-color: $color__accent-hover;
+	}
+}
+
+// font, size, weight, line-height and scale: the global h1 (_general.scss)
+.hero-homepage__title {
+	// editors wrap words in <span class="accent"> to highlight them
+	.accent {
+		color: $color__link;
+	}
+}
+
+.hero-homepage__text {
+	// Manrope 16px 400 from html, colour from the section; paragraphs have no gap, as in Figma (reset)
+	line-height: 1.6;
+
+	ul,
+	ol {
+		padding-left: 1.25em; // the reset zeroes it, bullets would hang outside
+	}
+
+	a {
+		color: $color__link;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+
+		&:focus-visible {
+			outline: 2px solid $color__link;
+			outline-offset: 2px;
+		}
+	}
+}
+
+.hero-homepage__buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	// Figma: the outline button is teal. .btn--outline inherits this colour (text + currentColor border);
+	// its hover and the filled .btn set their own colours
+	color: $color__link;
+}

@@ -19,6 +19,7 @@ We are rebuilding the layout of this live WordPress theme **alongside the legacy
    - Markup components (PHP partials) go in `components-2026/`, with their SCSS in `src-2026/scss/components/`.
    - Inline SVGs go in `svg-templates/`.
    - Header and footer variants go in the theme root as `header-new.php` and `footer-new.php`, because that's where `get_header('new')` and `get_footer('new')` look. `header-new.php` started as a copy of `header.php`.
+   - The front page variant is `front-page-new.php`, also in the theme root. WordPress only loads a file named `front-page.php`, so it's renamed at go-live (see "Homepage 2026").
 3. **`dist-2026/` is generated.** Never edit it by hand: it's wiped on every build.
 4. **pnpm only.** Never run `yarn` or `npm install`: they would create a second lockfile and fight pnpm over `node_modules`.
 5. **Commit production output only.** Run `pnpm build:2026` before committing. Source maps are git-ignored.
@@ -53,26 +54,28 @@ The legacy SCSS (`dist/styles/main.scss` and `map/*`) is compiled **outside** th
 functions.php          legacy + one require of inc/function-dev.php
 header-new.php         2026 header (loaded by get_header('new')): markup only, parts in components-2026/header/
 footer-new.php         2026 footer (loaded by get_footer('new')): markup only, parts in components-2026/footer/
+front-page-new.php     future front page: loads templates-2026/page-homepage-2026.php, renamed to front-page.php at go-live
 inc/                   2026 PHP
   function-dev.php        entry: requires the other inc files + theme support (custom logo, 2026 nav menus)
   function-assets.php     fonts/CSS/JS on 2026 pages, dequeues legacy assets there
   function-helpers.php    dsa_2026_get_svg(), dsa_2026_password_gate()
   function-navigation.php Main Menu 2026 filters (toggles, arrows, accordion classes) + dsa_2026_menu_button()
   function-acf.php        ACF options pages (Options > Footer) + dsa_2026_option(), dsa_2026_field()
-  function-layout.php     Dynamic Layout 2026: A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style(); no editor on Layout + Contact 2026 pages
+  function-layout.php     Dynamic Layout 2026: A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style(); no editor on Layout, Homepage + Contact 2026 pages
   function-blog.php       blog posts query + cards (dsa_2026_blog_query/cards) and the Load more REST route
   function-contact-form.php Contact Form 7 on 2026 pages: ACF form picker, Multi Step plugin CSS off, no autop
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
   partials/            reusable: button.php, blog-card.php
-  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php, service-cards.php
+  sections/            Dynamic Layout 2026 sections, one file per flexible layout: hero-homepage.php, hero-page.php, two-column-image-text.php, wysiwyg-editor.php, introduction.php, blog-row.php, service-cards.php, certification-showcase.php
   page/                components of fixed page templates: get-in-touch.php, contact-form.php (Contact 2026)
-svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, x, youtube, map-pin, mail, phone
+svg-templates/         inline SVGs: arrow, arrow-right, chevron-down, linkedin, facebook, instagram, map-pin, mail, phone
 acf-json/              ACF field groups as JSON (synced with live)
 templates-2026/
   page-contact-2026.php "Contact 2026" page template (main.site-main--contact): ACF tabs Hero, Get in touch, Contact form
   page-layout-2026.php  "Dynamic Layout 2026" page template (main.site-main--layout)
+  page-homepage-2026.php "Homepage 2026" page template (main.site-main--homepage): page_sections, like Dynamic Layout 2026
 src-2026/
   js/
     fonts.js           Fontsource imports (self-hosted fonts)
@@ -101,11 +104,13 @@ src-2026/
       _navigation.scss main nav, dropdowns, mobile panel
       _footer.scss     certification strip, footer columns, bottom bar
       _hero-page.scss  Dynamic Layout section: hero page (breadcrumb, title, accent lines)
+      _hero-homepage.scss  Dynamic Layout section: homepage hero (accent lines above the H1, text, two buttons)
       _two-column-image-text.scss  Dynamic Layout section: image + content, reverse, background colour
       _wysiwyg-editor.scss  Dynamic Layout section: editor content (h4 bar, dot lists, 12/30px rhythm)
       _introduction.scss  Dynamic Layout section: H2 left, text + two buttons right, background/text colour
       _blog-row.scss   Dynamic Layout section: title + count, blog card grid, Load more
       _service-cards.scss  Dynamic Layout section: H2 + accent lines, notched cards (full-card link), checkerboard fills
+      _certification-showcase.scss  Dynamic Layout section: accent lines + H2 + text, up to 3 certification images stacked on the right
       _get-in-touch.scss  Contact 2026: centred intro, Call and Email cards
       _contact-form.scss  Contact 2026: progress steps, CF7 multi-step form (chips, fields, buttons, errors)
 dist-2026/             build output (generated, committed)
@@ -126,9 +131,9 @@ A page is a 2026 page when its template calls **`get_header('new')`**. Nothing e
 - Every other page behaves exactly as before.
 - **2026 pages are a clean slate: no Bootstrap and no legacy CSS.** The whole page (header, content, footer) has to be built with 2026 markup and styles. 2026 templates end with **`get_footer('new')`**. One that still calls `get_footer()` gets the legacy `footer.php`, unstyled.
 
-**Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026" or "Dynamic Layout 2026"). Only logged-in editors can see it.
+**Preview on the live site:** create a **private** page in WP admin and pick a 2026 template ("Contact 2026", "Dynamic Layout 2026" or "Homepage 2026"). Only logged-in editors can see it.
 
-**Status (2026-10-06):** the header and footer are built, and "Contact 2026" uses both, with a Hero, a Get in touch and a Contact form section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with six sections so far: Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row and Service cards. No public page uses `get_header('new')` yet. Blog post styles are ready for `single.php`, waiting for its switch (see "Blog posts").
+**Status (2026-10-07):** the header and footer are built, and "Contact 2026" uses both, with a Hero, a Get in touch and a Contact form section filled from its own ACF tabs. The "Dynamic Layout 2026" template and its `page_sections` field exist, with eight sections so far: Hero homepage, Hero page, Two-column image text, WYSIWYG editor, Introduction, Blog row, Service cards and Certification showcase. The "Homepage 2026" template uses the same field, to test the new homepage before `front-page-new.php` goes live. No public page uses `get_header('new')` yet. Blog post styles are ready for `single.php`, waiting for its switch (see "Blog posts").
 
 ## Layout wrappers (`.content-block` + `.content-max`)
 
@@ -160,7 +165,7 @@ Every new section and component, the header and footer sections included, uses t
 
 ### Section padding (`.section-padding`)
 
-This is for sections whose editors set the top and bottom padding with ACF sliders: today the WYSIWYG editor, Blog row and Service cards.
+This is for sections whose editors set the top and bottom padding with ACF sliders: today Hero homepage, the WYSIWYG editor, Blog row, Service cards and Certification showcase.
 
 - **The slider value is the desktop padding.** Smaller screens multiply it by the same ratios as the default (76 / 64 / 35), so a section left at the default looks exactly as before.
 
@@ -322,7 +327,7 @@ footer.dark-footer > .content-block > .content-max
   | --- | --- | --- | --- |
   | Certifications | Certifications | `footer_certifications` | repeater of `image` (image ID) |
   | Info | Footer info | `footer_info` | WYSIWYG |
-  | Social | LinkedIn, X, YouTube | `footer_linkedin`, `footer_x`, `footer_youtube` | link |
+  | Social | LinkedIn, Facebook, Instagram | `footer_linkedin`, `footer_facebook`, `footer_instagram` | link |
   | Contact | Map, Email, Phone number | `footer_map`, `footer_email`, `footer_phone` | link |
 
   - **Contact links:** the link text is what's shown. The URLs are a Maps URL, `mailto:…` and `tel:+44…`.
@@ -350,14 +355,14 @@ main#main.site-main.site-main--layout
 
 - **Template:** "Dynamic Layout 2026". Inside the loop, `<main>` only calls `dsa_2026_render_sections()`. It never adds wrappers: each section brings its own.
 - **Field:**
-  - **Group:** the ACF group "Dynamic Layout 2026" (`acf-json/group_6ac4033ed38b9.json`), shown when Page Template is `templates-2026/page-layout-2026.php`.
+  - **Group:** the ACF group "Dynamic Layout 2026" (`acf-json/group_6ac4033ed38b9.json`), shown when Page Template is `templates-2026/page-layout-2026.php` or `templates-2026/page-homepage-2026.php` (see "Homepage 2026").
   - **The field:** one flexible content field, `page_sections` ("Page sections", button "Add section").
   - **Layouts:** every section is a layout of this field. Its sub fields are defined **directly in the layout**, with no clone groups (see "Decisions").
   - **"Add section" menu:** always in alphabetical order by label.
     - `dsa_2026_sort_section_layouts()` (`acf/load_field/name=page_sections`) sorts the layouts, so a new layout doesn't need to be dragged into place.
     - It only changes the menu. Saved rows keep the order the editor gave them.
-- **No editor:** `inc/function-layout.php` changes the edit screen of pages on this template and on Contact 2026, the two templates built only from ACF.
-  - `dsa_2026_has_no_editor()` decides which pages: `dsa_2026_is_layout_page()` (the only place the layout template path is written) or the Contact 2026 template. Add a template there when it stops printing `the_content()`.
+- **No editor:** `inc/function-layout.php` changes the edit screen of pages on this template, on Homepage 2026 and on Contact 2026, the templates built only from ACF.
+  - `dsa_2026_has_no_editor()` decides which pages: `dsa_2026_is_layout_page()` (Dynamic Layout 2026 or Homepage 2026, the only place their template paths are written) or the Contact 2026 template. Add a template there when it stops printing `the_content()`.
   - **Block editor:** turned off with the `use_block_editor_for_post` filter.
   - **Classic content box:** removed with `remove_post_type_support()` on `load-post.php`.
   - **The editor only goes away after a reload.** Create the page, pick the template, save the draft, then reload.
@@ -406,9 +411,64 @@ main#main.site-main.site-main--layout
    ```
 3. **Styles:** create `src-2026/scss/components/_<name>.scss` and add its `@use` to `main.scss`.
 4. **JS:** only if the section needs it. Create `src-2026/js/modules/<sectionName>.js` and call it from `main.js` (see "JS conventions").
-5. **Headings:** every page needs exactly one `<h1>`. The Hero page section prints it by default, and every other section starts at `<h2>`.
+5. **Headings:** every page needs exactly one `<h1>`. The Hero page section prints it by default, Hero homepage always does, and every other section starts at `<h2>`.
 
 **Reuse outside the builder:** a section is a normal component. Any template can render it by passing an array of the same shape, e.g. from an ACF Group field: `get_template_part('components-2026/sections/hero-page', null, get_field('hero'))`. No extra render helper is needed.
+
+### Hero homepage (`sections/hero-homepage.php` + `_hero-homepage.scss`)
+
+Layout `hero_homepage` ("Hero homepage"): the homepage hero. It has Hero page's accent lines **above** the title, then an H1, a text and two buttons, over an optional background image. There's no breadcrumb. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `462:6887` ("Hero", 1440 × 499).
+
+```
+section.hero-homepage.content-block.section-padding   [style=padding]
+	img.hero-homepage__image                (background, only when set)
+	.content-max > .hero-homepage__copy     (max-width 593px)
+		span.hero-homepage__lines[aria-hidden]   (::before + ::after, only when Show title highlight is on)
+		h1.hero-homepage__title
+		div.hero-homepage__text                  (only when filled)
+		.hero-homepage__buttons > a.btn + a.btn.btn--outline   (each only when set)
+```
+
+| Tab | Label | Name | Type | Notes |
+| --- | --- | --- | --- | --- |
+| Options | Padding top (50%) | `padding_top` | range 0–100, step 1, `px` | default 72 (Figma) |
+| Options | Padding bottom (50%) | `padding_bottom` | range 0–100, step 1, `px` | default 82 (Figma) |
+| Options | Show title highlight | `show_highlight` | true/false (switch) | default on: the two lines above the title |
+| Content | Hero title | `title` | text | always an `<h1>`; empty: the page title |
+| Content | Content | `content` | WYSIWYG (basic, no media) | |
+| Content | Primary button (50%) | `button_primary` | link | optional, filled `.btn` |
+| Content | Secondary button (50%) | `button_secondary` | link | optional, `.btn--outline` |
+| Content | Background image | `image` | image (ID) | empty: `$color__main` background |
+
+- **Title:**
+  - It's always the page's `<h1>`, with no H-tag select, so keep one Hero homepage per page and no other H1 section.
+  - `wp_kses()` keeps only `<span class>`, and `<span class="accent">` highlights words in `$color__link`.
+  - Its look is the global `h1` (54px, 400 / 1.05, ×0.9 / ×0.75): don't redeclare it.
+- **Lines:**
+  - **Show title highlight** prints or removes the `span`. A row saved before the option existed shows them (`$args` default `true`).
+  - They're Hero page's values: 48 × 4 `$color__link` + 15 × 4 `$color__accent-hover`, a 2px radius and a 7px gap. Figma draws 14px and an 8px gap here; the two heroes were kept identical.
+- **Text:** `wp_kses_post()`, Manrope 16px, `line-height: 1.6`, `$color__text-light`. Paragraphs have no gap, links are `$color__link` and underlined, and lists get their padding back.
+- **Buttons:**
+  - Both use `partials/button.php`; the secondary one gets `btn--outline`.
+  - The row sets `color: $color__link`, so the outline button is teal (border and text), as in Figma, without changing the shared `.btn--outline`. Its hover (teal fill) is unchanged.
+  - The row is only printed when at least one button has a URL.
+- **Image:** the same as Hero page: `wp_get_attachment_image()` at `full`, `alt=""`, `object-fit: cover` over the whole section, and eager + `fetchpriority="high"` when it's the first section.
+  - It's cropped from the centre. On phones the Figma image's bright triangle sits behind the title.
+- **Styles:**
+  - **Section:** `$color__main` (Figma "Dark - Alt") and `$color__text-light`.
+  - **Column:** max-width 593px (Figma). Lines, title, text and buttons are 24px apart. These are margins, so a hidden part leaves no gap: with the lines off, the title starts at the top padding.
+  - **Buttons:** a `flex-wrap` row with a 12px gap. `.btn` is 44px high, against Figma's 46px (as in Introduction), so at 1440 the section is about 495px high (Figma 499).
+  - **Padding:** `.section-padding` with the sliders. The defaults are on the class (`--padding-top: 72px; --padding-bottom: 82px`) and scale like every slider.
+
+    | Width | Padding top / bottom (default) | Title |
+    | --- | --- | --- |
+    | Base (desktop) | 72px / 82px (Figma) | 54px |
+    | `<desktop` | 72px / 82px | 48.6px |
+    | `<tablet` | 61px / 69px | 48.6px |
+    | `<phone-land` | 61px / 69px | 40.5px |
+    | `<phone` | 33px / 38px | 40.5px |
+
+    Only the desktop values are in Figma.
 
 ### Hero page (`sections/hero-page.php` + `_hero-page.scss`)
 
@@ -762,6 +822,86 @@ section.service-cards.content-block.section-padding   [style=padding]
 
   Only the desktop values are in Figma.
 
+### Certification showcase (`sections/certification-showcase.php` + `_certification-showcase.scss`)
+
+Layout `certification_showcase` ("Certification showcase"): the accent lines, an H2 and a text on the left, with up to three certification images stacked on the right. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `462:6898` ("Experience and trust", 1440 wide).
+
+```
+section.certification-showcase.content-block.section-padding   [style=padding]
+	.content-max > .certification-showcase__inner                (flex row)
+		.certification-showcase__copy                           (only with a title or content)
+			span.certification-showcase__lines[aria-hidden]     (only with a title)
+			h2.certification-showcase__title
+			div.certification-showcase__text
+		ul.certification-showcase__images[aria-label=Certifications]   (only with images)
+			li.certification-showcase__item > img.certification-showcase__img
+```
+
+| Tab | Label | Name | Type | Notes |
+| --- | --- | --- | --- | --- |
+| Options | Padding top (50%) | `padding_top` | range 0–100, step 1, `px` | default 54 (Figma) |
+| Options | Padding bottom (50%) | `padding_bottom` | range 0–100, step 1, `px` | default 54 (Figma) |
+| Content | Title | `title` | textarea (new lines → `<br>`) | optional, always an `<h2>` |
+| Content | Content | `content` | WYSIWYG (full toolbar, no media) | Heading 3 for the bold closing line |
+| Content | Images | `images` | repeater (table, max 3, "Add image") | |
+| ↳ | Image | `image` | image (ID) | required |
+
+- **Empty:** with no title, no content and no images, the section prints nothing. A row without an image is skipped.
+- **Title:** `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` highlights words in `$color__link`. Its look comes from the base `h2`.
+  - The accent lines are always printed above the title, as in Figma. There's no switch, Andrea's choice.
+- **Text:** `wp_kses_post()`, Manrope 16px, `line-height: 1.6`. Blocks are 12px apart, links are `$color__link` and underlined, and lists get their padding back.
+  - **Bold closing line:** Figma's "Security, governance and accountability…" is a **Heading 3** in the WYSIWYG, Andrea's choice. That's why the field has the full toolbar.
+  - Every content heading (h3–h6) takes Figma's "H4" look: `$text__h5` (22px), Titillium 700, `line-height: 1.28`, the same as the service card title. It's 22px below the text.
+- **Images:**
+  - **The light-blue notched tiles are part of the images** (Andrea's files). The section draws no tile and adds no colour: it shows each image as it is.
+  - Each image is 190px wide (Figma 190 × 112) and keeps its own ratio. Upload them at 380 × 224 for sharp screens.
+  - It's printed with `wp_get_attachment_image()` at `medium`, with `sizes="190px"`, so the srcset serves 2x screens.
+  - The alt text comes from the Media Library, because the logos carry meaning, so fill it in there.
+  - Eager-loaded only when it's the first section.
+- **Styles:**
+  - **Section:** `$color__text-light` background, `$color__text` text.
+  - **Copy column:** `flex: 1`. Lines, title and text are 22px apart. These are margins, so a missing part leaves no gap.
+  - **Lines:** 54 × 4px `$color__link` + 16 × 4px `$color__accent-hover`, with a 2px radius and a 7px gap (Figma).
+  - **Images:** a column with a 10px gap, vertically centred with the copy.
+  - **Padding:** `.section-padding` with the sliders. The defaults are on the class (`--padding-top: 54px; --padding-bottom: 54px`). At 1440 with three images, the section is about 464px high (356px of images + 2 × 54).
+
+    | Width | Padding top / bottom (default) | Layout |
+    | --- | --- | --- |
+    | Base (desktop) | 54px (Figma) | copy + images column, gap 78px (Figma) |
+    | `<tablet` | 45px | gap 48px |
+    | `<phone-land` | 45px | 1 column, images in a row under the text (wrapping), gap 40px |
+    | `<phone` | 25px | the same |
+
+    Only the desktop values are in Figma.
+
+## Homepage 2026 (`templates-2026/page-homepage-2026.php` + `front-page-new.php`)
+
+The new homepage, built with the Dynamic Layout strategy: the same `page_sections` field, so any section can be picked (Hero homepage first). It has its own template, so the homepage can change without touching Dynamic Layout pages.
+
+```
+main#main.site-main.site-main--homepage
+	section.<name>.content-block > .content-max    components-2026/sections/<name>.php (one per row)
+	…
+```
+
+- **Two files:**
+  - **`templates-2026/page-homepage-2026.php`** ("Homepage 2026") is the page template. Its markup is the same as Dynamic Layout 2026's, with the `site-main--homepage` class.
+    - Test it now on a **private** page.
+  - **`front-page-new.php`** (theme root) is the future front page. It's one line, `get_template_part('templates-2026/page-homepage-2026')`, so what's tested on the private page is exactly what goes live.
+    - WordPress doesn't load it under this name. It does nothing until it's renamed to `front-page.php`.
+    - It has no `Template Name`, so it isn't in the template dropdown.
+- **Field and editor:**
+  - The "Dynamic Layout 2026" ACF group has a second location rule, for the Homepage 2026 template.
+  - `dsa_2026_is_layout_page()` covers both templates, so the editor is removed here too (see "No editor" under Dynamic Layout 2026).
+- **The legacy front page:** `front-page.php` (legacy) loads the banner, wireframe, count and slider template parts. They read only **Options** fields (`video`, `inactive_imagen`, `slider`), never the page's own fields or content.
+- **Go-live (Andrea, legacy file):**
+  1. Open the real homepage (Settings > Reading must be "A static page"). Pick the template "Homepage 2026", save, reload, and build its sections.
+     - The live site doesn't change: `front-page.php` wins over page templates, and the legacy front page doesn't read the page's fields.
+     - The page's editor content is hidden, not deleted.
+  2. Delete the legacy `front-page.php`, rename `front-page-new.php` to `front-page.php`, and upload it. That one upload switches the site.
+  3. Optionally, delete the private test page.
+  - The template has to stay on the homepage after go-live: it's what shows the "Page sections" field and removes the editor.
+
 ## Contact 2026 (`templates-2026/page-contact-2026.php`)
 
 A fixed page: the template sets the sections and their order, and editors fill one ACF tab per section. The pages have no editor (see "No editor" under Dynamic Layout 2026).
@@ -1111,7 +1251,7 @@ Self-hosted from npm (Fontsource) and bundled by webpack. No requests to Google.
 ## Deploying to the live server
 
 1. Run `pnpm build:2026` and commit the result.
-2. Upload `inc/`, `components-2026/`, `svg-templates/`, `dist-2026/`, `templates-2026/`, `header-new.php` and `footer-new.php` **first**.
+2. Upload `inc/`, `components-2026/`, `svg-templates/`, `dist-2026/`, `templates-2026/`, `header-new.php`, `footer-new.php` and `front-page-new.php` **first**.
    - For `acf-json/`, upload only the **new or changed** `group_*.json` files, then sync them under Custom Fields > Field Groups.
 3. Upload `functions.php` **last**. Its `require` of `inc/function-dev.php` is a fatal error if `inc/` isn't on the server yet.
 4. Never upload `node_modules/` or `src-2026/`. The server only needs the built `dist-2026/`.
@@ -1360,3 +1500,25 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - Hero page: the **H tag** now sets the title's look as well as its tag, at Andrea's request. The `.h1` class is gone, and `.hero-page__title` no longer sets its font, weight or line-height, so an h2 title looks like the global h2 (44px, 400 / 1.2) and an h3 like the global h3.
   - The global `h1, .h1` in `_general.scss` now has `font-weight: 400; line-height: 1.05` (the values the hero title had), so an h1 title looks exactly as before.
   - The `title_tag` instructions now read "Sets the tag and its style (global H1 / H2 / H3). Keep one H1 per page." in both groups (Dynamic Layout 2026 and the Contact 2026 `hero` copy).
+- **2026-10-07**
+  - Seventh Dynamic Layout section, **Hero homepage**: layout `hero_homepage`, `components-2026/sections/hero-homepage.php` and `_hero-homepage.scss`. Figma node `462:6887`.
+    - **Options tab:** padding sliders (0–100px, default 72 / 82, Figma) and **Show title highlight** (default on).
+    - **Content tab:** an H1 title (accent span, empty: the page title), a WYSIWYG, primary and secondary buttons, and a background image.
+    - Hero page's accent lines sit **above** the title, with the same values (48 + 15px, 7px gap). Figma's 14px and 8px gap were not used, so the two heroes match.
+    - The outline button is teal, as in Figma: the button row sets `color: $color__link`, and the shared `.btn--outline` is unchanged.
+- **2026-10-07**
+  - Eighth Dynamic Layout section, **Certification showcase**: layout `certification_showcase`, `components-2026/sections/certification-showcase.php` and `_certification-showcase.scss`. Figma node `462:6898`.
+    - **Options tab:** padding sliders (0–100px, default 54, Figma).
+    - **Content tab:** an optional H2 title (accent span), a WYSIWYG (full toolbar) and an **Images** repeater (up to 3).
+    - The accent lines (54 + 16px, Figma) are always above the title.
+    - The bold closing line is a Heading 3 in the WYSIWYG, Andrea's choice. Content headings take Figma's "H4" look (22px, Titillium 700 / 1.28).
+    - The light-blue notched tiles are part of Andrea's images. The section shows them as they are, 190px wide, with no tile shape and no new colour.
+- **2026-10-07**
+  - New **Homepage 2026** template, `templates-2026/page-homepage-2026.php` (`main.site-main--homepage`), built from `page_sections` like Dynamic Layout 2026. It's for testing the new homepage on a private page. See "Homepage 2026".
+  - New `front-page-new.php` in the theme root. It loads that template, and Andrea renames it to `front-page.php` at go-live, replacing the legacy front page.
+  - The "Dynamic Layout 2026" ACF group has a second location rule, for the Homepage 2026 template.
+  - `dsa_2026_is_layout_page()` now covers both templates, so Homepage 2026 pages have no editor.
+- **2026-10-07**
+  - Footer social links: **X → Facebook** and **YouTube → Instagram**, at Andrea's request. LinkedIn is unchanged.
+    - **ACF** (Options > Footer, Social tab): `footer_x` / `footer_youtube` were replaced by the new link fields `footer_facebook` / `footer_instagram`, in the same places. They have new keys, so the old X and YouTube URLs aren't carried over: fill in the new fields after the sync.
+    - `components-2026/footer/social.php` loads `svg-templates/svg-facebook.php` and `svg-instagram.php` (Andrea's icons, the same 36px `currentColor` circle as LinkedIn). `svg-x.php` and `svg-youtube.php` are no longer used.

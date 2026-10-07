@@ -14,11 +14,13 @@
 
 // Sections (Dynamic Layout 2026, components-2026/sections/)
 @use 'components/hero-page';
+@use 'components/hero-homepage';
 @use 'components/two-column-image-text';
 @use 'components/wysiwyg-editor';
 @use 'components/introduction';
 @use 'components/blog-row';
 @use 'components/service-cards';
+@use 'components/certification-showcase';
 
 // Page components (components-2026/page/)
 @use 'components/get-in-touch';

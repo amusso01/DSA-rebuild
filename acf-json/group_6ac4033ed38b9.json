@@ -1105,6 +1105,419 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_6ac60a6d6a892": {
+                    "key": "layout_6ac60a6d6a892",
+                    "name": "hero_homepage",
+                    "label": "Hero homepage",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_6ac60a6d6ab3f",
+                            "label": "Options",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6abc8",
+                            "label": "Padding top",
+                            "name": "padding_top",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 72,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6ac51",
+                            "label": "Padding bottom",
+                            "name": "padding_bottom",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 82,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6a91b",
+                            "label": "Show title highlight",
+                            "name": "show_highlight",
+                            "aria-label": "",
+                            "type": "true_false",
+                            "instructions": "The two accent lines above the title.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "",
+                            "default_value": 1,
+                            "allow_in_bindings": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": "",
+                            "ui": 1,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6acda",
+                            "label": "Content",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6a9a4",
+                            "label": "Hero title",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Rendered as the page's H1. Empty: the page title. To highlight words, wrap them in &lt;span class=\"accent\"&gt;…&lt;/span&gt;.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6aa2d",
+                            "label": "Content",
+                            "name": "content",
+                            "aria-label": "",
+                            "type": "wysiwyg",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "allow_in_bindings": 0,
+                            "tabs": "all",
+                            "toolbar": "basic",
+                            "media_upload": 0,
+                            "delay": 0,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6ad63",
+                            "label": "Primary button",
+                            "name": "button_primary",
+                            "aria-label": "",
+                            "type": "link",
+                            "instructions": "Optional: filled button.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6adec",
+                            "label": "Secondary button",
+                            "name": "button_secondary",
+                            "aria-label": "",
+                            "type": "link",
+                            "instructions": "Optional: outline button.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        },
+                        {
+                            "key": "field_6ac60a6d6aab6",
+                            "label": "Background image",
+                            "name": "image",
+                            "aria-label": "",
+                            "type": "image",
+                            "instructions": "Fills the hero, cropped to fit. Empty: plain dark background.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "id",
+                            "library": "all",
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": "",
+                            "allow_in_bindings": 0,
+                            "preview_size": "medium",
+                            "parent_layout": "layout_6ac60a6d6a892"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_6ac60cbc1a089": {
+                    "key": "layout_6ac60cbc1a089",
+                    "name": "certification_showcase",
+                    "label": "Certification showcase",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_6ac60cbc1a112",
+                            "label": "Options",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac60cbc1a089"
+                        },
+                        {
+                            "key": "field_6ac60cbc1a19b",
+                            "label": "Padding top",
+                            "name": "padding_top",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 54,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac60cbc1a089"
+                        },
+                        {
+                            "key": "field_6ac60cbc1a224",
+                            "label": "Padding bottom",
+                            "name": "padding_bottom",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 54,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac60cbc1a089"
+                        },
+                        {
+                            "key": "field_6ac60cbc1a2ad",
+                            "label": "Content",
+                            "name": "",
+                            "aria-label": "",
+                            "type": "tab",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placement": "top",
+                            "endpoint": 0,
+                            "selected": 0,
+                            "parent_layout": "layout_6ac60cbc1a089"
+                        },
+                        {
+                            "key": "field_6ac60cbc1a336",
+                            "label": "Title",
+                            "name": "title",
+                            "aria-label": "",
+                            "type": "textarea",
+                            "instructions": "Rendered as an H2. To highlight words, wrap them in &lt;span class=\"accent\"&gt;…&lt;/span&gt;.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "rows": 2,
+                            "placeholder": "",
+                            "new_lines": "br",
+                            "parent_layout": "layout_6ac60cbc1a089"
+                        },
+                        {
+                            "key": "field_6ac60cbc1a3bf",
+                            "label": "Content",
+                            "name": "content",
+                            "aria-label": "",
+                            "type": "wysiwyg",
+                            "instructions": "For the bold closing line, pick Heading 3 in the Paragraph menu.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "allow_in_bindings": 0,
+                            "tabs": "all",
+                            "toolbar": "full",
+                            "media_upload": 0,
+                            "delay": 0,
+                            "parent_layout": "layout_6ac60cbc1a089"
+                        },
+                        {
+                            "key": "field_6ac60cbc1a448",
+                            "label": "Images",
+                            "name": "images",
+                            "aria-label": "",
+                            "type": "repeater",
+                            "instructions": "Up to 3, stacked on the right. Upload each tile as one image (190 × 112, or 380 × 224 for sharp screens). Alt text comes from the Media Library.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "table",
+                            "pagination": 0,
+                            "min": 0,
+                            "max": 3,
+                            "collapsed": "",
+                            "button_label": "Add image",
+                            "rows_per_page": 20,
+                            "sub_fields": [
+                                {
+                                    "key": "field_6ac60cbc1a4d1",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "aria-label": "",
+                                    "type": "image",
+                                    "instructions": "",
+                                    "required": 1,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "id",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": "",
+                                    "allow_in_bindings": 0,
+                                    "preview_size": "medium",
+                                    "parent_repeater": "field_6ac60cbc1a448"
+                                }
+                            ],
+                            "parent_layout": "layout_6ac60cbc1a089"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
             "min": "",
@@ -1119,6 +1532,13 @@
                 "operator": "==",
                 "value": "templates-2026/page-layout-2026.php"
             }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "templates-2026/page-homepage-2026.php"
+            }
         ]
     ],
     "menu_order": 0,
@@ -1128,10 +1548,10 @@
     "instruction_placement": "label",
     "hide_on_screen": "",
     "active": true,
-    "description": "Dynamic Layout 2026 template: the page sections builder. Every section is a layout rendered by components-2026/sections/<layout>.php.",
+    "description": "Dynamic Layout 2026 and Homepage 2026 templates: the page sections builder. Every section is a layout rendered by components-2026/sections/<layout>.php.",
     "show_in_rest": 0,
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791307136
+    "modified": 1791367445
 }

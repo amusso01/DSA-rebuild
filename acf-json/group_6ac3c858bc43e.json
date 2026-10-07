@@ -146,9 +146,9 @@
             "allow_in_bindings": 0
         },
         {
-            "key": "field_6ac3c858bef80",
-            "label": "X",
-            "name": "footer_x",
+            "key": "field_6ac61c0d2b001",
+            "label": "Facebook",
+            "name": "footer_facebook",
             "aria-label": "",
             "type": "link",
             "instructions": "Leave empty to hide the icon.",
@@ -163,9 +163,9 @@
             "allow_in_bindings": 0
         },
         {
-            "key": "field_6ac3c858bf417",
-            "label": "YouTube",
-            "name": "footer_youtube",
+            "key": "field_6ac61c0d2b08a",
+            "label": "Instagram",
+            "name": "footer_instagram",
             "aria-label": "",
             "type": "link",
             "instructions": "Leave empty to hide the icon.",
@@ -270,5 +270,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791215704
+    "modified": 1791368205
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * 2026 layout: "Dynamic Layout 2026" template (templates-2026/page-layout-2026.php).
- * Pages on it are built only from the ACF flexible content field page_sections:
+ * 2026 layout: "Dynamic Layout 2026" and "Homepage 2026" templates (templates-2026/page-layout-2026.php,
+ * templates-2026/page-homepage-2026.php). Pages on them are built only from the ACF flexible content field page_sections:
  * the editor is removed, and each row renders components-2026/sections/<layout>.php.
  * The editor is also removed on "Contact 2026" pages, which are built only from ACF tabs.
  *
@@ -11,10 +11,14 @@
 /*==================================================================================
   TEMPLATE
 ==================================================================================*/
-// True when the page uses the Dynamic Layout 2026 template (the only place its path is written).
+// True when the page is built from page_sections: the Dynamic Layout 2026 or Homepage 2026 template
+// (the only place their paths are written).
 function dsa_2026_is_layout_page($post = null)
 {
-	return get_page_template_slug($post) === 'templates-2026/page-layout-2026.php';
+	return in_array(get_page_template_slug($post), array(
+		'templates-2026/page-layout-2026.php',
+		'templates-2026/page-homepage-2026.php',
+	), true);
 }
 
 // True when the page's template is built only from ACF fields, so the editor is removed (see NO EDITOR).
