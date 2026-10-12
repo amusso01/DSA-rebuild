@@ -27,3 +27,46 @@ function dsa_2026_strip_content_meta($content)
 {
 	return preg_replace('/<meta\b[^>]*>/i', '', $content);
 }
+
+/*==================================================================================
+  ACF WYSIWYG FIELDS
+==================================================================================*/
+// Print an ACF WYSIWYG value with only what the editor's own buttons make: paragraphs, headings,
+// bold/italic/strikethrough, links, lists, quotes, lines, and text-align (how editors centre text).
+// Pasted formatting (spans, inline styles, colours, b/i wrappers, classes, ids) is dropped, its text kept,
+// so content saved before this is cleaned too. Use it instead of wp_kses_post() for 2026 WYSIWYG output.
+function dsa_2026_editor_html($html)
+{
+	$align   = array('style' => true); // only text-align survives (dsa_2026_editor_styles)
+	$allowed = array(
+		'p'          => $align,
+		'h1'         => $align,
+		'h2'         => $align,
+		'h3'         => $align,
+		'h4'         => $align,
+		'h5'         => $align,
+		'h6'         => $align,
+		'li'         => $align,
+		'ul'         => array(),
+		'ol'         => array(),
+		'blockquote' => array(),
+		'br'         => array(),
+		'hr'         => array(),
+		'strong'     => array(),
+		'em'         => array(),
+		'del'        => array(),
+		'a'          => array('href' => true, 'target' => true, 'rel' => true),
+	);
+
+	add_filter('safe_style_css', 'dsa_2026_editor_styles');
+	$html = wp_kses($html, $allowed);
+	remove_filter('safe_style_css', 'dsa_2026_editor_styles');
+
+	return $html;
+}
+
+// The only inline style kept in editor content: the alignment buttons' text-align.
+function dsa_2026_editor_styles()
+{
+	return array('text-align');
+}

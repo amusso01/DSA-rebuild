@@ -106,8 +106,13 @@
 }
 
 .two-column-image-text__text {
-	// Manrope 16px 400 from html, colour from the section; paragraphs have no gap, as in Figma (reset)
+	// Manrope 16px 400 from html, colour from the section
 	line-height: 1.6;
+
+	// Enter makes a new paragraph: 12px between blocks (the editor rhythm)
+	> * + * {
+		margin-top: 12px;
+	}
 
 	ul,
 	ol {

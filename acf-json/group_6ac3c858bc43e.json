@@ -220,7 +220,7 @@
             "name": "footer_email",
             "aria-label": "",
             "type": "link",
-            "instructions": "URL as mailto:hello@example.com. The link text is the address shown in the footer.",
+            "instructions": "Email address (or a mailto: URL). The link text is the address shown in the footer.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -237,7 +237,7 @@
             "name": "footer_phone",
             "aria-label": "",
             "type": "link",
-            "instructions": "URL as tel:+448000000000 (no spaces). The link text is the number shown in the footer.",
+            "instructions": "Phone number (or a tel: URL). The link text is the number shown in the footer.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -270,5 +270,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791368205
+    "modified": 1791475227
 }

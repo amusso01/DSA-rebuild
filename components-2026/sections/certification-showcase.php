@@ -36,7 +36,7 @@ $style = dsa_2026_section_padding_style($args['padding_top'], $args['padding_bot
 						<h2 class="certification-showcase__title"><?php echo wp_kses($args['title'], array('span' => array('class' => true), 'br' => array())); ?></h2>
 					<?php endif; ?>
 					<?php if ($args['content']) : ?>
-						<div class="certification-showcase__text"><?php echo wp_kses_post($args['content']); ?></div>
+						<div class="certification-showcase__text"><?php echo dsa_2026_editor_html($args['content']); ?></div>
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>

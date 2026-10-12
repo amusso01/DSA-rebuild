@@ -64,7 +64,7 @@ inc/                   2026 PHP
   function-layout.php     Dynamic Layout 2026: A–Z "Add section" menu, dsa_2026_render_sections(), dsa_2026_section_padding_style(); no editor on Layout, Homepage + Contact 2026 pages
   function-blog.php       blog posts query + cards (dsa_2026_blog_query/cards) and the Load more REST route
   function-contact-form.php Contact Form 7 on 2026 pages: ACF form picker, Multi Step plugin CSS off, no autop
-  function-content.php    the_content() on 2026 pages (single.php, page.php): pasted <meta> stripped
+  function-content.php    the_content() on 2026 pages (single.php, page.php): pasted <meta> stripped; dsa_2026_editor_html() for ACF WYSIWYG output
 components-2026/       markup components, loaded with get_template_part()
   header/              logo.php, hamburger.php, navigation.php
   footer/              partner.php, logo.php, info.php, social.php, navigation.php, contact.php, bottom.php
@@ -257,6 +257,29 @@ article.blog-card
 - **A part that changes colour on hover** gets `fill="currentColor"` (or `stroke`), so CSS sets its colour, as in the footer's social icons.
 - **Remove Figma's `clipPath` wrappers when they clip nothing.** Their IDs repeat when an icon appears twice on a page.
 
+### Editor content (ACF WYSIWYG fields)
+
+Editors paste from Google Docs and Word without clearing the formatting. A paste can look normal and still carry `<span style="font-weight: 400;">`, colours, font sizes, `class="MsoNormal"` or Google's `<b style="font-weight:normal" id="docs-internal-guid-…">` wrapper.
+
+- **Print every 2026 WYSIWYG value with `dsa_2026_editor_html()`** (`inc/function-content.php`), never `wp_kses_post()`. All eight outputs use it: Introduction, Two-column image text, Hero homepage, WYSIWYG editor, Certification showcase, Get in touch, Contact form and Footer info.
+- **It keeps only what the editor's own buttons make:**
+  - `p`, `h1`–`h6`, `ul` / `ol` / `li`, `blockquote`, `br`, `hr`;
+  - `strong`, `em`, `del`;
+  - links (`href`, `target`, `rel`);
+  - `text-align` (the alignment buttons, the only inline style kept).
+- **It drops everything else and keeps the text:**
+  - spans and every other inline style (pasted bold, colours, font sizes);
+  - classes and ids;
+  - `b` / `i`: the B and I buttons make `strong` / `em`, and Google's `<b>` wrapper would turn a whole paste bold;
+  - underline (a `<span style>` in this editor);
+  - images and scripts.
+- **How:** `wp_kses()` with this allowlist. During the call, a `safe_style_css` filter (`dsa_2026_editor_styles()`) allows only `text-align`, so `safecss_filter_attr()` removes the other properties and drops a `style` left empty.
+- **It works on output,** so content saved before is cleaned too.
+  - The saved value and the editor's Text tab still show the pasted spans. The page doesn't.
+  - Paragraphs aren't lost: ACF runs `wpautop` when it formats the value, before the cleanup.
+- **Pasted bold is lost on purpose.** It's a style on a span. To keep bold, select the words and press B.
+- Tested with WordPress's own `kses.php` on Andrea's span paste, a Google Docs wrapper, Word markup, an aligned paragraph with a pasted colour, the editor's own markup and unsafe markup.
+
 ### Accordions (accordion-js)
 
 - Use [accordion-js](https://github.com/michu2k/Accordion) (installed with pnpm) with its **default classes**: `.ac` (item), `.ac-trigger` (button), `.ac-panel` (content). The active class is `.is-active`.
@@ -394,7 +417,7 @@ footer.dark-footer > .content-block > .content-max
   | Social | LinkedIn, Facebook, Instagram | `footer_linkedin`, `footer_facebook`, `footer_instagram` | link |
   | Contact | Map, Email, Phone number | `footer_map`, `footer_email`, `footer_phone` | link |
 
-  - **Contact links:** the link text is what's shown. The URLs are a Maps URL, `mailto:…` and `tel:+44…`.
+  - **Contact links:** the link text is what's shown. Map uses the URL as entered and always opens in a new tab (`target="_blank"`, `rel="noopener noreferrer"`). Email and phone are turned into `mailto:` and `tel:` in `contact.php` (plain address or number is enough; a full `mailto:` / `tel:` URL still works).
   - **Social links:** they show only an icon, with the network name as the `aria-label`. The icon is a 36px SVG whose circle is `currentColor`: `$color__text-light`, and `$color__link` on hover.
 - **Menus:** the Footer Service 2026 and Footer Company 2026 locations become the "Services" and "Company" columns. The column titles are in `navigation.php`. A column is skipped while its location has no menu.
 - **Copyright:** hard-coded in `bottom.php`, with the year from `wp_date('Y')`.
@@ -512,7 +535,7 @@ section.hero-homepage.content-block.section-padding   [style=padding]
 - **Lines:**
   - **Show title highlight** prints or removes the `span`. A row saved before the option existed shows them (`$args` default `true`).
   - They're Hero page's values: 48 × 4 `$color__link` + 15 × 4 `$color__accent-hover`, a 2px radius and a 7px gap. Figma draws 14px and an 8px gap here; the two heroes were kept identical.
-- **Text:** `wp_kses_post()`, in `$color__text-light` from the section.
+- **Text:** `dsa_2026_editor_html()` (see "Editor content"), in `$color__text-light` from the section.
   - **Full toolbar,** so editors can pick Paragraph or a heading. The `basic` toolbar has no Paragraph/Heading dropdown. The field instructions say to start at H2, because the title is the H1.
   - **Styles:** the `editor-content` mixin (`common/_editor-content.scss`), the same as the WYSIWYG editor section and blog posts. That's Manrope 16px / 1.6, 12px between blocks, 30px before a heading, the h4 bar, dot lists, and `$color__link` underlined links.
   - A single paragraph looks as in Figma.
@@ -546,19 +569,22 @@ Layout `hero_page` ("Hero page"). Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `22
 section.hero-page.content-block
 	img.hero-page__image                  (background, only when set)
 	.content-max
-		nav.hero-page__breadcrumb > ol.hero-page__crumbs > li.hero-page__crumb…
+		nav.hero-page__breadcrumb > ol.hero-page__crumbs > li.hero-page__crumb…   (only when Show breadcrumb is on)
 		h1|h2|h3.hero-page__title
 		span.hero-page__lines           (the two accent lines, ::before + ::after)
 ```
 
 | Label | Name | Type | Fallback |
 | --- | --- | --- | --- |
+| Show breadcrumb | `show_breadcrumb` | true/false (switch) | on |
 | Breadcrumb | `breadcrumb` | repeater of `link` (Link) | none: only Home |
 | Breadcrumb actual page | `breadcrumb_actual_page` | text | the page title |
 | Hero title (50%) | `title` | text | the page title |
 | H tag (50%) | `title_tag` | select `h1` / `h2` / `h3` | `h1` |
 | Background image | `image` | image (ID) | `$color__main-light` background |
 
+- **Show breadcrumb:** the first field, with no Options tab (Andrea's choice). It's on by default, so heroes saved before the switch keep their breadcrumb.
+  - **Off:** the `<nav>` isn't printed. The title is then the first child, so `:first-child` drops its top margin and it starts at the section padding: about 193px at 1440 with a one-line h1.
 - **Breadcrumb:** Home (`home_url('/')`) is **always** first, then the repeater links in order (a row without a URL or text is skipped), then the current page.
   - The current page is the "actual page" text, or the page title. It's never a link, and it carries `aria-current="page"`.
   - The `/` separators are `aria-hidden`.
@@ -637,13 +663,13 @@ section.two-column-image-text.content-block[.two-column-image-text--reverse][.tw
   - It goes through `wp_kses()`, which keeps only `<span class>` and `<br>`.
   - **Highlighting:** wrap words in `<span class="accent">` to colour them `$color__link`.
   - **Base h2:** its size, weight, line-height and font come from the base `h2` in `_general.scss` (Titillium 400, 44px / 1.2, with the h2 scale). Don't redeclare them in the section.
-- **Text:** `wp_kses_post()`. In WYSIWYG lists, the padding is put back (`1.25em`). Links are `$color__link` and underlined.
+- **Text:** `dsa_2026_editor_html()` (see "Editor content"). In WYSIWYG lists, the padding is put back (`1.25em`). Links are `$color__link` and underlined.
 - **Image:**
   - `wp_get_attachment_image()` at size `large`, with `sizes` `(max-width: 920px) 100vw, 50vw` and the alt text from the media library.
   - Eager-loaded only when it's the first section.
 - **Styles:**
   - **Eyebrow:** Titillium Web 600, 14px, `line-height: 1.5`, uppercase, `$color__link`.
-  - **Text:** Manrope 16px 400, `line-height: 1.6`, `$color__text-light`. Paragraphs have no gap, as in Figma.
+  - **Text:** Manrope 16px 400, `line-height: 1.6`, `$color__text-light`. 12px between paragraphs (Enter makes a new one), Andrea's choice.
   - **Button:** `.btn` as it is. It already matches Figma.
   - **Image:** `aspect-ratio: 556 / 542` (Figma), `object-fit: cover`, 12px radius on every image.
   - **Grid:** content vertically centred (`align-items: center`).
@@ -681,7 +707,7 @@ section.wysiwyg-editor.content-block
   - `default` is the `.content-max` width.
   - `narrow` adds `.content-narrow` to the content div, inside `.content-max`.
 - **Empty content:** the section prints nothing.
-- **Output:** `wp_kses_post()`.
+- **Output:** `dsa_2026_editor_html()` (see "Editor content").
   - It keeps the editor's `style="text-align: …"`. That's how editors centre text, so there's no centring option.
 - **Full toolbar:** the `basic` toolbar has no Paragraph/Heading dropdown.
 - **Headings:** start at H2 (the field instructions say so).
@@ -741,8 +767,8 @@ section.introduction.content-block[.introduction--light]   (style="background-co
   - It's required, because it holds the left column. Without it, the section prints nothing.
   - `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` highlights words in `$color__link`.
   - Its look comes from the base `h2`: don't redeclare it.
-- **Text:** `wp_kses_post()`, Manrope 16px 400, `line-height: 1.6`, max-width 580px (Figma).
-  - Paragraphs have no gap, as in Figma.
+- **Text:** `dsa_2026_editor_html()` (see "Editor content"), Manrope 16px 400, `line-height: 1.6`, max-width 580px (Figma).
+  - 12px between paragraphs (Enter makes a new one), Andrea's choice. Figma has a single paragraph.
   - Links are `$color__link` and underlined. Lists get their padding back.
 - **Buttons:** both use `partials/button.php`, and the secondary one gets `btn--outline`.
   - The row is `flex-wrap` with a 12px gap, 24px under the text.
@@ -934,7 +960,7 @@ section.certification-showcase.content-block.section-padding   [style=padding]
 - **Empty:** with no title, no content and no images, the section prints nothing. A row without an image is skipped.
 - **Title:** `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` highlights words in `$color__link`. Its look comes from the base `h2`.
   - The accent lines are always printed above the title, as in Figma. There's no switch, Andrea's choice.
-- **Text:** `wp_kses_post()`, Manrope 16px, `line-height: 1.6`. Blocks are 12px apart, links are `$color__link` and underlined, and lists get their padding back.
+- **Text:** `dsa_2026_editor_html()` (see "Editor content"), Manrope 16px, `line-height: 1.6`. Blocks are 12px apart, links are `$color__link` and underlined, and lists get their padding back.
   - **Bold closing line:** Figma's "Security, governance and accountability…" is a **Heading 3** in the WYSIWYG, Andrea's choice. That's why the field has the full toolbar.
   - Every content heading (h3–h6) takes Figma's "H4" look: `$text__h5` (22px), Titillium 700, `line-height: 1.28`, the same as the service card title. It's 22px below the text.
 - **Images:**
@@ -1047,8 +1073,8 @@ section.get-in-touch.content-block
 - **Title:**
   - `wp_kses()` keeps only `<span class>`.
   - Figma's style is Titillium Web Bold 36 / 1.2, so the `<h2>` takes the `.h3` class (36px and its scale) plus `font-weight: 700; line-height: 1.2`.
-- **Text:** `wp_kses_post()`, Manrope 16px, `line-height: 1.6`, max-width 560px, centred.
-  - Paragraphs have no gap.
+- **Text:** `dsa_2026_editor_html()` (see "Editor content"), Manrope 16px, `line-height: 1.6`, max-width 560px, centred.
+  - 12px between paragraphs.
   - Links are `$color__link` and underlined.
 - **Colours:** the section is `$color__main` with `$color__text-light` text. The cards use four Figma colours that Andrea approved:
 
@@ -1439,6 +1465,9 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
 
 ## Log
 
+- **2026-10-08**
+  - Footer contact: email and phone links now output `mailto:` and `tel:` hrefs in `components-2026/footer/contact.php`. Footer 2026 ACF instructions updated.
+  - Footer map link always opens in a new tab with `rel="noopener noreferrer"`.
 - **2026-10-05**
   - Migrated yarn to pnpm. The legacy `dist/bundle.js` was verified byte-identical afterwards.
   - Added `webpack.2026.config.js` and the `src-2026/` skeleton.
@@ -1671,3 +1700,9 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - New `svg-templates/svg-dsa.php`: Andrea's Figma export of the logo (node `538:8448`), cleaned up. The empty `clipPath` is removed, the fills are one `currentColor` group (it follows Text color), and it has `role="img"` + an `aria-label`.
 - **2026-10-07**
   - **Fix:** the footer social hover only worked on LinkedIn. `svg-facebook.php` and `svg-instagram.php` had the circle hard-coded as `fill="#F3F3F1"`, so `$color__link` on hover couldn't reach it. Their circle is now `fill="currentColor"`, like LinkedIn, and looks the same at rest.
+- **2026-10-07**
+  - Hero page: a new **Show breadcrumb** switch (`show_breadcrumb`, true/false, default on), the first field, with no Options tab. Off removes the breadcrumb `<nav>`, and the title's top margin goes with it (`.hero-page__title:first-child`).
+  - Added to the Contact 2026 `hero` Group too (`group_6ac50cfa10bbb.json`), which copies the `hero_page` fields.
+- **2026-10-07**
+  - New `dsa_2026_editor_html()` in `inc/function-content.php`: every 2026 WYSIWYG output now keeps only the editor's own markup and drops pasted formatting (spans, inline styles, `b` / `i`, classes, ids), keeping the text. It replaces `wp_kses_post()` in all eight outputs. See "Editor content". Andrea found `<span style="font-weight: 400;">` pastes in an Introduction.
+  - 12px between paragraphs in the Introduction, Two-column image text and Get in touch text (`> * + *`). Before, two paragraphs touched.

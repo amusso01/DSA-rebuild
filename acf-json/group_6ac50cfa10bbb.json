@@ -37,6 +37,27 @@
             "layout": "block",
             "sub_fields": [
                 {
+                    "key": "field_6ac66858c118a",
+                    "label": "Show breadcrumb",
+                    "name": "show_breadcrumb",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "Off: no breadcrumb above the title.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "allow_in_bindings": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
                     "key": "field_6ac50cfa10111",
                     "label": "Breadcrumb",
                     "name": "breadcrumb",
@@ -423,5 +444,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791307136
+    "modified": 1791387736
 }

@@ -52,7 +52,7 @@ if (!$has_intro && !$cards) {
 						<h2 class="get-in-touch__title h3"><?php echo wp_kses($args['title'], array('span' => array('class' => true))); ?></h2>
 					<?php endif; ?>
 					<?php if ($args['content']) : ?>
-						<div class="get-in-touch__text"><?php echo wp_kses_post($args['content']); ?></div>
+						<div class="get-in-touch__text"><?php echo dsa_2026_editor_html($args['content']); ?></div>
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>

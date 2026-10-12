@@ -11,4 +11,4 @@ if (!$info) {
 	return;
 }
 ?>
-<div class="footer-info"><?php echo wp_kses_post($info); ?></div>
+<div class="footer-info"><?php echo dsa_2026_editor_html($info); ?></div>

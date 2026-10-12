@@ -1,7 +1,7 @@
 <?php
 /**
  * Section: hero page (layout hero_page in Dynamic Layout 2026).
- * Breadcrumb (Home / repeater links / current page), title with the two accent lines,
+ * Breadcrumb (Home / repeater links / current page; off with Show breadcrumb), title with the two accent lines,
  * optional background image over $color__main-light. Rendered by dsa_2026_render_sections(),
  * and by Contact 2026 from its ACF group field "hero" (same sub fields).
  *
@@ -9,6 +9,7 @@
  */
 
 $args = wp_parse_args($args, array(
+	'show_breadcrumb'        => true,    // false: no breadcrumb (heroes saved before the switch keep it)
 	'breadcrumb'             => array(), // repeater rows: array('link' => ACF Link array)
 	'breadcrumb_actual_page' => '',      // last crumb; empty: the page title
 	'title'                  => '',      // empty: the page title; <span class="accent"> highlights
@@ -46,17 +47,19 @@ $first = $args['index'] === 0;
 		)); ?>
 	<?php endif; ?>
 	<div class="content-max">
-		<nav class="hero-page__breadcrumb" data-reveal="fade-up" aria-label="<?php esc_attr_e('Breadcrumb'); ?>">
-			<ol class="hero-page__crumbs">
-				<?php foreach ($crumbs as $crumb) : ?>
-					<li class="hero-page__crumb">
-						<a href="<?php echo esc_url($crumb['url']); ?>"<?php if (($crumb['target'] ?? '') === '_blank') : ?> target="_blank" rel="noopener"<?php endif; ?>><?php echo esc_html($crumb['title']); ?></a>
-						<span class="hero-page__separator" aria-hidden="true">/</span>
-					</li>
-				<?php endforeach; ?>
-				<li class="hero-page__crumb hero-page__crumb--current" aria-current="page"><?php echo esc_html($current); ?></li>
-			</ol>
-		</nav>
+		<?php if ($args['show_breadcrumb']) : ?>
+			<nav class="hero-page__breadcrumb" data-reveal="fade-up" aria-label="<?php esc_attr_e('Breadcrumb'); ?>">
+				<ol class="hero-page__crumbs">
+					<?php foreach ($crumbs as $crumb) : ?>
+						<li class="hero-page__crumb">
+							<a href="<?php echo esc_url($crumb['url']); ?>"<?php if (($crumb['target'] ?? '') === '_blank') : ?> target="_blank" rel="noopener"<?php endif; ?>><?php echo esc_html($crumb['title']); ?></a>
+							<span class="hero-page__separator" aria-hidden="true">/</span>
+						</li>
+					<?php endforeach; ?>
+					<li class="hero-page__crumb hero-page__crumb--current" aria-current="page"><?php echo esc_html($current); ?></li>
+				</ol>
+			</nav>
+		<?php endif; ?>
 		<<?php echo tag_escape($tag); ?> class="hero-page__title" data-reveal="fade-up" data-reveal-delay="100"><?php echo wp_kses($title, array('span' => array('class' => true))); ?></<?php echo tag_escape($tag); ?>>
 		<span class="hero-page__lines" aria-hidden="true" data-reveal="fade-up" data-reveal-delay="200"></span>
 	</div>

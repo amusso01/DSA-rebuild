@@ -51,10 +51,15 @@
 }
 
 .get-in-touch__text {
-	// Manrope 16px 400 from html; paragraphs have no gap (reset), as in the other sections
+	// Manrope 16px 400 from html
 	max-width: 560px;
 	margin-inline: auto;
 	line-height: 1.6;
+
+	// Enter makes a new paragraph: 12px between blocks (the editor rhythm)
+	> * + * {
+		margin-top: 12px;
+	}
 
 	ul,
 	ol {

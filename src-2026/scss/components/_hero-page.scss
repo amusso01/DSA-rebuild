@@ -94,6 +94,11 @@
 	@include media('<phone') {
 		margin-top: 20px;
 	}
+
+	// no breadcrumb (Show breadcrumb off): the title starts at the section padding
+	&:first-child {
+		margin-top: 0;
+	}
 }
 
 .hero-page__lines {

@@ -48,7 +48,7 @@ $classes = 'two-column-image-text content-block'
 					<h2 class="two-column-image-text__title"><?php echo wp_kses($args['title'], array('span' => array('class' => true), 'br' => array())); ?></h2>
 				<?php endif; ?>
 				<?php if ($args['content']) : ?>
-					<div class="two-column-image-text__text"><?php echo wp_kses_post($args['content']); ?></div>
+					<div class="two-column-image-text__text"><?php echo dsa_2026_editor_html($args['content']); ?></div>
 				<?php endif; ?>
 				<?php get_template_part('components-2026/partials/button', null, array(
 					'link'  => $args['link'],

@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Footer: bottom bar, copyright + legal menu (Footer Legal 2026).
  *
  * @package FDRY
  */
 ?>
-<p class="footer-bottom__copy">&copy; <?php echo esc_html(wp_date('Y')); ?> DSA Connect. All rights reserved. Registered in England &amp; Wales.</p>
+<p class="footer-bottom__copy">&copy; <?php echo esc_html(wp_date('Y')); ?> DSA Connect (London) Ltd. company number: 07109191. Registered in England &amp; Wales.</p>
 <?php if (has_nav_menu('footer-legal-2026')) : ?>
 	<nav aria-label="<?php esc_attr_e('Legal'); ?>">
 		<?php

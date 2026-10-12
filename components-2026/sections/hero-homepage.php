@@ -44,7 +44,7 @@ $first = $args['index'] === 0;
 			<?php endif; ?>
 			<h1 class="hero-homepage__title"><?php echo wp_kses($title, array('span' => array('class' => true))); ?></h1>
 			<?php if ($args['content']) : ?>
-				<div class="hero-homepage__text"><?php echo wp_kses_post($args['content']); ?></div>
+				<div class="hero-homepage__text"><?php echo dsa_2026_editor_html($args['content']); ?></div>
 			<?php endif; ?>
 			<?php if ($has_buttons) : ?>
 				<div class="hero-homepage__buttons">
