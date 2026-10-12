@@ -8,7 +8,7 @@
  * @package foundry
  */
 
-get_header(); ?>
+get_header('new'); ?>
 
 
 <section id="primary" class="content-area page-area">
@@ -27,4 +27,4 @@ get_header(); ?>
 
 
 
-<?php get_footer(); ?>
+<?php get_footer('new'); ?>

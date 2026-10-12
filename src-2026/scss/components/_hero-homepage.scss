@@ -75,6 +75,10 @@
 // as in the WYSIWYG editor section. Colour from the section; a single paragraph is as in Figma
 .hero-homepage__text {
 	@include editor-content;
+
+	h4 {
+		color: $color__link;
+	}
 }
 
 .hero-homepage__buttons {
