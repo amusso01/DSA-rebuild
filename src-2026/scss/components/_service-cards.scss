@@ -92,8 +92,8 @@
 	color: $color__text-light; // the cards are always dark: their text doesn't follow the section's text colour
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	// Figma: 208px cards. Content centred: two-line cards get Figma's 38px, three-line ones stay 208px
+	justify-content: flex-start;
+	// Figma: 208px min height; content aligned to the top (padding below)
 	min-height: 208px;
 	padding: 25px 52px;
 

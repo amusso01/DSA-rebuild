@@ -6,17 +6,19 @@
 @use '../common/variables' as *;
 @use '../common/media' as *;
 
+// padding: .section-padding (_helper.scss) from the ACF sliders; 86px is the Figma default.
+// Own scale (86 → 64 → 35, not the shared 76-based one): rows saved before the sliders look as before
 .introduction {
-	// only top/bottom: the sides come from .content-block
-	padding-block: 86px;
+	--padding-top: 86px;
+	--padding-bottom: 86px;
 	background-color: $color__text-light; // default; the ACF colour is an inline style
 	color: $color__text;
 
 	@include media('<tablet') {
-		padding-block: 64px;
+		--padding-scale: calc(64 / 86);
 	}
 	@include media('<phone') {
-		padding-block: 35px;
+		--padding-scale: calc(35 / 86);
 	}
 }
 

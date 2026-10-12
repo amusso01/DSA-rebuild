@@ -2,12 +2,14 @@
 /**
  * Section: introduction (layout introduction in Dynamic Layout 2026).
  * H2 title on the left; text and up to two buttons (filled + outline) on the right.
- * Options: background colour, text colour. Rendered by dsa_2026_render_sections().
+ * Options: padding, background colour, text colour. Rendered by dsa_2026_render_sections().
  *
  * @package FDRY
  */
 
 $args = wp_parse_args($args, array(
+	'padding_top'      => '',     // slider, desktop px (0–100); empty: 86px from .introduction
+	'padding_bottom'   => '',
 	'background_color' => '',     // hex; empty or invalid: $color__text-light from the SCSS
 	'text_color'       => 'dark', // dark | light (light: for dark backgrounds)
 	'title'            => '',     // textarea (new lines → <br>); <span class="accent"> highlights
@@ -23,10 +25,15 @@ if (!$args['title']) {
 }
 
 $bg          = sanitize_hex_color($args['background_color']);
-$classes     = 'introduction content-block' . ($args['text_color'] === 'light' ? ' introduction--light' : '');
+$classes     = 'introduction content-block section-padding' . ($args['text_color'] === 'light' ? ' introduction--light' : '');
 $has_buttons = !empty($args['button_primary']['url']) || !empty($args['button_secondary']['url']);
+// one inline style: the padding sliders, then the background
+$style = implode('; ', array_filter(array(
+	dsa_2026_section_padding_style($args['padding_top'], $args['padding_bottom']),
+	$bg ? 'background-color: ' . $bg : '',
+)));
 ?>
-<section class="<?php echo esc_attr($classes); ?>"<?php if ($bg) : ?> style="background-color: <?php echo esc_attr($bg); ?>"<?php endif; ?>>
+<section class="<?php echo esc_attr($classes); ?>"<?php if ($style) : ?> style="<?php echo esc_attr($style); ?>"<?php endif; ?>>
 	<div class="content-max">
 		<div class="introduction__inner">
 			<h2 class="introduction__title" data-reveal="fade-up"><?php echo wp_kses($args['title'], array('span' => array('class' => true), 'br' => array())); ?></h2>

@@ -35,7 +35,7 @@ function dsa_2026_strip_content_meta($content)
 // bold/italic/strikethrough, links, lists, quotes, lines, and text-align (how editors centre text).
 // Pasted formatting (spans, inline styles, colours, b/i wrappers, classes, ids) is dropped, its text kept,
 // so content saved before this is cleaned too. Use it instead of wp_kses_post() for 2026 WYSIWYG output.
-function dsa_2026_editor_html($html)
+function dsa_2026_editor_html($html, $allow_images = false)
 {
 	$align   = array('style' => true); // only text-align survives (dsa_2026_editor_styles)
 	$allowed = array(
@@ -57,6 +57,17 @@ function dsa_2026_editor_html($html)
 		'del'        => array(),
 		'a'          => array('href' => true, 'target' => true, 'rel' => true),
 	);
+
+	if ($allow_images) {
+		$allowed['img'] = array(
+			'src'    => true,
+			'alt'    => true,
+			'width'  => true,
+			'height' => true,
+			'srcset' => true,
+			'sizes'  => true,
+		);
+	}
 
 	add_filter('safe_style_css', 'dsa_2026_editor_styles');
 	$html = wp_kses($html, $allowed);

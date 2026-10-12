@@ -619,6 +619,52 @@
                             "parent_layout": "layout_6ac4c592da74c"
                         },
                         {
+                            "key": "field_6accdb08a1b01",
+                            "label": "Padding top",
+                            "name": "padding_top",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 86,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
+                            "key": "field_6accdb08a1b02",
+                            "label": "Padding bottom",
+                            "name": "padding_bottom",
+                            "aria-label": "",
+                            "type": "range",
+                            "instructions": "Desktop value. Tablet and phone scale it down.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "50",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": 86,
+                            "min": 0,
+                            "max": 100,
+                            "step": 1,
+                            "prepend": "",
+                            "append": "px",
+                            "allow_in_bindings": 0,
+                            "parent_layout": "layout_6ac4c592da74c"
+                        },
+                        {
                             "key": "field_6ac4c592db5de",
                             "label": "Background color",
                             "name": "background_color",
@@ -1340,7 +1386,7 @@
                             "name": "content",
                             "aria-label": "",
                             "type": "wysiwyg",
-                            "instructions": "Start at H2: the title is the page's H1. H4 gets the accent bar.",
+                            "instructions": "Start at H2: the title is the page's H1. H4 gets the accent bar and the link color.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -1352,7 +1398,7 @@
                             "allow_in_bindings": 0,
                             "tabs": "all",
                             "toolbar": "full",
-                            "media_upload": 0,
+                            "media_upload": 1,
                             "delay": 0,
                             "parent_layout": "layout_6ac60a6d6a892"
                         },
@@ -1647,5 +1693,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791387736
+    "modified": 1791810394
 }

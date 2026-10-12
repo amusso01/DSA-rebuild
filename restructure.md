@@ -168,7 +168,7 @@ Every new section and component, the header and footer sections included, uses t
 
 ### Section padding (`.section-padding`)
 
-This is for sections whose editors set the top and bottom padding with ACF sliders: today Hero homepage, the WYSIWYG editor, Blog row, Service cards and Certification showcase.
+This is for sections whose editors set the top and bottom padding with ACF sliders: today Hero homepage, the WYSIWYG editor, Introduction, Blog row, Service cards and Certification showcase.
 
 - **The slider value is the desktop padding.** Smaller screens multiply it by the same ratios as the default (76 / 64 / 35), so a section left at the default looks exactly as before.
 
@@ -188,7 +188,9 @@ This is for sections whose editors set the top and bottom padding with ACF slide
   2. **Markup:** add the `section-padding` class to the `<section>`, and print the helper's string as its `style` (through `esc_attr()`). If the section already has an inline style, join the two strings with `; `.
   3. **Styles:** remove the section's own `padding-block` and its media queries. Component CSS loads after `common/`, so it would override the helper.
 
-  A section with a different default (e.g. Introduction's 86px) would also set its own fallback with `--padding-top: 86px; --padding-bottom: 86px` on its class.
+  A section with a different default sets its own fallback on its class, e.g. `--padding-top: 86px; --padding-bottom: 86px`.
+
+  **A section that's already live** and whose smaller-screen padding doesn't follow 76 / 64 / 35 also sets its own `--padding-scale` per breakpoint on its class, so the rows saved before the sliders don't move. Introduction (86 / 64 / 35) uses `calc(64 / 86)` `<tablet` and `calc(35 / 86)` `<phone`. The shared 76-based scale would give it 72px and 40px.
 
 ## Components (`components-2026/`)
 
@@ -272,7 +274,7 @@ Editors paste from Google Docs and Word without clearing the formatting. A paste
   - classes and ids;
   - `b` / `i`: the B and I buttons make `strong` / `em`, and Google's `<b>` wrapper would turn a whole paste bold;
   - underline (a `<span style>` in this editor);
-  - images and scripts.
+  - images and scripts (except Hero homepage content: pass `true` as the second argument to allow `img` with `src`, `alt`, `width`, `height`, `srcset`, `sizes` only).
 - **How:** `wp_kses()` with this allowlist. During the call, a `safe_style_css` filter (`dsa_2026_editor_styles()`) allows only `text-align`, so `safecss_filter_attr()` removes the other properties and drops a `style` left empty.
 - **It works on output,** so content saved before is cleaned too.
   - The saved value and the editor's Text tab still show the pasted spans. The page doesn't.
@@ -523,7 +525,7 @@ section.hero-homepage.content-block.section-padding   [style=padding]
 | Options | Padding bottom (50%) | `padding_bottom` | range 0–100, step 1, `px` | default 82 (Figma) |
 | Options | Show title highlight | `show_highlight` | true/false (switch) | default on: the two lines above the title |
 | Content | Hero title | `title` | text | always an `<h1>`; empty: the page title |
-| Content | Content | `content` | WYSIWYG (full toolbar, no media) | paragraphs and headings, starting at H2 |
+| Content | Content | `content` | WYSIWYG (full toolbar, media) | paragraphs and headings, starting at H2; H4 link color + bar |
 | Content | Primary button (50%) | `button_primary` | link | optional, filled `.btn` |
 | Content | Secondary button (50%) | `button_secondary` | link | optional, `.btn--outline` |
 | Content | Background image | `image` | image (ID) | empty: `$color__main` background |
@@ -535,9 +537,9 @@ section.hero-homepage.content-block.section-padding   [style=padding]
 - **Lines:**
   - **Show title highlight** prints or removes the `span`. A row saved before the option existed shows them (`$args` default `true`).
   - They're Hero page's values: 48 × 4 `$color__link` + 15 × 4 `$color__accent-hover`, a 2px radius and a 7px gap. Figma draws 14px and an 8px gap here; the two heroes were kept identical.
-- **Text:** `dsa_2026_editor_html()` (see "Editor content"), in `$color__text-light` from the section.
-  - **Full toolbar,** so editors can pick Paragraph or a heading. The `basic` toolbar has no Paragraph/Heading dropdown. The field instructions say to start at H2, because the title is the H1.
-  - **Styles:** the `editor-content` mixin (`common/_editor-content.scss`), the same as the WYSIWYG editor section and blog posts. That's Manrope 16px / 1.6, 12px between blocks, 30px before a heading, the h4 bar, dot lists, and `$color__link` underlined links.
+- **Text:** `dsa_2026_editor_html( $content, true )` (see "Editor content"), in `$color__text-light` from the section. The second argument keeps `img` in the allowlist (Hero homepage only).
+  - **Full toolbar with media,** so editors can pick Paragraph or a heading and insert an image. The field instructions say to start at H2, because the title is the H1, and that H4 gets the accent bar and the link color.
+  - **Styles:** the `editor-content` mixin (`common/_editor-content.scss`), the same as the WYSIWYG editor section and blog posts. That's Manrope 16px / 1.6, 12px between blocks, 30px before a heading, the h4 bar, dot lists, and `$color__link` underlined links. **h4** text is `$color__link` in `.hero-homepage__text` only; inline images are `max-width: 100%`.
   - A single paragraph looks as in Figma.
 - **Buttons:**
   - Both use `partials/button.php`; the secondary one gets `btn--outline`.
@@ -741,7 +743,7 @@ section.wysiwyg-editor.content-block
 Layout `introduction` ("Introduction"): an H2 on the left, with text and up to two buttons on the right. Figma: file `ZaphlvDdgp3I9EhmdhDnFe`, node `223:3244` ("Methods introduction", 1440 wide).
 
 ```
-section.introduction.content-block[.introduction--light]   (style="background-color: …")
+section.introduction.content-block.section-padding[.introduction--light]   [style=padding; background-color]
 	.content-max > .introduction__inner                      (grid 480px | 1fr)
 		h2.introduction__title
 		.introduction__summary
@@ -751,6 +753,8 @@ section.introduction.content-block[.introduction--light]   (style="background-co
 
 | Tab | Label | Name | Type | Notes |
 | --- | --- | --- | --- | --- |
+| Options | Padding top (50%) | `padding_top` | range 0–100, step 1, `px` | default 86 (Figma) |
+| Options | Padding bottom (50%) | `padding_bottom` | range 0–100, step 1, `px` | default 86 (Figma) |
 | Options | Background color (50%) | `background_color` | color picker | default `#F3F3F1` |
 | Options | Text color (50%) | `text_color` | select `dark` / `light` | default `dark` |
 | Content | Title | `title` | textarea (new lines → `<br>`) | **required**, always an `<h2>` |
@@ -758,7 +762,7 @@ section.introduction.content-block[.introduction--light]   (style="background-co
 | Content | Primary button (50%) | `button_primary` | link | optional, filled `.btn` |
 | Content | Secondary button (50%) | `button_secondary` | link | optional, `.btn--outline` |
 
-- **Background:** like Two-column image text. A valid colour is an inline `style` (`sanitize_hex_color()`). An empty or invalid one falls back to the SCSS default, `$color__text-light`.
+- **Background:** like Two-column image text. A valid colour is added to the inline style, after the padding (joined with `; `, `sanitize_hex_color()`). An empty or invalid one falls back to the SCSS default, `$color__text-light`.
 - **Text color:**
   - **Dark** (default) is `$color__text`, for light backgrounds.
   - **Light** adds `.introduction--light`, which sets `$color__text-light`, for dark backgrounds.
@@ -774,9 +778,11 @@ section.introduction.content-block[.introduction--light]   (style="background-co
   - The row is `flex-wrap` with a 12px gap, 24px under the text.
   - It's only printed when at least one button has a URL.
 - **Height:** Figma draws the buttons 46px high, but the shared `.btn` is 44px. It's left as it is, so at 1440px the section is 368px high (Figma ~372).
-- **Grid and padding:** `padding-block` only. The title column is top-aligned.
+- **Grid and padding:** the title column is top-aligned.
+  - **Padding:** `.section-padding` with the sliders. The defaults are on the class (`--padding-top: 86px; --padding-bottom: 86px`).
+  - **Its own scale:** `--padding-scale` is `64 / 86` `<tablet` and `35 / 86` `<phone`, not the shared 76-based scale. At the default it gives exactly 86 / 64 / 35, so rows saved before the sliders look the same. Other values scale in the same proportion, e.g. 100 gives 74 / 41.
 
-  | Width | Padding top / bottom | Grid |
+  | Width | Padding top / bottom (default) | Grid |
   | --- | --- | --- |
   | Base (desktop) | 86px (Figma) | `480px 1fr`, gap 64px (Figma) |
   | `<tablet` | 64px | `1fr 1fr`, gap 48px |
@@ -1465,6 +1471,10 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
 
 ## Log
 
+- **2026-10-12**
+  - Hero homepage **Content** WYSIWYG: **media upload** on; instructions mention H4 accent bar and link color. Output uses `dsa_2026_editor_html( …, true )` so inline images print; `.hero-homepage__text` styles `img` and h4 in `$color__link`.
+  - Introduction: new **Padding top / Padding bottom** sliders (`padding_top` / `padding_bottom`, range 0–100px, default 86), first in the Options tab. The section now uses `.section-padding`, and the padding joins the background colour in one inline style.
+    - `.introduction` sets its own `--padding-scale` (64/86 `<tablet`, 35/86 `<phone`), so the default still gives 86 / 64 / 35 and rows already on live look the same at every width.
 - **2026-10-08**
   - Footer contact: email and phone links now output `mailto:` and `tel:` hrefs in `components-2026/footer/contact.php`. Footer 2026 ACF instructions updated.
   - Footer map link always opens in a new tab with `rel="noopener noreferrer"`.
