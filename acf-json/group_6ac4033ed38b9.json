@@ -761,7 +761,7 @@
                             "name": "content",
                             "aria-label": "",
                             "type": "wysiwyg",
-                            "instructions": "",
+                            "instructions": "Start at H3: the title is the section's H2. H4 gets the accent bar.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -772,7 +772,7 @@
                             "default_value": "",
                             "allow_in_bindings": 0,
                             "tabs": "all",
-                            "toolbar": "basic",
+                            "toolbar": "full",
                             "media_upload": 0,
                             "delay": 0,
                             "parent_layout": "layout_6ac4c592da74c"
@@ -1693,5 +1693,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1791810394
+    "modified": 1791812163
 }

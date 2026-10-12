@@ -96,7 +96,7 @@ src-2026/
       _general.scss    base typography: html, headings, links
       _helper.scss     layout helpers: .content-block, .content-max, .content-narrow, .section-padding, %cover…
       _reveal.scss     data-reveal: fade-up keyframes, delay/duration steps, pending/revealed states
-      _editor-content.scss  mixin editor-content: editor rich text (rhythm, h4 bar, dot lists, links), WYSIWYG section + Hero homepage text + blog posts
+      _editor-content.scss  mixin editor-content: editor rich text (rhythm, h4 bar, dot lists, links), WYSIWYG section + Hero homepage and Introduction text + blog posts
     pages/             styles for legacy templates on header-new, written for their own markup
       _singular.scss   blog posts + pages (single.php, page.php): dark page, 2026 type, Gutenberg blocks
     components/        one partial per component (mirrors components-2026/)
@@ -758,7 +758,7 @@ section.introduction.content-block.section-padding[.introduction--light]   [styl
 | Options | Background color (50%) | `background_color` | color picker | default `#F3F3F1` |
 | Options | Text color (50%) | `text_color` | select `dark` / `light` | default `dark` |
 | Content | Title | `title` | textarea (new lines → `<br>`) | **required**, always an `<h2>` |
-| Content | Content | `content` | WYSIWYG (basic, no media) | |
+| Content | Content | `content` | WYSIWYG (full toolbar, no media) | paragraphs and headings, starting at H3 |
 | Content | Primary button (50%) | `button_primary` | link | optional, filled `.btn` |
 | Content | Secondary button (50%) | `button_secondary` | link | optional, `.btn--outline` |
 
@@ -771,9 +771,10 @@ section.introduction.content-block.section-padding[.introduction--light]   [styl
   - It's required, because it holds the left column. Without it, the section prints nothing.
   - `wp_kses()` keeps only `<span class>` and `<br>`, and `<span class="accent">` highlights words in `$color__link`.
   - Its look comes from the base `h2`: don't redeclare it.
-- **Text:** `dsa_2026_editor_html()` (see "Editor content"), Manrope 16px 400, `line-height: 1.6`, max-width 580px (Figma).
-  - 12px between paragraphs (Enter makes a new one), Andrea's choice. Figma has a single paragraph.
-  - Links are `$color__link` and underlined. Lists get their padding back.
+- **Text:** `dsa_2026_editor_html()` (see "Editor content"), max-width 580px (Figma).
+  - **Full toolbar, no media,** so editors can pick Paragraph or a heading. The field instructions say to start at H3, because the title is the H2, and that H4 gets the accent bar.
+  - **Styles:** the `editor-content` mixin (`common/_editor-content.scss`), the same as the WYSIWYG editor section, Hero homepage and blog posts. That's Manrope 16px / 1.6, 12px between blocks (Andrea's choice), 30px before a heading, the h4 bar, dot lists, and `$color__link` underlined links. Headings take the global sizes.
+  - A single paragraph looks as in Figma.
 - **Buttons:** both use `partials/button.php`, and the secondary one gets `btn--outline`.
   - The row is `flex-wrap` with a 12px gap, 24px under the text.
   - It's only printed when at least one button has a URL.
@@ -1475,6 +1476,7 @@ Removing the chunk also removes webpack's chunk-loading code, which is why mobil
   - Hero homepage **Content** WYSIWYG: **media upload** on; instructions mention H4 accent bar and link color. Output uses `dsa_2026_editor_html( …, true )` so inline images print; `.hero-homepage__text` styles `img` and h4 in `$color__link`.
   - Introduction: new **Padding top / Padding bottom** sliders (`padding_top` / `padding_bottom`, range 0–100px, default 86), first in the Options tab. The section now uses `.section-padding`, and the padding joins the background colour in one inline style.
     - `.introduction` sets its own `--padding-scale` (64/86 `<tablet`, 35/86 `<phone`), so the default still gives 86 / 64 / 35 and rows already on live look the same at every width.
+  - Introduction **Content** WYSIWYG: the **full toolbar** (headings), still no media. Instructions: start at H3, H4 gets the accent bar. `.introduction__text` now includes the shared `editor-content` mixin instead of its own rules. Paragraphs and links are unchanged, but `ul` lists now get the teal dots instead of the browser's bullets.
 - **2026-10-08**
   - Footer contact: email and phone links now output `mailto:` and `tel:` hrefs in `components-2026/footer/contact.php`. Footer 2026 ACF instructions updated.
   - Footer map link always opens in a new tab with `rel="noopener noreferrer"`.

@@ -5,6 +5,7 @@
 ==================================================================================*/
 @use '../common/variables' as *;
 @use '../common/media' as *;
+@use '../common/editor-content' as *;
 
 // padding: .section-padding (_helper.scss) from the ACF sliders; 86px is the Figma default.
 // Own scale (86 → 64 → 35, not the shared 76-based one): rows saved before the sliders look as before
@@ -61,31 +62,11 @@
 	}
 }
 
+// full toolbar: paragraphs and headings (from H3, the title is the H2).
+// Rhythm, h4 bar, dot lists and links: the shared editor-content mixin; colour from the section
 .introduction__text {
-	// Manrope 16px 400 from html, colour from the section
+	@include editor-content;
 	max-width: 580px;
-	line-height: 1.6;
-
-	// Enter makes a new paragraph: 12px between blocks (the editor rhythm)
-	> * + * {
-		margin-top: 12px;
-	}
-
-	ul,
-	ol {
-		padding-left: 1.25em; // the reset zeroes it, bullets would hang outside
-	}
-
-	a {
-		color: $color__link;
-		text-decoration: underline;
-		text-underline-offset: 2px;
-
-		&:focus-visible {
-			outline: 2px solid $color__link;
-			outline-offset: 2px;
-		}
-	}
 }
 
 .introduction__buttons {
